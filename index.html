@@ -122,8 +122,8 @@ packages: [{
 	}]
 }
 </script>
+	<script src="https://js.arcgis.com/3.16/"></script>
 
-<script type="text/javascript" src="http://map.amherst.ny.us/arcgis_js_api/library/3.2/jsapi/init.js"></script>
 <script src="js/jquery-1.8.2.min.js" type="text/javascript"></script>
 <script type="text/javascript" src="js/jquery.tablesorter.js"></script>
 <script type="text/javascript" src="js/sorttable.js"></script>
@@ -608,7 +608,8 @@ dojo.require("dijit.form.CheckBox");
 dojo.require("dijit.form.TextBox");
 dojo.require("esri.dijit.Measurement"); <!--06042015-->
 dojo.require("myModules.InfoWindow");
-
+dojo.require("esri.tasks.gp");
+dojo.require("esri.dijit.InfoWindow");
 var layer,ortho,layer2;
 var map, queryTask, query, navToolbar, loading;//, layervisible=[];//easy way to get visible layers in "layer"
 var legendDijit;

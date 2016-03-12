@@ -1,0 +1,39 @@
+<!-- dumped from index..html LN 41-->
+<!-- try to retrieve information for URL passed from webpage.[for Neiborhood application use] -->
+<script type="text/javascript">
+function parseURLParams(url) {
+	var queryStart = url.indexOf("?") + 1;
+	var queryEnd   = url.indexOf("#") + 1 || url.length + 1;
+	var query      = url.slice(queryStart, queryEnd - 1);
+
+	if (query === url || query === "") return;
+
+	var params  = {};
+	var nvPairs = query.replace(/\+/g, " ").split("&");
+	for (var i=0; i<nvPairs.length; i++) {
+		var nv = nvPairs[i].split("=");
+		var n  = decodeURIComponent(nv[0]);
+		var v  = decodeURIComponent(nv[1]);
+		if ( !(n in params) ) {
+			params[n] = [];
+		}
+		params[n].push(nv.length === 2 ? v : null);
+	}
+	return params;
+}
+//<!---- LIXIAN DAI Grab SwissCode from CPI-->--------------------------------------------------------------------------------------------------------
+var urlString = document.URL;
+var urlParams = parseURLParams(urlString);
+var test;
+if(urlParams!=null){
+	test=urlParams.mnu_swissbl;
+}
+</script>
+
+<script type="text/javascript">
+var urlString = document.URL;
+var urlParams = parseURLParams(urlString);
+if(urlParams!=null){
+	var swiss=urlParams.swiss;
+}
+</script>
