@@ -3,2161 +3,2278 @@
 <!--[if lt IE 7 ]> <html lang="en" class="no-js ie7">    <![endif]-->
 <!--[if IE 8 ]>    <html lang="en" class="no-js ie8">    <![endif]-->
 <!--[if IE 9 ]>    <html lang="en" class="no-js ie9">    <![endif]-->
-<!--[if (gt IE 9)|!(IE)]><!--><html lang="en" class="no-js"><!--<![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!-->
+<html lang="en" class="no-js">
+<!--<![endif]-->
+
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-
-<!--The viewport meta tag is used to improve the presentation and behavior of the samples
+    <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <!--The viewport meta tag is used to improve the presentation and behavior of the samples
 on iOS devices-->
-<meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
-<title>Town of Amherst-----The Map Machine</title>
-<link rel="stylesheet" type="text/css" href="https://js.arcgis.com/3.16/dijit/themes/claro/claro.css">
-<link rel="stylesheet" type="text/css" href="https://js.arcgis.com/3.16/esri/css/esri.css">
-<link rel="stylesheet" type="text/css" href="css/style.css">
-<link rel="stylesheet" type="text/css" href="css/map.css">
-
-<!-- Some style setting going to be add so a css file later -->
-<style type="text/css">
-.zoominIcon { background-image:url(images/blue_zoom_in.png); width:32px; height:32px; }
-.zoomoutIcon { background-image:url(images/blue_zoom_out.png); width:32px; height:32px; }
-.zoomfullextIcon { background-image:url(images/globe.png); width:32px; height:32px; }
-.zoomprevIcon { background-image:url(images/white_arrow_left.png); width:32px; height:32px; }
-.zoomnextIcon { background-image:url(images/white_arrow_right2.png); width:32px; height:32px; }
-.panIcon { background-image:url(images/hand_1.png); width:32px; height:32px; }
-.hyperlinkIcon { background-image:url(images/triview_google.png); width:32px; height:32px; }
-.identifyIcon { background-image:url(images/info.png); width:32px; height:32px;}
-.measureIcon { background-image:url(images/measure.png); width:32px; height:32px; }<!--06042015-->
-.deactivateIcon { background-image:url(images/Deactivate_32.png); width:32px; height:32px; }
-.clearIcon{background-image:url(images/map_delete.png); width:32px; height:32px;}
-.printerIcon { background-image:url(images/printer.png); width:32px; height:32px; }
-.go { background-image:url(images/search.png); width:32px; height:32px;}
-.dryicon {background-image:url(images/logo_24px.png); width:24px; height:24px;  }
-.tombutton {float:left; position:relative; left:10px; border:0px;text-align: center; border:hidden;}
-.tombutton .dijitButtonNode{border:0px;}
-.mybutton {float:left; left:0px;border:3px;border-color:white; background:rgba(255,255,255,0.9);padding:3px;}
-.tool {padding-top:5px;}
-</style>
-<!-- try to retrieve information for URL passed from webpage.[for Neiborhood application use] -->
-<script type="text/javascript">
-function parseURLParams(url) {
-	var queryStart = url.indexOf("?") + 1;
-	var queryEnd   = url.indexOf("#") + 1 || url.length + 1;
-	var query      = url.slice(queryStart, queryEnd - 1);
-
-	if (query === url || query === "") return;
-
-	var params  = {};
-	var nvPairs = query.replace(/\+/g, " ").split("&");
-	for (var i=0; i<nvPairs.length; i++) {
-		var nv = nvPairs[i].split("=");
-		var n  = decodeURIComponent(nv[0]);
-		var v  = decodeURIComponent(nv[1]);
-		if ( !(n in params) ) {
-			params[n] = [];
-		}
-		params[n].push(nv.length === 2 ? v : null);
-	}
-	return params;
-}
-//<!---- LIXIAN DAI Grab SwissCode from CPI-->--------------------------------------------------------------------------------------------------------
-var urlString = document.URL;
-var urlParams = parseURLParams(urlString);
-var test;
-if(urlParams!=null){
-	test=urlParams.mnu_swissbl;
-}
-</script>
-
-<script type="text/javascript">
-var urlString = document.URL;
-var urlParams = parseURLParams(urlString);
-if(urlParams!=null){
-	var swiss=urlParams.swiss;
-}
-</script>
-
-<script type="text/javascript">
-var OSName="Unknown OS";
-if (navigator.appVersion.indexOf("Win")!=-1) OSName="Windows";
-if (navigator.appVersion.indexOf("Mac")!=-1) OSName="MacOS";
-if (navigator.appVersion.indexOf("X11")!=-1) OSName="UNIX";
-if (navigator.appVersion.indexOf("Linux")!=-1) OSName="Linux";
-
-navigator.sayswho= (function(){
-	var N= navigator.appName, ua= navigator.userAgent, tem;
-	var M= ua.match(/(opera|chrome|safari|firefox|msie)\/?\s*(\.?\d+(\.\d+)*)/i);
-	if(M && (tem= ua.match(/version\/([\.\d]+)/i))!= null) M[2]= tem[1];
-	M= M? [M[1], M[2]]: [N, navigator.appVersion,'-?'];
-	return M;
-})();
-var browser=''+navigator.sayswho[0]+navigator.sayswho[1];
-</script>
-
-<!-- get resolution of the screen -->
-<script>
-var winW=1024, winH=800;
-if (document.body && document.body.offsetWidth) {
-	winW = document.body.offsetWidth;
-	winH = document.body.offsetHeight;
-}
-if (document.compatMode=='CSS1Compat' &&
-		document.documentElement &&
-		document.documentElement.offsetWidth ) {
-	winW = document.documentElement.offsetWidth;
-	winH = document.documentElement.offsetHeight;
-}
-if (window.innerWidth && window.innerHeight) {
-	winW = window.innerWidth;
-	winH = window.innerHeight;
-}
-</script>
-
-<script type="text/javascript">
-
-dojoConfig = { parseOnLoad:true,
-packages: [{
-		"name": "myModules",
-		"location": location.pathname.replace(/\/[^/]+$/, "") + "/myModules"
-	}]
-}
-</script>
-	<script src="https://js.arcgis.com/3.16/"></script>
-
-<script src="js/jquery-1.8.2.min.js" type="text/javascript"></script>
-<script type="text/javascript" src="js/jquery.tablesorter.js"></script>
-<script type="text/javascript" src="js/sorttable.js"></script>
-<script type="text/javascript" src="js/jquery-ui-1.8.23.custom.min.js"></script>
-<script type="text/javascript" src="js/slimScroll.js"></script>
-<script src="js/jquery.cookie.js" type="text/javascript"></script>
-<link href="css/skin-vista/ui.dynatree.css" rel="stylesheet" type="text/css" id="skinSheet">
-<script src="js/jquery.dynatree.js" type="text/javascript"></script>
-<link href="css/modalPopLite.css" rel="stylesheet" type="text/css" />
-<script type="text/javascript" src="js/modalPopLite.js"></script>
-<link rel="stylesheet" type="text/css" href="myModules/InfoWindow.css">
-<script src="js/placeholder.js" type="text/javascript"></script>
-
-<!-- Add Style Dynamically -->
-<script>
-$(document).ready(function(){
-	var mapheight=winH-20+"px";
-
-
-	$("#map").css("height",mapheight);
-	$("#alert").css("left",winW/2-505+"px");
-	$('#mapLoadingImg').css("left",winW/2-16+"px");
-	$('#mapLoadingImg').css("top",winH/2-16+"px");
-	$('#table').css("top",100+"px");
-	$('#table').css("right",winW/2+"px");
-	$("#legendDiv").addClass("absolutePosition");
-});
-
-</script>
-
-<script type="text/javascript">
-$(function () {
-	$('#popupinfo').modalPopLite({ openButton: '#popupclicker', closeButton: '#close-btn',isModal:true});
-});
-$(function () {
-	$('#alertinfo').modalPopLite({ openButton: '#alertclicker', closeButton: '#close-btn3',isModal:true});
-});
-$(function () {
-	$('#popupinfo2').modalPopLite({ openButton: '#popupclicker2', closeButton: '#close-btn2',isModal:true});
-});
-$(function () {
-	$('#contactinfo').modalPopLite({ openButton: '#contactclicker', closeButton: '#close-btn4',isModal:true});
-});
-</script>
-
-
-<script type="text/javascript">
-$(document).ready(function(){
-
-	//Draggable Table from JQuery UI
-	$( "#table" ).draggable({containment: "parent",handle:".title"});
-	$( "#LayerList" ).draggable({containment: "parent",handle:".title"});
-	$( "#legend" ).draggable({containment: "parent",handle:".title"});
-	var printertest=$("#printerSettings");
-	printertest.draggable({containment: "parent",handle:".title"});
-
-	//slimScroll Add-on
-	$('#bigTable').slimScroll({
-alwaysVisible: true,
-railVisible: true,
-start: $('#large'),
-height: '370px',
-width:'100%',
-size: '10px'
-	});
-	//initializing search combo box
-	enableSelectBoxes();
-	$('#disclaimer-content').slimScroll({
-railVisible: true,
-height: '220px',
-width:'100%',
-		size : '15px',
-color:"#000",
-railColor:"#666",
-		opacity : .6,
-		alwaysVisible : true,
-		railOpacity : '0.5'
-	});
-	$('#legendDiv').slimScroll({
-railVisible: true,
-height: '400px',
-width:'100%',
-		size : '15px',
-color:"#000",
-railColor:"#666",
-		opacity : .6,
-		alwaysVisible : true,
-		railOpacity : '0.5'
-	});
-});
-
-function accept(){
-	if(document.getElementById('agree').checked){
-		dijit.byId("continue").setAttribute('disabled',false);
-	}
-	else{
-		dijit.byId("continue").setAttribute('disabled',true);
-	}
-}
-function accept2(){
-	if(document.getElementById('agree2').checked){
-		dijit.byId("continue2").setAttribute('disabled',false);
-	}
-	else{
-		dijit.byId("continue2").setAttribute('disabled',true);
-	}
-}
-function zcontinue(){
-	setCookie("zoning","True",0.125);
-	$('#close-btn2').trigger('click');
-	$("#tree3").dynatree("getTree").getNodeByKey("20").select();
-}
-function zreturn(){
-	setCookie("zoning","",1);
-	$('#close-btn2').trigger('click');
-}
-function mcontinue(){
-	setCookie("main","True",7);
-	$('#close-btn').trigger('click');
-}
-function userGuide(){
-	window.open("doc/User Guide.pdf","_blank");
-}
-
-function sortByID(x,y) {
-	return ((x.PARCELID == y.PARCELID) ? 0 : ((x.PARCELID > y.PARCELID) ? 1 : -1 ));
-}
-function sortByKey(x,y) {
-	return ((x.Printkey == y.Printkey) ? 0 : ((x.Printkey > y.Printkey) ? 1 : -1 ));
-}
-
-//custom DataGrid
-function fillTable(items){
-	var tdTagStart = '<td>';
-	var tdTagEnd = '</td>';
-
-	items.sort(sortByKey);  //sort by ID
-
-	var limit = items.length;
-
-	for(var i = 0; i < limit; i++) {
-		var row = '<tr width=100% onclick="shownMap(this)">';
-		row += '<td width=20%>' + items[i].Printkey + tdTagEnd;
-		row += '<td width=29%>' + items[i].PARCELADD + tdTagEnd;
-		row += '<td width=41%>' + items[i].ONAME1 + tdTagEnd;
-
-		row += '</tr>';
-		var rowCount = $('#large >tbody >tr').length;
-		$("#large > tbody:first").append(row);
-	}
-
-	$("#large").trigger('update');
-}
-
-
-
-//Zoom to the parcel when the user clicks a row
-function shownMap(evt){
-	map.graphics.remove(tempGraphic);
-	var clickedTaxLotId = evt.cells[0].textContent;
-	if(clickedTaxLotId==null){
-		clickedTaxLotId=evt.firstChild.outerText;
-	}
-	var rowIndex= evt.rowIndex;
-	//remove highlighted row
-	if(tempcells!=-1){
-		$('td').removeClass("hover");
-	}
-	//Highlight selected row
-	$(evt.cells).addClass("hover");
-	tempcells=rowIndex;
-
-	var selectedTaxLot;
-
-	dojo.forEach(tempFeatures,function(graphic){
-		if((graphic.attributes) && graphic.attributes.Printkey == clickedTaxLotId){
-			selectedTaxLot = graphic;
-			tempGraphic=graphic;
-			map.graphics.add(tempGraphic);
-			return;
-		}
-	});
-	var taxLotExtent = selectedTaxLot.geometry.getExtent();
-	map.setExtent(taxLotExtent,true);
-	tempstatus=99;
-}
-
-function clearTable(table){
-	for(var i = table.rows.length - 1; i > 0; i--)
-	{
-		table.deleteRow(i);
-	}
-}
-
-
-function enableSelectBoxes(){
-	$('div.selectBox').each(function(){
-		$(this).children('span.selected').html("Search By:");
-		$(this).attr('value',$(this).children('div.selectOptions').children('span.selectOption:first').attr('value'));
-
-		$(this).children('span.selected,span.selectArrow,span.infoTitle').click(function(){
-			if($(this).parent().children('div.selectOptions').css('display') == 'none'){
-				$(this).parent().children('div.selectOptions').css('display','block');
-			}
-			else
-			{
-				$(this).parent().children('div.selectOptions').css('display','none');
-			}
-		});
-
-		$(this).find('span.selectOption').click(function(){
-			$(this).parent().css('display','none');
-			$(this).closest('div.selectBox').attr('value',$(this).attr('value'));
-			$(this).parent().siblings('span.selected').html($(this).html());
-			var aa=$(this)[0].textContent;
-			if(aa==null){
-				aa=$(this)[0].innerText;
-			}
-			if(aa=="Address" || aa=="SBL"|| aa=="Owner Name"){
-				$("#index").trigger("focus");
-			}
-		});
-	});
-	$("#mapInfo").children('span.infoTitle').html("Map Info/Help");
-	$("#mapInfo").find('span.selectOption').click(function(){
-		var value=$(this).attr('value');
-		$(this).find('span').toggleClass("hiddenspan");
-		if($(this).find('span').css('visibility')=='hidden'){
-
-			$("#"+value).hide();
-		}
-		else{
-			$("#"+value).show();
-		}
-	});
-}
-function getDropdownValue(selectedOption){
-	var optionValues=["Printkey","PARCELADD","ONAME1"];
-	var options=["SBL","Address","Owner Name"]
-	var dropdownValue;
-	jQuery.each(options,function(i,option){
-		if(option==selectedOption){
-			dropdownValue=optionValues[i];
-			return;
-		}
-	})
-	return dropdownValue;
-}
-
-function getCookie(c_name) {
-	var i, x, y, ARRcookies = document.cookie.split(";");
-	for ( i = 0; i < ARRcookies.length; i++) {
-		x = ARRcookies[i].substr(0, ARRcookies[i].indexOf("="));
-		y = ARRcookies[i].substr(ARRcookies[i].indexOf("=") + 1);
-		x = x.replace(/^\s+|\s+$/g, "");
-		if (x == c_name) {
-			return unescape(y);
-		}
-	}
-}
-
-function setCookie(c_name, value, exdays) {
-
-	var exdate = new Date();
-	if(exdays<1){
-		exdate.setTime(exdate.getTime() + exdays*24*60*60*1000);
-	}
-	else{
-		exdate.setDate(exdate.getDate() + exdays);
-	}
-	var exdate = exdate.toUTCString();
-
-	var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate);
-	document.cookie = c_name + "=" + c_value;
-}
-
-$(function(){
-	Placeholder.init({
-		normal : "#000000",
-		placeholder : "#C0C0C0",
-wait: true
-	});
-});
-
-
-
-</script>
-
-<script type="text/javascript">
-var treeData = [{
-	title : "Base Information",
-expand:true,
-	key : "100",
-	children : [{
-		title : "Zoning",
-key: "20"
-	},{
-		title : "Parcels",
-select: true,
-key: "22"
-	},{
-		title : "Buildings",
-key: "24"
-	},{
-		title : "Zip Code",
-key: "25"
-	},{
-		title : "School Districts",
-key: "26"
-	},{
-		title : "Fire Districts",
-key: "27"
-	},{
-title:"Fire Hydrant",
-select: true,
-key: "119"
-}]
-},{
-title: "Environmental Features",
-key:"129",
-expand:true,
-children:
-	[{
-		title : "Lakes, Ponds, Creeks",
-select: true,
-key: "29"
-	},{
-title:"Drainage Ditches & Creeks",
-key:"30",
-select: true
-	},{
-title:"Contours 2ft (LiDAR Based)",
-key:"31"
-	},{
-title:"Soils",
-key:"32"
-	},{
-title:"Wetlands",
-key:"134",
-children:[{
-title:"Wetlands - State (DEC)",
-key:"34"
-		},{
-title:"Wetlands - Federal (FWS)",
-key:"35"
-		}]
-	},{
-		title : "FEMA FLoodplain Information",
-		key : "137",
-		expand : true,
-		children : [{
-			title : "(Existing)FEMA Floodplain",
-expand:true,
-			key : "138",
-			children : [{
-				title : "Existing Floodway",
-				key : "38"
-			}, {
-				title : "Existing Floodplain",
-				key : "39"
-			}]
-		},{
-			title : "(Proposed) FEMA Floodplain",
-expand:true,
-			key : "141",
-			children : [{
-				title : "Proposed Floodway",
-				key : "41"
-			}, {
-				title : "Proposed Floodplain",
-				key : "42"
-			}]
-		}]
-	}]},{
-title:"2014 NYS Aerial Photography",
-select: true,
-key: "118"
-}];
-$(function() {
-	$("#tree3").dynatree({
-		checkbox : true,
-		selectMode : 3,
-		children : treeData,
-		onSelect : function(select, node) {
-			var selKeys = $.map(node.tree.getSelectedNodes(), function(node) {
-				return node.data.key;
-			});
-			var visible = $.map(selKeys,function(key){
-				return parseInt(key);
-
-			});
-			if(jQuery.inArray(22, visible)!=-1){
-				visible.push(23);
-			}
-			identifyParams.layerIds = [22,25,26,27,32];
-			if(jQuery.inArray(20, visible)!=-1){
-				var zoningPre=getCookie("zoning");
-				if (zoningPre!=null && zoningPre!="" )
-				{
-					identifyParams.layerIds.push(20);
-					/*identifyParams.layerIds.push(20);//add zoning to identify layers*/
-				}
-				else
-				{
-					visible.splice(jQuery.inArray(20, visible),1);
-					//node.toggleSelect();
-					$("#tree3").dynatree("getTree").getNodeByKey("20").toggleSelect();
-					//layervisible=visible;
-					$('#popupclicker2').trigger('click');
-				}
-			}
-
-			//if there aren't any layers visible set the array value to = -1
-			var arr=[1,2,3,4,5,6,7,8,9,10,11,13,14,15,17,18,19];
-			dojo.forEach(arr,function(a,i){
-				visible.push(a);
-			});
-
-			if(visible.length === 0){
-				visible.push(-1);
-			}
-			layer.setVisibleLayers(visible);
-			if(jQuery.inArray(118, visible)!=-1){
-				ortho.show();
-			}
-			else{
-				ortho.hide();
-			}
-			if(jQuery.inArray(119, visible)!=-1){
-				hydrant.show();
-			}
-			else{
-				hydrant.hide();
-			}
-
-			var selRootNodes = node.tree.getSelectedNodes(true);
-			var selRootKeys = $.map(selRootNodes, function(node) {
-				return node.data.key;
-			});
-
-		},
-		onDblClick : function(node, event) {
-			node.toggleSelect();
-		},
-		onKeydown : function(node, event) {
-			if (event.which == 32) {
-				node.toggleSelect();
-				return false;
-			}
-		},
-		cookieId : "dynatree-Cb3",
-		idPrefix : "dynatree-Cb3-"
-	});
-});
-</script>
-
-
-
-<script type="text/javascript">
-dojo.require("dojo.parser");
-dojo.require("esri.map");
-
-dojo.require("esri.layers.FeatureLayer");
-dojo.require("esri.SnappingManager");
-dojo.require("esri.symbol");
-dojo.require("esri.renderer");
-
-dojo.require("esri.tasks.query");
-dojo.require("esri.tasks.identify");
-dojo.require("esri.toolbars.navigation");
-dojo.require("dijit.form.Button");
-dojo.require("dijit.Toolbar");
-dojo.require("esri.dijit.Scalebar");
-dojo.require("dijit.Tooltip");
-dojo.require("dojo.data.ItemFileReadStore");
-dojo.require("esri.tasks.find");
-dojo.require("esri.dijit.Legend");
-dojo.require("dijit.Dialog");
-dojo.require("dijit.ProgressBar");
-dojo.require("dijit.form.FilteringSelect");
-dojo.require("dijit.form.CheckBox");
-dojo.require("dijit.form.TextBox");
-dojo.require("esri.dijit.Measurement"); <!--06042015-->
-dojo.require("myModules.InfoWindow");
-dojo.require("esri.tasks.gp");
-dojo.require("esri.dijit.InfoWindow");
-var layer,ortho,layer2;
-var map, queryTask, query, navToolbar, loading;//, layervisible=[];//easy way to get visible layers in "layer"
-var legendDijit;
-var symbol, infoTemplate;
-var handle,startExtent;
-var currentGraphic; //This variable is used to store symbol highlighted by hyperlink tool.
-var tempGraphic;
-//var popupTemplate;
-var measurement;//06042015
-
-var findTask, findParams;
-var identifyTask, identifyParams;
-
-var tempcells=-1;
-var tempstatus; //control shown level id for selected parcel
-var tempFeatures=[]; //store graphics related with parcels's searching results
-var tempnav,exportMapGP, contactGP;
-var snapManager;//06172015
-dojo.ready(function() {
-	esri.config.defaults.io.proxyUrl = "proxy.ashx";
-});
-
-function init() {
-
-	loading = dojo.byId("mapLoadingImg");
-
-	var infoWindow = new myModules.InfoWindow({
-domNode: dojo.create("div", null, dojo.byId("map"))
-	});
-
-	esri.config.defaults.map.sliderLabel = null;
-	esri.config.defaults.map.slider = { left:"80px", top:"20px", width:null, height:"200px" };
-
-	startExtent = new esri.geometry.Extent({"xmin":  1081699,
-          "ymin": 1073385,
-          "xmax": 1117959,
-          "ymax": 1124831,
-		"spatialReference": {
-			"wkid": 2262
-		}});
-	map = new esri.Map("map",{infoWindow:infoWindow});
-	dojo.connect(map,"onUpdateStart",showLoading);
-	dojo.connect(map,"onUpdateEnd",hideLoading);
-
-	/*06172015*/
-
-	parcellayer = new esri.layers.FeatureLayer("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer/22",{
-		 mode: esri.layers.FeatureLayer.MODE_SELECTION,
-		outFields: ["*"]});
-
-	ortho = new esri.layers.ArcGISTiledMapServiceLayer("http://map.amherst.ny.us/gallifrey/rest/services/OrthoBase/NYS_Imagery_2014/MapServer",{"id":"2011nys_true_color","opacity":1.0,"visible":true});
-
-	map.addLayer(ortho);
-
-	//Add Hydrant Layer MJiang 03.03.2015
-	var imageParametersF = new esri.layers.ImageParameters();
-	imageParametersF.layerIds = [0,1,2,3];
-	hydrant = new esri.layers.ArcGISDynamicMapServiceLayer("http://map.amherst.ny.us/gallifrey/rest/services/Fire/FireHydrants/MapServer",{"imageParameters":imageParametersF});
-	map.addLayer(hydrant);
-
-
-
-	var imageParameters = new esri.layers.ImageParameters();
-	imageParameters.layerIds = [1,2,3,4,5,6,7,8,9,10,11,13,14,15,17,18,19,22,23,29,30];
-	imageParameters.layerOption = esri.layers.ImageParameters.LAYER_OPTION_SHOW;
-	imageParameters.transparent = true;
-
-	layer=new esri.layers.ArcGISDynamicMapServiceLayer("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer", {"imageParameters":imageParameters});
-	layer.setImageFormat("png32");
-
-	map.addLayer(layer);
-
-	exportMapGP = new esri.tasks.Geoprocessor("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/ExportToPDF/GPServer/ExportToPDF");
-	contactGP = new esri.tasks.Geoprocessor("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/Contact/GPServer/Contact");
-
-
-	navToolbar = new esri.toolbars.Navigation(map);
-	dojo.connect(navToolbar, "onExtentHistoryChange", extentHistoryChangeHandler);
-
-
-	queryTask = new esri.tasks.QueryTask("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer/22");
-
-	//build query filter
-	query = new esri.tasks.Query();
-	query.outSpatialReference = {"wkid":2262};
-	query.returnGeometry = true;
-	query.outFields = ["Printkey", "PARCELID", "GLink", "ONAME1", "PARCELADD","CPILink"];
-
-
-
-	identifyTask = new esri.tasks.IdentifyTask("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer");
-
-	identifyParams = new esri.tasks.IdentifyParameters();
-	//identifyParams.tolerance = 3;
-	identifyParams.tolerance = 0; //prevent for multiple parcels selected
-	identifyParams.returnGeometry = true;
-	identifyParams.layerIds = [22,25,26,27,32];
-	identifyParams.layerOption = esri.tasks.IdentifyParameters.LAYER_OPTION_ALL;
-	identifyParams.width  = map.width;
-	identifyParams.height = map.height;
-
-	symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_DASHDOT, new dojo.Color([255,0,0]), 2), new dojo.Color([255,255,0,0.5]));
-
-	//Create Find Task using the URL of the map service to search
-	findTask = new esri.tasks.FindTask("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer");
-
-	//Create the find parameters
-	findParams = new esri.tasks.FindParameters();
-	findParams.returnGeometry = true;
-	findParams.layerIds = [22];
-	findParams.searchFields = ["Printkey"];
-	findParams.outSpatialReference = map.spatialReference;
-
-
-	var div=document.getElementById('map_container');
-	if(div.addEventListener){
-		//evt.preventDefault();
-		div.addEventListener('contextmenu',CPILink,true);
-	}
-	else{//previous method, not in use anymore
-
-		if ($.browser.msie  && parseInt($.browser.version, 10) === 8) {
-			document.getElementById('map_container').attachEvent('oncontextmenu', function(evt) {
-				CPILink(evt);
-				window.event.returnValue = false;
-			});
-		} else {
-			document.getElementById('map_container').attachEvent('oncontextmenu', function(evt) {
-				CPILink(evt);
-				window.event.returnValue = false;
-			});
-		}
-
-	}
-
-
-	dojo.connect(map, 'onLoad', function(theMap) {
-
-		var scalebar = new esri.dijit.Scalebar({
-map: map,
-scalebarUnit:'english'
-		});
-
-		//resize the map when the browser resizes
-		// dojo.connect(dijit.byId('map'), 'resize', map, map.resize);
-
-		window.onresize = function () {
-			map.resize();
-			map.reposition();
-			$("#map").css("height",window.innerHeight-20+"px");
-			$('#mapLoadingImg').css("left",window.innerWidth/2-16+"px");
-			$('#mapLoadingImg').css("top",window.innerHeight/2-16+"px");
-			$("#alert").css("left",window.innerWidth/2-505+"px");
-
-
-		}
-
-		map.setExtent(startExtent);
-
-		/* Commented by MingJ 06032015
-		//Grab the sbl with 16 or 20 digits from Lixian Dai-------------------------------------------------------------------------
-	var tbox =  document.getElementById('index');
-		if (tbox)
-		{
-		test = test.toString().trim().substring(6);
-		alert(test);
-		}
-		tbox.value = test;
-		findParams.searchFields = ["SBL"];
-		findParams.searchText = tbox.value;
-		findTask.execute(findParams,showSearchResults1);
-
-MJ Comment end*/
-	});
-
-		/*06042015*/
-		esri.config.defaults.geometryService = new esri.tasks.GeometryService("http://map.amherst.ny.us/gallifrey/rest/services/Utilities/Geometry/GeometryServer");
-		dojo.connect(map, "onLoad", function(){
-			measurement = new esri.dijit.Measurement({
-			map: map,
-			defaultLengthUnit: esri.Units.FEET
-			}, dojo.byId('measurement-div'));
-
-			dojo.style("measurement-div", {
-				"position":"absolute",
-				"background":"#fff",
-				"z-index":"100",
-				"left":"115px",
-				"top":"25px",
-				"width":"290px",
-				"height":"150px",
-				"padding":"10px 10px 10px 10px",
-				"display":"none"
-			});
-
-			measurement.startup();
-			measurement.resultLabel.setContent("Measurement Result (hold CTRL to snap)");	//06182015
-			/*06172015 snappingmanager*/
-		snapManager = map.enableSnapping();
-		var layerInfosSnap = [{layer:parcellayer}];
-		snapManager.setLayerInfos(layerInfosSnap);
-
-			measurement.on("measure-end", function(evt){
-				this.setTool(evt.activeTool, false);
-				console.log("measure-end event triggered");
-			});
-		});
-	/* /06042015*/
-
-}
-
-function makelegend(layer){
-	var tocDOM = dojo.byId("legendDiv");//changeto lengendDiv
-
-	esri.request({
-url: layer.url + "/legend",
-content: {
-f: "json"
-		},
-handleAs: "json",
-preventCache: true,
-callbackParamName: "callback",
-load: function(response, io){
-
-			//var newcontent = document.createElement('ul');
-			dojo.forEach(response.layers, function(layerInfo, i){
-				var min=layerInfo.minScale;
-				if(min==0){
-					min=9999999;
-				}
-				if (jQuery.inArray(layerInfo.layerId, layer.visibleLayers)!=-1 && map.getScale()>layerInfo.maxScale && map.getScale()<=min && layerInfo.layerId>19) {
-
-					var legendUl = document.getElementById("legendUl");
-					var newcontent = document.createElement('li');
-
-					if(layerInfo.legend.length>1){
-						newcontent.innerHTML+="<span>"+layerInfo.layerName+"</span>";
-
-						var newcontent2 = document.createElement('ul');
-						dojo.forEach(layerInfo.legend,function(symbol,n){
-							newcontent2.innerHTML+="<li><img style=\"vertical-align:middle;\" src='" + layer.url + "/" + layerInfo.layerId + "/images/" + layerInfo.legend[n].url + "'/>&nbsp;" + layerInfo.legend[n].label+"</li>";
-
-						});
-						newcontent.appendChild(newcontent2);
-
-					}
-					else{
-						newcontent.innerHTML+="<img style=\"vertical-align:middle;\" src='" + layer.url + "/" + layerInfo.layerId + "/images/" + layerInfo.legend[0].url + "'/>&nbsp;" + layerInfo.layerName;
-
-					}
-
-					legendUl.appendChild(newcontent);
-
-				}
-			});
-		},
-error: function(error, io){
-			tocDOM.innerHTML = "An error occured, please refresh your browser.";
-		}
-	});
-	$("#legendDiv").trigger('resetBar', [-99] );
-}
-
-function extentHistoryChangeHandler() {
-	dijit.byId("zoomprev").disabled = navToolbar.isFirstExtent();
-	dijit.byId("zoomnext").disabled = navToolbar.isLastExtent();
-}
-
-function CPILink(evt){
-	map.infoWindow.hide();
-
-	if ($.browser.msie) {
-
-		//screen coordinates to map coordinates
-		if(parseInt($.browser.version, 10) === 9){
-			try{
-				evt.preventDefault();
-			}
-			catch(err){
-
-			}
-		}
-		var winx=evt.clientX;
-		var winy=evt.clientY-20;
-
-	}
-	else{
-		evt.preventDefault();
-		var winx=evt.clientX;
-		var winy=evt.clientY-20;
-	}
-
-	//var screenPoint=new esri.geometry.Point(evt.screenX, evt.screenY-80);//need to consider screen size as well.
-	var screenPoint=new esri.geometry.Point(winx,winy); //new point
-	var mapPoint=map.toMap(screenPoint);
-	query.geometry = mapPoint;
-
-	//Execute task and call showResults on completion
-	queryTask.execute(query, function(fset) {
-		var feature=fset.features[0];
-		var attr=feature.attributes;
-		map.graphics.remove(currentGraphic);
-		//set symbol
-		var symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([250,0,197]), 2), new dojo.Color([255,255,0,0.5]));
-		feature.setSymbol(symbol);
-
-		map.graphics.add(feature);
-		currentGraphic=feature;
-
-		window.open(attr['CPILink'],"_blank",'scrollbars=1,toolbar=0,location=0,menubar=0,left=0px,top=0px,height='+screen.height+'px ,width='+screen.width+'px');
-	});
-
-}
-
-function identify(){
-
-	if(handle!=null){
-		dojo.disconnect(handle);
-	}
-	handle = dojo.connect(map, "onClick", executeQueryIdentifyTask);
-	//Listent for infoWindow onHide event
-	dojo.connect(map.infoWindow, "onHide", function() {map.graphics.remove(currentGraphic);});
-
-	$("#map_layers").css("cursor","url(images/info_mid.png) 12 12, -moz-zoom-in");
-	dojo.byId("map_layers").style.cursor = "url(images/info_mid.png) 12 12, -moz-zoom-in";
-	down = dojo.connect(map, "onMouseDown", function(evt) {
-		dojo.byId("map_layers").style.cursor = "url(images/hand_1.png) 16 16, -moz-zoom-in";
-	});
-	dojo.connect(map, "onMouseUp", function(evt) {
-		dojo.byId("map_layers").style.cursor = "url(images/info_mid.png) 12 12, -moz-zoom-in";
-	});
-}
-function executeQueryIdentifyTask(evt){
-	map.infoWindow.hide();
-	$("#mapLoadingImg").show();
-	//map.graphics.clear();
-	map.graphics.remove(currentGraphic);
-	featureSet = null;
-
-	//onClick event returns the evt point where the user clicked on the map.
-	//This is contains the mapPoint (esri.geometry.point) and the screenPoint (pixel xy where the user clicked).
-	//set query geometry = to evt.mapPoint Geometry
-	identifyParams.geometry = evt.mapPoint;
-	identifyParams.mapExtent = map.extent;
-
-	//Execute task and call showResults on completion
-	identifyTask.execute(identifyParams, function(fset) {
-		showQueryIdentifyResult(fset,evt);
-	});
-
-}
-function showQueryIdentifyResult(fset,evt){
-
-	map.graphics.remove(currentGraphic);
-	var title="";
-	var content="";
-	var printkey="";
-
-	for (var i=0, il=fset.length; i<il; i++) {
-		var features = fset[i];
-
-		var feature=features.feature;
-		var attr = feature.attributes;
-		switch(features.layerId){
-		case 22:
-			var symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([250,0,197]), 2), new dojo.Color([255,255,0,0.5]));
-			feature.setSymbol(symbol);
-			map.graphics.add(feature);
-			currentGraphic=feature;
-
-			if(title!=""){
-				content+="<br />";
-			}
-			else{
-
-			}
-			printkey=attr.Printkey;
-			title = "SBL: " + attr.Printkey;
-			content += "Address: " + attr.PARCELADD
-			+ "<br />Owner Name: " + attr.ONAME1;
-
-			break;
-		case 20:
-
-			if(title!=""){
-				content+="<br />";
-			}
-			else{
-				title="Zoning: "+attr.Zoning;
-			}
-			content+="Zoning: "+attr.Zoning
-			+"<br />Zoning Definition: "+attr.Definition;
-			break;
-		case 25:
-			if(title!=""){
-				content+="<br />";
-			}
-			else{
-				title="Zip Code: "+attr.ZIPCODE;
-			}
-			content+="Zip Code: "+attr.ZIPCODE;
-			break;
-		case 26:
-			if(title!=""){
-				content+="<br />";
-			}
-			else{
-				title="School District: "+attr.NAME;
-			}
-			//content+="School District: "+attr.DISTRICT_N;
-			content+="School District: "+attr.NAME;
-			break;
-		case 27:
-			if(title!=""){
-				content+="<br />";
-			}
-			else{
-				title="Fire District: "+attr.DISTRICTNA;
-			}
-			content+="Fire District: "+attr.DISTRICTNA;
-			break;
-		case 32:
-			if(title!=""){
-				content+="<br />";
-			}
-			else{
-				title="Soil: "+attr.SOIL_NAME;
-			}
-			content+="Soil: "+attr.SOIL_NAME;
-			break;
-		}
-	}
-
-	if(printkey!=""){
-		content+= "<br /><br /><a onClick='getCurrentGraphicExtent()'>Zoom to</a>";
-	}
-	map.infoWindow.setTitle(title);
-	map.infoWindow.setContent(content);
-
-	var aa=map.getInfoWindowAnchor(evt.screenPoint);
-	(evt) ? map.infoWindow.show(evt.screenPoint,esri.dijit.InfoWindow.ANCHOR_LOWERLEFT) : null;
-	$("#mapLoadingImg").hide();
-}
-
-
-
-
-function hyperlink(){
-	if(handle!=null){
-		dojo.disconnect(handle);}
-	handle = dojo.connect(map, "onClick", executeQueryTask);
-	//Listent for infoWindow onHide event
-	dojo.connect(map.infoWindow, "onHide", function() {map.graphics.remove(currentGraphic);});
-	$("#alert").show();
-
-	$("#map_layers").css("cursor","url(images/triview3.png) 16 16, -moz-zoom-in");
-	dojo.byId("map_layers").style.cursor = "url(images/triview3.png) 16 16, -moz-zoom-in";
-	down = dojo.connect(map, "onMouseDown", function(evt) {
-		dojo.byId("map_layers").style.cursor = "url(images/hand_1.png), -moz-zoom-in";
-	});
-	dojo.connect(map, "onMouseUp", function(evt) {
-		dojo.byId("map_layers").style.cursor = "url(images/triview3.png) 16 16, -moz-zoom-in";
-	});
-}
-
-function executeQueryTask(evt) {
-	map.infoWindow.hide();
-	map.graphics.remove(currentGraphic);
-	featureSet = null;
-
-	//onClick event returns the evt point where the user clicked on the map.
-	//This is contains the mapPoint (esri.geometry.point) and the screenPoint (pixel xy where the user clicked).
-	//set query geometry = to evt.mapPoint Geometry
-	query.geometry = evt.mapPoint;
-
-	//Execute task and call showResults on completion
-	queryTask.execute(query, function(fset) {
-		showQueryResult(fset.features[0],evt);
-	});
-	//stop event bubbling
-	evt.stopPropagation();
-
-}
-function showQueryResult(feature,evt) {
-	map.graphics.remove(currentGraphic);
-
-	//set symbol
-	var symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([250,0,197]), 2), new dojo.Color([255,255,0,0.5]));
-	feature.setSymbol(symbol);
-
-	map.graphics.add(feature);
-	currentGraphic=feature;
-
-	//construct infowindow title and content
-	var attr = feature.attributes;
-	//07282015 replace street view from dual map, with the customized google street web page
-	////window.open(attr["GLink"], '_blank','toolbar=0,location=0,menubar=0,left=0px,top=0px,height='+screen.height+'px ,width='+screen.width+'px');
-	window.open(attr["GLink"], '_blank','toolbar=0,location=0,menubar=0,left=0px,top=0px,height='+screen.height+'px ,width='+screen.width+'px');
-}
-
-function getCurrentGraphicExtent(){
-	map.setExtent(currentGraphic.geometry.getExtent(),true);
-	tempstatus=99;
-}
-function gosearch(){
-	$("#mapLoadingImg").show();
-	map.infoWindow.hide();
-	map.graphics.clear();
-
-	var selectedOption = document.getElementById('selectedOption').textContent;
-	if (selectedOption == null){
-		selectedOption = document.getElementById('selectedOption').outerText;
-	}
-	if(selectedOption=="Search By:")
-	{
-		$("#mapLoadingImg").hide();
-		return
-	}
-	var dropdownValue = getDropdownValue(selectedOption);
-
-	var inputValue= document.getElementById("index").value;
-
-	if(inputValue==""){
-		alert("Please input a value!");
-		$("#mapLoadingImg").hide();
-		return
-	}
-
-
-	findParams.searchFields = [dropdownValue];
-	findParams.searchText = inputValue;
-	findTask.execute(findParams,showSearchResults);
-}
-
-//original
-function showSearchResults(results) {
-	//This function works with an array of FindResult that the task returns
-	map.graphics.clear();
-	if(map.infowindow!=null){
-		map.infowindow.hide();}
-	var symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([250,0,197]), 2), new dojo.Color([255,255,0,0.5]));
-
-	if(results.length==0)
-	{
-		$("#mapLoadingImg").hide();
-		$('#alertclicker').trigger('click');
-		return;
-	}
-	//create array of attributes
-	var items = dojo.map(results,function(result){
-		var graphic = result.feature;
-		graphic.setSymbol(symbol);
-		tempFeatures.push(graphic);
-		return result.feature.attributes;
-	});
-
-	//test clearTable
-	clearTable(document.getElementById("large"));
-	//test fillTable
-	fillTable(items);
-
-	if ($(".sorttable_sorted").length > 0){
-		$('.sorttable_sorted').find("span:first-child").remove();
-		$('.sorttable_sorted').each(function(){$(this).removeClass("sorttable_sorted");});
-	}
-	if ($(".sorttable_sorted_reverse").length > 0){
-		$('.sorttable_sorted_reverse').find("span:first-child").remove();
-		$('.sorttable_sorted_reverse').each(function(){$(this).removeClass("sorttable_sorted_reverse");});
-	}
-
-	$("#mapLoadingImg").hide();
-	$("#table").show();
-	$("#bigTable").trigger('scrollContent', [-99] );//return to top
-}
-
-//LixianDai-------------------------------------------------------------------------------------------------------------------
-
-function showSearchResults1(results) {
-	//This function works with an array of FindResult that the task returns
-	map.graphics.clear();
-	if(map.infowindow!=null){
-		map.infowindow.hide();}
-	var symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([250,0,197]), 2), new dojo.Color([255,255,0,0.5]));
-
-	if(results.length==0)
-	{
-		$("#mapLoadingImg").hide();
-		$('#alertclicker').trigger('click');
-		return;
-	}
-	//create array of attributes
-	var items = dojo.map(results,function(result){
-		var graphic = result.feature;
-		graphic.setSymbol(symbol);
-		tempFeatures.push(graphic);
-		return result.feature.attributes;
-	});
-
-	//test fillTable //test clearTable
-	clearTable(document.getElementById("large"));
-	//test fillTable
-	fillTable(items);
-
-	map.graphics.remove(tempGraphic);
-
-	var clickedTaxLotId = document.getElementById("index").value; //replase <SBL Number> with the variable that has the SBL number(ex. "28.10-3-12") of the property.
-
-	var selectedTaxLot;
-
-	dojo.forEach(tempFeatures,function(graphic){
-		if((graphic.attributes) && graphic.attributes.SBL == clickedTaxLotId){
-			selectedTaxLot = graphic;
-			tempGraphic=graphic;
-			map.graphics.add(tempGraphic);
-			return;
-		}
-	});
-	var taxLotExtent = selectedTaxLot.geometry.getExtent();
-	map.setExtent(taxLotExtent,true);
-	tempstatus=99;
-
-	if ($(".sorttable_sorted").length > 0){
-		$('.sorttable_sorted').find("span:first-child").remove();
-		$('.sorttable_sorted').each(function(){$(this).removeClass("sorttable_sorted");});
-	}
-	if ($(".sorttable_sorted_reverse").length > 0){
-		$('.sorttable_sorted_reverse').find("span:first-child").remove();
-		$('.sorttable_sorted_reverse').each(function(){$(this).removeClass("sorttable_sorted_reverse");});
-	}
-
-	$("#mapLoadingImg").hide();
-	$("#table").show();
-	$("#bigTable").trigger('scrollContent', [-99] );//return to top
-
-}
-
-//print start
-function getFeatureSet(type){
-	var fset = new esri.tasks.FeatureSet();
-	dojo.forEach(map.graphics.graphics, function(graphic){
-		if (graphic.geometry.type === type) {
-			fset.features.push(graphic);
-		}
-	});
-	if (fset.features.length > 0) {
-		return fset;
-	}
-	else {
-		return "";
-	}
-}
-/*
-	//evoked after printer button pressed
-	function exportPDF(evt){
-
-		dojo.style("pdfRequestFinished", "display", "none");
-		dojo.style("pdfRequestError", "display", "none");
-		dojo.style("pdfRequest", "display", "block");
-		dijit.byId("exportPDFBtn").set("disabled", true);
-		var visiblelayers = {};
-		dojo.forEach(map.layerIds, function(layer, i1){
-			var ml = map.getLayer(layer);
-			switch (ml.declaredClass) {
-				case "esri.layers.ArcGISDynamicMapServiceLayer":
-					var s = dojo.forEach(ml.layerInfos, function(sublayer, i2){
-						if (dojo.indexOf(ml.visibleLayers, sublayer.id.toString()) !== -1) {
-							visiblelayers[sublayer.name] = "True";
-						}
-						else {
-							visiblelayers[sublayer.name] = "False";
-						}
-
-						if(sublayer.subLayerIds!=null){
-						visiblelayers[sublayer.name] = "True";
-						}
-					});
-					break;
-				default:
-					var ov = ml.visible.toString();
-					visiblelayers["OrthoBase/NYSOrthos2011"] = ov.charAt(0).toUpperCase() + ov.slice(1);
-					break;
-			}
-		});
-
-		var params = {
-			"xMin": map.extent.xmin,
-			"yMin": map.extent.ymin,
-			"xMax": map.extent.xmax,
-			"yMax": map.extent.ymax,
-			"Spatial_Reference": map.spatialReference.wkid,
-			"Map_Scale": esri.geometry.getScale(map),
-			"Visiblelayers": dojo.toJson(visiblelayers),
-			"Layout": dijit.byId("mapLayout").value,
-			"Include_Attributes": true,//dijit.byId("incAttribs").checked,
-			"Map_Title": dijit.byId("mapTitle").value,
-			"PointGraphics": getFeatureSet("point"),
-			"LineGraphics": getFeatureSet("polyline"),
-			"PolyGraphics": getFeatureSet("polygon")
-		};
-		try
-		{
-		//Run some code here
-		exportMapGP.submitJob(params, pdfCompleteCallback, pdfStatusCallback, pdfErrorCallback);
-		}
-		catch(err)
-		{
-		//Handle errors here
-		var error=err;
-		}
-
-	}
-
-	function pdfCompleteCallback(jobInfo){
-	try{
-		if (jobInfo.jobStatus == "esriJobSucceeded") {
-			exportMapGP.getResultData(jobInfo.jobId, "PDF", setPdfDownloadLink);
-		}
-		else {
-			pdfErrorCallback();
-		}
-		}
-		catch(err){
-		var error=err;
-		}
-	}
-	function pdfStatusCallback(jobInfo){
-	try{
-		if (jobInfo.jobStatus === "esriJobFailed") {
-			pdfErrorCallback();
-		}
-		}
-		catch(err){
-		var error=err;
-		}
-	}
-	function pdfErrorCallback(error){
-		var err=error;
-		dijit.byId("exportPDFBtn").set("disabled", false);
-dojo.style("pdfRequest", "display", "none");
-dojo.style("pdfRequestFinished", "display", "none");
-dojo.style("pdfRequestError", "display", "block");
-	}
-	*/
-
-var myVar;
-//evoked after printer button pressed
-function exportPDF(evt){
-
-	dojo.style("pdfRequestFinished", "display", "none");
-	dojo.style("pdfRequestError", "display", "none");
-	dojo.style("pdfRequest", "display", "block");
-	dijit.byId("exportPDFBtn").set("disabled", true);
-	var visiblelayers = {};
-	dojo.forEach(map.layerIds, function(layer, i1){
-		var ml = map.getLayer(layer);
-		switch (ml.declaredClass) {
-		case "esri.layers.ArcGISDynamicMapServiceLayer":
-			var s = dojo.forEach(ml.layerInfos, function(sublayer, i2){
-				if (dojo.indexOf(ml.visibleLayers, sublayer.id.toString()) !== -1) {
-					visiblelayers[sublayer.name] = "True";
-				}
-				else {
-					visiblelayers[sublayer.name] = "False";
-				}
-
-				if(sublayer.subLayerIds!=null){
-					visiblelayers[sublayer.name] = "True";
-				}
-			});
-			break;
-		default:
-			var ov = ml.visible.toString();
-			visiblelayers["OrthoBase/NYS_Imagery_2014"] = ov.charAt(0).toUpperCase() + ov.slice(1);
-			break;
-		}
-	});
-
-	var params = {
-		"xMin": map.extent.xmin,
-		"yMin": map.extent.ymin,
-		"xMax": map.extent.xmax,
-		"yMax": map.extent.ymax,
-		"Spatial_Reference": map.spatialReference.wkid,
-		"Map_Scale": esri.geometry.getScale(map),
-		"Visiblelayers": dojo.toJson(visiblelayers),
-		"Layout": dijit.byId("mapLayout").value,
-		"Include_Attributes": true,//dijit.byId("incAttribs").checked,
-		"Map_Title": dijit.byId("mapTitle").value,
-		"PointGraphics": getFeatureSet("point"),
-		"LineGraphics": getFeatureSet("polyline"),
-		"PolyGraphics": getFeatureSet("polygon")
-	};
-	try
-	{
-		//Run some code here
-		exportMapGP.submitJob(params, pdfCompleteCallback, pdfStatusCallback, pdfErrorCallback);
-
-		myVar=setInterval(function(){testtimer()},5000);
-		//1. Add a timer here count to 20s.if pdfdownloadlink is none. get jobid from 1st status. ....
-		//2. jump ..... from town's data
-		//3. Add a tool(Measure)
-	}
-	catch(err)
-	{
-		//Handle errors here
-		var error=err;
-	}
-
-}
-var jobinfotemp;
-var testcount=2;
-function testtimer(){
-	if(testcount==1){
-		/*exportMapGP.submitJob(params, pdfCompleteCallback, pdfStatusCallback, pdfErrorCallback);*/
-	}
-	else{
-		exportMapGP.checkJobStatus(jobinfotemp.jobId,pdfStatusCallback,pdfErrorCallback);
-	}
-
-	testcount+=1;
-
-}
-
-function pdfCompleteCallback(jobInfo){
-	try{
-		if (jobInfo.jobStatus == "esriJobSucceeded") {
-			testcount=1;
-			clearInterval(myVar);
-			exportMapGP.getResultData(jobInfo.jobId, "PDF", setPdfDownloadLink);
-			//var jobId = jobInfo.message.replace(/Job '([a-z,0-9]*)' does not exist or is inaccessible\./, "$1");
-			//exportMapGP.checkJobStatus(jobId,pdfStatusCallback,pdfErrorCallback);
-		}
-		else {
-			pdfErrorCallback();
-		}
-	}
-	catch(err){
-		var error=err;
-	}
-}
-
-function pdfStatusCallback(jobInfo){
-	if(testcount==2){
-		jobinfotemp=jobInfo;
-		testcount+=1;
-	}
-	try{
-		if (jobInfo.jobStatus === "esriJobFailed") {
-			pdfErrorCallback();
-		}
-		else if(jobInfo.jobStatus == "esriJobSucceeded"){
-			pdfCompleteCallback(jobInfo);
-		}
-		else if(jobInfo.message.search("does not exist or is inaccessible") > -1){
-			//var jobId = jobInfo.message.replace(/Job '([a-z,0-9]*)' does not exist or is inaccessible\./, "$1");
-			exportMapGP.checkJobStatus(jobinfotemp.jobId,pdfStatusCallback,pdfErrorCallback);
-		}/*
-		else{
-		pdfErrorCallback();
-		}*/
-	}
-	catch(err){
-		var error=err;
-		testcount=2;
-	}
-}
-function pdfErrorCallback(error){
-	if(error.message.search("does not exist or is inaccessible") > -1){
-		//var jobId = jobInfo.message.replace(/Job '([a-z,0-9]*)' does not exist or is inaccessible\./, "$1");
-		//exportMapGP.checkJobStatus(jobId,pdfStatusCallback,pdfErrorCallback);
-	}
-	else{
-		var err=error;
-		dijit.byId("exportPDFBtn").set("disabled", false);
-		dojo.style("pdfRequest", "display", "none");
-		dojo.style("pdfRequestFinished", "display", "none");
-		dojo.style("pdfRequestError", "display", "block");
-		testcount=2;
-		clearInterval(myVar);
-	}
-
-}
-
-function setPdfDownloadLink(pdf){
-	dijit.byId("exportPDFBtn").set("disabled", false);
-	dojo.style("pdfRequest", "display", "none");
-	dojo.style("pdfRequestError", "display", "none");
-	dojo.style("pdfRequestFinished", "display", "block");
-	var pdfurl=pdf.value.url;
-	var nurl=pdfurl.replace("glyphcode","map.amherst.ny.us");
-	dojo.byId("pdfLink").href = nurl;
-}
-//print end
-
-function clearContact(){
-	$("#email")[0].value='';
-	$("#name")[0].value='';
-	$("#comments")[0].value='';
-	$("#contactinfo").find("table").show();
-	$("#submitting").hide();
-	dijit.byId("submitContact").set("disabled", false);
-	var a = document.getElementById("antispam");
-	a.value="lalalala";
-	clearTimeout(spamDetect);
-}
-
-function emailValidation(email){
-	var atpos=email.indexOf("@");
-	var dotpos=email.lastIndexOf(".");
-	if (atpos<1 || dotpos<atpos+2 || dotpos+2>=email.length)
-	{
-		return false;
-	}
-	return true;
-}
-
-function contact(){
-	var a = document.getElementById("antispam");
-	if(a.value=="lalalala" || a.value<=7){
-		alert("Spam!");
-		var a = document.getElementById("antispam");
-		a.value="lalalala";
-		clearTimeout(spamDetect);
-		return;
-	}
-	var email=$("#email")[0].value;
-	var name=$("#name")[0].value;
-	var comments=$("#comments")[0].value;
-
-	if(email!=""&&name!=""&&comments!=""){
-		if(emailValidation(email)!=true){
-			alert("Invalid email address!");
-			return;
-		}
-	}
-	else{
-		alert("Please fill out the form before you submit!");
-		return;
-	}
-
-	dijit.byId("submitContact").set("disabled", true);
-	$("#contactinfo").find("table").hide();
-	$("#submitting")[0].innerHTML="Submitting...";
-	$("#submitting").show();
-
-	var params = {
-		"Name": name,
-		"Email": email,
-		"Comments": comments,
-		"OS": OSName,
-		"Browser": browser
-	};
-	contactGP.submitJob(params, contactCompleteCallback, contactStatusCallback, contactErrorCallback);
-}
-function contactCompleteCallback(jobInfo){
-	try{
-		if (jobInfo.jobStatus == "esriJobSucceeded") {
-
-			$("#submitting")[0].innerHTML="Your comment has been submitted.<br /> We will reply you as soon as possible.<br />Thank you!";
-		}
-		else {
-			contactErrorCallback();
-		}
-	}
-	catch(err){
-		var error=err;
-	}
-}
-function contactStatusCallback(jobInfo){
-	try{
-		if (jobInfo.jobStatus === "esriJobFailed") {
-			contactErrorCallback();
-		}
-	}
-	catch(err){
-		var error=err;
-	}
-}
-function contactErrorCallback(error){
-	$("#submitting")[0].innerHTML="Failed. Please try again later.";
-	var err=error;
-}
-
-
-
-
-function dryicons(){
-	window.open("http://www.dryicons.com", '_blank');
-}
-function zoomCursor(){
-	$("#map_layers").css("cursor","crosshair");
-	dojo.byId("map_layers").style.cursor = "crosshair";
-	down = dojo.connect(map, "onMouseDown", function(evt) {
-		dojo.byId("map_layers").style.cursor = "crosshair";
-	});
-	dojo.connect(map, "onMouseUp", function(evt) {
-		dojo.byId("map_layers").style.cursor = "crosshair";
-	});
-}
-function defaultCursor(){
-	$("#map_layers").css("cursor","default");
-	dojo.byId("map_layers").style.cursor = "default";
-	down = dojo.connect(map, "onMouseDown", function(evt) {
-		dojo.byId("map_layers").style.cursor = "url(images/hand_1.png), -moz-zoom-in";
-	});
-	dojo.connect(map, "onMouseUp", function(evt) {
-		dojo.byId("map_layers").style.cursor = "default";
-	});
-}
-function activatePan(){
-	tempnav=2;
-	//navToolbar.deactivate();
-	this.navToolbar.activate(esri.toolbars.Navigation.PAN);
-	$("#map_layers").css("cursor","url(images/hand_1.png), -moz-zoom-in");
-	dojo.byId("map_layers").style.cursor = "url(images/hand_1.png), -moz-zoom-in";
-	down = dojo.connect(map, "onMouseDown", function(evt) {
-		dojo.byId("map_layers").style.cursor = "url(images/hand_1.png), -moz-zoom-in";
-	});
-	dojo.connect(map, "onMouseUp", function(evt) {
-		dojo.byId("map_layers").style.cursor = "url(images/hand_1.png), -moz-zoom-in";
-	});
-}
-function activateZoomIn(){
-	tempnav=0;// use for loading icon hide event.
-	navToolbar.deactivate();
-	dojo.disconnect(handle);
-	navToolbar.activate(esri.toolbars.Navigation.ZOOM_IN);
-	zoomCursor();
-}
-function activateZoomOut(){
-	tempnav=1;
-	navToolbar.deactivate();
-	dojo.disconnect(handle);
-	navToolbar.activate(esri.toolbars.Navigation.ZOOM_OUT);
-	zoomCursor();
-}
-function showLoading() {
-	esri.show(loading);
-	map.disableMapNavigation();
-	//map.hideZoomSlider();
-}
-function print(){
-	$('#printerSettings').show();
-	dijit.byId("exportPDFBtn").set("disabled", false);
-	dojo.style("pdfRequest", "display", "none");
-}
-<!--06042015,0616-->
-
-function measure(evt){
-	navToolbar.deactivate();
-	if(handle!=null){
-		dojo.disconnect(handle);
-	}
-	map.infoWindow.hide();
-
-	measurement.setTool("area",false);
-	measurement.setTool("distance",false);
-	measurement.setTool("location",false);
-	$("#measurement-div").toggle();
-	zoomCursor();
-}
-
-function hideLoading(error) {
-	var legendDiv = document.getElementById("legendUl"); //test
-	legendDiv.innerHTML="";
-	makelegend(layer);
-	esri.hide(loading);
-	map.enableMapNavigation();
-	if(tempnav==0){
-		activateZoomIn();
-	}
-	else if(tempnav==1){
-		activateZoomOut();
-	}
-	else if(tempnav==2){
-		activatePan();
-	}
-	if(tempstatus==99){
-		map.setLevel(7);
-		tempstatus=0;
-	}
-
-	$("#legendDiv").trigger('scrollContent', [-99] );
-	$("#legendDiv").trigger('resetBar', [-99] );
-}
-
-dojo.addOnLoad(init);
-
-
-</script>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
+    <title>Town of Amherst-----The Map Machine</title>
+    <link rel="stylesheet" type="text/css" href="https://js.arcgis.com/3.13/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" type="text/css" href="https://js.arcgis.com/3.13/esri/css/esri.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="css/map.css">
+    <!-- Some style setting going to be add so a css file later -->
+    <style type="text/css">
+    .zoominIcon {
+        background-image: url(images/blue_zoom_in.png);
+        width: 32px;
+        height: 32px;
+    }
+
+    .zoomoutIcon {
+        background-image: url(images/blue_zoom_out.png);
+        width: 32px;
+        height: 32px;
+    }
+
+    .zoomfullextIcon {
+        background-image: url(images/globe.png);
+        width: 32px;
+        height: 32px;
+    }
+
+    .zoomprevIcon {
+        background-image: url(images/white_arrow_left.png);
+        width: 32px;
+        height: 32px;
+    }
+
+    .zoomnextIcon {
+        background-image: url(images/white_arrow_right2.png);
+        width: 32px;
+        height: 32px;
+    }
+
+    .panIcon {
+        background-image: url(images/hand_1.png);
+        width: 32px;
+        height: 32px;
+    }
+
+    .hyperlinkIcon {
+        background-image: url(images/triview_google.png);
+        width: 32px;
+        height: 32px;
+    }
+
+    .identifyIcon {
+        background-image: url(images/info.png);
+        width: 32px;
+        height: 32px;
+    }
+
+    .measureIcon {
+        background-image: url(images/measure.png);
+        width: 32px;
+        height: 32px;
+    }
+
+    <!--06042015--> .deactivateIcon {
+        background-image: url(images/Deactivate_32.png);
+        width: 32px;
+        height: 32px;
+    }
+
+    .clearIcon {
+        background-image: url(images/map_delete.png);
+        width: 32px;
+        height: 32px;
+    }
+
+    .printerIcon {
+        background-image: url(images/printer.png);
+        width: 32px;
+        height: 32px;
+    }
+
+    .go {
+        background-image: url(images/search.png);
+        width: 32px;
+        height: 32px;
+    }
+
+    .dryicon {
+        background-image: url(images/logo_24px.png);
+        width: 24px;
+        height: 24px;
+    }
+
+    .tombutton {
+        float: left;
+        position: relative;
+        left: 10px;
+        border: 0px;
+        text-align: center;
+        border: hidden;
+    }
+
+    .tombutton .dijitButtonNode {
+        border: 0px;
+    }
+
+    .mybutton {
+        float: left;
+        left: 0px;
+        border: 3px;
+        border-color: white;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 3px;
+    }
+
+    .tool {
+        padding-top: 5px;
+    }
+    </style>
+    <!-- try to retrieve information for URL passed from webpage.[for Neiborhood application use] -->
+    <script type="text/javascript">
+    function parseURLParams(url) {
+        var queryStart = url.indexOf("?") + 1;
+        var queryEnd = url.indexOf("#") + 1 || url.length + 1;
+        var query = url.slice(queryStart, queryEnd - 1);
+
+        if (query === url || query === "") return;
+
+        var params = {};
+        var nvPairs = query.replace(/\+/g, " ").split("&");
+        for (var i = 0; i < nvPairs.length; i++) {
+            var nv = nvPairs[i].split("=");
+            var n = decodeURIComponent(nv[0]);
+            var v = decodeURIComponent(nv[1]);
+            if (!(n in params)) {
+                params[n] = [];
+            }
+            params[n].push(nv.length === 2 ? v : null);
+        }
+        return params;
+    }
+    //<!---- LIXIAN DAI Grab SwissCode from CPI-->--------------------------------------------------------------------------------------------------------
+    var urlString = document.URL;
+    var urlParams = parseURLParams(urlString);
+    var test;
+    if (urlParams != null) {
+        test = urlParams.mnu_swissbl;
+    }
+    </script>
+    <script type="text/javascript">
+    var urlString = document.URL;
+    var urlParams = parseURLParams(urlString);
+    if (urlParams != null) {
+        var swiss = urlParams.swiss;
+    }
+    </script>
+    <script type="text/javascript">
+    var OSName = "Unknown OS";
+    if (navigator.appVersion.indexOf("Win") != -1) OSName = "Windows";
+    if (navigator.appVersion.indexOf("Mac") != -1) OSName = "MacOS";
+    if (navigator.appVersion.indexOf("X11") != -1) OSName = "UNIX";
+    if (navigator.appVersion.indexOf("Linux") != -1) OSName = "Linux";
+
+    navigator.sayswho = (function() {
+        var N = navigator.appName,
+            ua = navigator.userAgent,
+            tem;
+        var M = ua.match(/(opera|chrome|safari|firefox|msie)\/?\s*(\.?\d+(\.\d+)*)/i);
+        if (M && (tem = ua.match(/version\/([\.\d]+)/i)) != null) M[2] = tem[1];
+        M = M ? [M[1], M[2]] : [N, navigator.appVersion, '-?'];
+        return M;
+    })();
+    var browser = '' + navigator.sayswho[0] + navigator.sayswho[1];
+    </script>
+    <!-- get resolution of the screen -->
+    <script>
+    var winW = 1024,
+        winH = 800;
+    if (document.body && document.body.offsetWidth) {
+        winW = document.body.offsetWidth;
+        winH = document.body.offsetHeight;
+    }
+    if (document.compatMode == 'CSS1Compat' &&
+        document.documentElement &&
+        document.documentElement.offsetWidth) {
+        winW = document.documentElement.offsetWidth;
+        winH = document.documentElement.offsetHeight;
+    }
+    if (window.innerWidth && window.innerHeight) {
+        winW = window.innerWidth;
+        winH = window.innerHeight;
+    }
+    </script>
+    <script type="text/javascript">
+    dojoConfig = {
+        parseOnLoad: true,
+        packages: [{
+            "name": "myModules",
+            "location": location.pathname.replace(/\/[^/]+$/, "") + "/myModules"
+        }]
+    }
+    </script>
+    <script src="https://js.arcgis.com/3.13/"></script>
+    <script src="js/jquery-1.8.2.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="js/jquery.tablesorter.js"></script>
+    <script type="text/javascript" src="js/sorttable.js"></script>
+    <script type="text/javascript" src="js/jquery-ui-1.8.23.custom.min.js"></script>
+    <script type="text/javascript" src="js/slimScroll.js"></script>
+    <script src="js/jquery.cookie.js" type="text/javascript"></script>
+    <link href="css/skin-vista/ui.dynatree.css" rel="stylesheet" type="text/css" id="skinSheet">
+    <script src="js/jquery.dynatree.js" type="text/javascript"></script>
+    <link href="css/modalPopLite.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="js/modalPopLite.js"></script>
+    <link rel="stylesheet" type="text/css" href="myModules/InfoWindow.css">
+    <script src="js/placeholder.js" type="text/javascript"></script>
+    <!-- Add Style Dynamically -->
+    <script>
+    $(document).ready(function() {
+        var mapheight = winH - 20 + "px";
+
+
+        $("#map").css("height", mapheight);
+        $("#alert").css("left", winW / 2 - 505 + "px");
+        $('#mapLoadingImg').css("left", winW / 2 - 16 + "px");
+        $('#mapLoadingImg').css("top", winH / 2 - 16 + "px");
+        $('#table').css("top", 100 + "px");
+        $('#table').css("right", winW / 2 + "px");
+        $("#legendDiv").addClass("absolutePosition");
+    });
+    </script>
+    <script type="text/javascript">
+    $(function() {
+        $('#popupinfo').modalPopLite({
+            openButton: '#popupclicker',
+            closeButton: '#close-btn',
+            isModal: true
+        });
+    });
+    $(function() {
+        $('#alertinfo').modalPopLite({
+            openButton: '#alertclicker',
+            closeButton: '#close-btn3',
+            isModal: true
+        });
+    });
+    $(function() {
+        $('#popupinfo2').modalPopLite({
+            openButton: '#popupclicker2',
+            closeButton: '#close-btn2',
+            isModal: true
+        });
+    });
+    $(function() {
+        $('#contactinfo').modalPopLite({
+            openButton: '#contactclicker',
+            closeButton: '#close-btn4',
+            isModal: true
+        });
+    });
+    </script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+
+        //Draggable Table from JQuery UI
+        $("#table").draggable({
+            containment: "parent",
+            handle: ".title"
+        });
+        $("#LayerList").draggable({
+            containment: "parent",
+            handle: ".title"
+        });
+        $("#legend").draggable({
+            containment: "parent",
+            handle: ".title"
+        });
+        var printertest = $("#printerSettings");
+        printertest.draggable({
+            containment: "parent",
+            handle: ".title"
+        });
+
+        //slimScroll Add-on
+        $('#bigTable').slimScroll({
+            alwaysVisible: true,
+            railVisible: true,
+            start: $('#large'),
+            height: '370px',
+            width: '100%',
+            size: '10px'
+        });
+        //initializing search combo box
+        enableSelectBoxes();
+        $('#disclaimer-content').slimScroll({
+            railVisible: true,
+            height: '220px',
+            width: '100%',
+            size: '15px',
+            color: "#000",
+            railColor: "#666",
+            opacity: .6,
+            alwaysVisible: true,
+            railOpacity: '0.5'
+        });
+        $('#legendDiv').slimScroll({
+            railVisible: true,
+            height: '400px',
+            width: '100%',
+            size: '15px',
+            color: "#000",
+            railColor: "#666",
+            opacity: .6,
+            alwaysVisible: true,
+            railOpacity: '0.5'
+        });
+    });
+
+    function accept() {
+        if (document.getElementById('agree').checked) {
+            dijit.byId("continue").setAttribute('disabled', false);
+        } else {
+            dijit.byId("continue").setAttribute('disabled', true);
+        }
+    }
+
+    function accept2() {
+        if (document.getElementById('agree2').checked) {
+            dijit.byId("continue2").setAttribute('disabled', false);
+        } else {
+            dijit.byId("continue2").setAttribute('disabled', true);
+        }
+    }
+
+    function zcontinue() {
+        setCookie("zoning", "True", 0.125);
+        $('#close-btn2').trigger('click');
+        $("#tree3").dynatree("getTree").getNodeByKey("20").select();
+    }
+
+    function zreturn() {
+        setCookie("zoning", "", 1);
+        $('#close-btn2').trigger('click');
+    }
+
+    function mcontinue() {
+        setCookie("main", "True", 7);
+        $('#close-btn').trigger('click');
+    }
+
+    function userGuide() {
+        window.open("doc/User Guide.pdf", "_blank");
+    }
+
+    function sortByID(x, y) {
+        return ((x.PARCELID == y.PARCELID) ? 0 : ((x.PARCELID > y.PARCELID) ? 1 : -1));
+    }
+
+    function sortByKey(x, y) {
+        return ((x.Printkey == y.Printkey) ? 0 : ((x.Printkey > y.Printkey) ? 1 : -1));
+    }
+
+    //custom DataGrid
+    function fillTable(items) {
+        var tdTagStart = '<td>';
+        var tdTagEnd = '</td>';
+
+        items.sort(sortByKey); //sort by ID
+
+        var limit = items.length;
+
+        for (var i = 0; i < limit; i++) {
+            var row = '<tr width=100% onclick="shownMap(this)">';
+            row += '<td width=20%>' + items[i].Printkey + tdTagEnd;
+            row += '<td width=29%>' + items[i].PARCELADD + tdTagEnd;
+            row += '<td width=41%>' + items[i].ONAME1 + tdTagEnd;
+
+            row += '</tr>';
+            var rowCount = $('#large >tbody >tr').length;
+            $("#large > tbody:first").append(row);
+        }
+
+        $("#large").trigger('update');
+    }
+
+
+
+    //Zoom to the parcel when the user clicks a row
+    function shownMap(evt) {
+        map.graphics.remove(tempGraphic);
+        var clickedTaxLotId = evt.cells[0].textContent;
+        if (clickedTaxLotId == null) {
+            clickedTaxLotId = evt.firstChild.outerText;
+        }
+        var rowIndex = evt.rowIndex;
+        //remove highlighted row
+        if (tempcells != -1) {
+            $('td').removeClass("hover");
+        }
+        //Highlight selected row
+        $(evt.cells).addClass("hover");
+        tempcells = rowIndex;
+
+        var selectedTaxLot;
+
+        dojo.forEach(tempFeatures, function(graphic) {
+            if ((graphic.attributes) && graphic.attributes.Printkey == clickedTaxLotId) {
+                selectedTaxLot = graphic;
+                tempGraphic = graphic;
+                map.graphics.add(tempGraphic);
+                return;
+            }
+        });
+        var taxLotExtent = selectedTaxLot.geometry.getExtent();
+        map.setExtent(taxLotExtent, true);
+        tempstatus = 99;
+    }
+
+    function clearTable(table) {
+        for (var i = table.rows.length - 1; i > 0; i--) {
+            table.deleteRow(i);
+        }
+    }
+
+
+    function enableSelectBoxes() {
+        $('div.selectBox').each(function() {
+            $(this).children('span.selected').html("Search By:");
+            $(this).attr('value', $(this).children('div.selectOptions').children('span.selectOption:first').attr('value'));
+
+            $(this).children('span.selected,span.selectArrow,span.infoTitle').click(function() {
+                if ($(this).parent().children('div.selectOptions').css('display') == 'none') {
+                    $(this).parent().children('div.selectOptions').css('display', 'block');
+                } else {
+                    $(this).parent().children('div.selectOptions').css('display', 'none');
+                }
+            });
+
+            $(this).find('span.selectOption').click(function() {
+                $(this).parent().css('display', 'none');
+                $(this).closest('div.selectBox').attr('value', $(this).attr('value'));
+                $(this).parent().siblings('span.selected').html($(this).html());
+                var aa = $(this)[0].textContent;
+                if (aa == null) {
+                    aa = $(this)[0].innerText;
+                }
+                if (aa == "Address" || aa == "SBL" || aa == "Owner Name") {
+                    $("#index").trigger("focus");
+                }
+            });
+        });
+        $("#mapInfo").children('span.infoTitle').html("Map Info/Help");
+        $("#mapInfo").find('span.selectOption').click(function() {
+            var value = $(this).attr('value');
+            $(this).find('span').toggleClass("hiddenspan");
+            if ($(this).find('span').css('visibility') == 'hidden') {
+
+                $("#" + value).hide();
+            } else {
+                $("#" + value).show();
+            }
+        });
+    }
+
+    function getDropdownValue(selectedOption) {
+        var optionValues = ["Printkey", "PARCELADD", "ONAME1"];
+        var options = ["SBL", "Address", "Owner Name"]
+        var dropdownValue;
+        jQuery.each(options, function(i, option) {
+            if (option == selectedOption) {
+                dropdownValue = optionValues[i];
+                return;
+            }
+        })
+        return dropdownValue;
+    }
+
+    function getCookie(c_name) {
+        var i, x, y, ARRcookies = document.cookie.split(";");
+        for (i = 0; i < ARRcookies.length; i++) {
+            x = ARRcookies[i].substr(0, ARRcookies[i].indexOf("="));
+            y = ARRcookies[i].substr(ARRcookies[i].indexOf("=") + 1);
+            x = x.replace(/^\s+|\s+$/g, "");
+            if (x == c_name) {
+                return unescape(y);
+            }
+        }
+    }
+
+    function setCookie(c_name, value, exdays) {
+
+        var exdate = new Date();
+        if (exdays < 1) {
+            exdate.setTime(exdate.getTime() + exdays * 24 * 60 * 60 * 1000);
+        } else {
+            exdate.setDate(exdate.getDate() + exdays);
+        }
+        var exdate = exdate.toUTCString();
+
+        var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate);
+        document.cookie = c_name + "=" + c_value;
+    }
+
+    $(function() {
+        Placeholder.init({
+            normal: "#000000",
+            placeholder: "#C0C0C0",
+            wait: true
+        });
+    });
+    </script>
+    <script type="text/javascript">
+    var treeData = [{
+        title: "Base Information",
+        expand: true,
+        key: "100",
+        children: [{
+            title: "Zoning",
+            key: "20"
+        }, {
+            title: "Parcels",
+            select: true,
+            key: "22"
+        }, {
+            title: "Buildings",
+            key: "24"
+        }, {
+            title: "Zip Code",
+            key: "25"
+        }, {
+            title: "School Districts",
+            key: "26"
+        }, {
+            title: "Fire Districts",
+            key: "27"
+        }, {
+            title: "Fire Hydrant",
+            select: true,
+            key: "119"
+        }]
+    }, {
+        title: "Environmental Features",
+        key: "129",
+        expand: true,
+        children: [{
+            title: "Lakes, Ponds, Creeks",
+            select: true,
+            key: "29"
+        }, {
+            title: "Drainage Ditches & Creeks",
+            key: "30",
+            select: true
+        }, {
+            title: "Contours 2ft (LiDAR Based)",
+            key: "31"
+        }, {
+            title: "Soils",
+            key: "32"
+        }, {
+            title: "Wetlands",
+            key: "134",
+            children: [{
+                title: "Wetlands - State (DEC)",
+                key: "34"
+            }, {
+                title: "Wetlands - Federal (FWS)",
+                key: "35"
+            }]
+        }, {
+            title: "FEMA FLoodplain Information",
+            key: "137",
+            expand: true,
+            children: [{
+                title: "(Existing)FEMA Floodplain",
+                expand: true,
+                key: "138",
+                children: [{
+                    title: "Existing Floodway",
+                    key: "38"
+                }, {
+                    title: "Existing Floodplain",
+                    key: "39"
+                }]
+            }, {
+                title: "(Proposed) FEMA Floodplain",
+                expand: true,
+                key: "141",
+                children: [{
+                    title: "Proposed Floodway",
+                    key: "41"
+                }, {
+                    title: "Proposed Floodplain",
+                    key: "42"
+                }]
+            }]
+        }]
+    }, {
+        title: "2014 NYS Aerial Photography",
+        select: true,
+        key: "118"
+    }];
+    $(function() {
+        $("#tree3").dynatree({
+            checkbox: true,
+            selectMode: 3,
+            children: treeData,
+            onSelect: function(select, node) {
+                var selKeys = $.map(node.tree.getSelectedNodes(), function(node) {
+                    return node.data.key;
+                });
+                var visible = $.map(selKeys, function(key) {
+                    return parseInt(key);
+
+                });
+                if (jQuery.inArray(22, visible) != -1) {
+                    visible.push(23);
+                }
+                identifyParams.layerIds = [22, 25, 26, 27, 32];
+                if (jQuery.inArray(20, visible) != -1) {
+                    var zoningPre = getCookie("zoning");
+                    if (zoningPre != null && zoningPre != "") {
+                        identifyParams.layerIds.push(20);
+                        /*identifyParams.layerIds.push(20);//add zoning to identify layers*/
+                    } else {
+                        visible.splice(jQuery.inArray(20, visible), 1);
+                        //node.toggleSelect();
+                        $("#tree3").dynatree("getTree").getNodeByKey("20").toggleSelect();
+                        //layervisible=visible;
+                        $('#popupclicker2').trigger('click');
+                    }
+                }
+
+                //if there aren't any layers visible set the array value to = -1
+                var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 17, 18, 19];
+                dojo.forEach(arr, function(a, i) {
+                    visible.push(a);
+                });
+
+                if (visible.length === 0) {
+                    visible.push(-1);
+                }
+                layer.setVisibleLayers(visible);
+                if (jQuery.inArray(118, visible) != -1) {
+                    ortho.show();
+                } else {
+                    ortho.hide();
+                }
+                if (jQuery.inArray(119, visible) != -1) {
+                    hydrant.show();
+                } else {
+                    hydrant.hide();
+                }
+
+                var selRootNodes = node.tree.getSelectedNodes(true);
+                var selRootKeys = $.map(selRootNodes, function(node) {
+                    return node.data.key;
+                });
+
+            },
+            onDblClick: function(node, event) {
+                node.toggleSelect();
+            },
+            onKeydown: function(node, event) {
+                if (event.which == 32) {
+                    node.toggleSelect();
+                    return false;
+                }
+            },
+            cookieId: "dynatree-Cb3",
+            idPrefix: "dynatree-Cb3-"
+        });
+    });
+    </script>
+    <script type="text/javascript">
+    dojo.require("dojo.parser");
+    dojo.require("esri.map");
+
+    dojo.require("esri.layers.FeatureLayer");
+    dojo.require("esri.SnappingManager");
+    dojo.require("esri.symbol");
+    dojo.require("esri.renderer");
+
+    dojo.require("esri.tasks.query");
+    dojo.require("esri.tasks.identify");
+    dojo.require("esri.toolbars.navigation");
+    dojo.require("dijit.form.Button");
+    dojo.require("dijit.Toolbar");
+    dojo.require("esri.dijit.Scalebar");
+    dojo.require("dijit.Tooltip");
+    dojo.require("dojo.data.ItemFileReadStore");
+    dojo.require("esri.tasks.find");
+    dojo.require("esri.dijit.Legend");
+    dojo.require("dijit.Dialog");
+    dojo.require("dijit.ProgressBar");
+    dojo.require("dijit.form.FilteringSelect");
+    dojo.require("dijit.form.CheckBox");
+    dojo.require("dijit.form.TextBox");
+    dojo.require("esri.dijit.Measurement"); <!--06042015-->
+    dojo.require("myModules.InfoWindow");
+    dojo.require("esri.tasks.gp");
+    dojo.require("esri.dijit.InfoWindow");
+    var layer, ortho, layer2;
+    var map, queryTask, query, navToolbar, loading; //, layervisible=[];//easy way to get visible layers in "layer"
+    var legendDijit;
+    var symbol, infoTemplate;
+    var handle, startExtent;
+    var currentGraphic; //This variable is used to store symbol highlighted by hyperlink tool.
+    var tempGraphic;
+    //var popupTemplate;
+    var measurement; //06042015
+
+    var findTask, findParams;
+    var identifyTask, identifyParams;
+
+    var tempcells = -1;
+    var tempstatus; //control shown level id for selected parcel
+    var tempFeatures = []; //store graphics related with parcels's searching results
+    var tempnav, exportMapGP, contactGP;
+    var snapManager; //06172015
+    dojo.ready(function() {
+        esri.config.defaults.io.proxyUrl = "proxy.ashx";
+    });
+
+    function init() {
+
+        loading = dojo.byId("mapLoadingImg");
+
+        var infoWindow = new myModules.InfoWindow({
+            domNode: dojo.create("div", null, dojo.byId("map"))
+        });
+
+        esri.config.defaults.map.sliderLabel = null;
+        esri.config.defaults.map.slider = {
+            left: "80px",
+            top: "20px",
+            width: null,
+            height: "200px"
+        };
+
+        startExtent = new esri.geometry.Extent({
+            "xmin": 1081699,
+            "ymin": 1073385,
+            "xmax": 1117959,
+            "ymax": 1124831,
+            "spatialReference": {
+                "wkid": 2262
+            }
+        });
+        map = new esri.Map("map", {
+            infoWindow: infoWindow
+        });
+        dojo.connect(map, "onUpdateStart", showLoading);
+        dojo.connect(map, "onUpdateEnd", hideLoading);
+
+        /*06172015*/
+
+        parcellayer = new esri.layers.FeatureLayer("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer/22", {
+            mode: esri.layers.FeatureLayer.MODE_SELECTION,
+            outFields: ["*"]
+        });
+
+        ortho = new esri.layers.ArcGISTiledMapServiceLayer("http://map.amherst.ny.us/gallifrey/rest/services/OrthoBase/NYS_Imagery_2014/MapServer", {
+            "id": "2011nys_true_color",
+            "opacity": 1.0,
+            "visible": true
+        });
+
+        map.addLayer(ortho);
+
+        //Add Hydrant Layer MJiang 03.03.2015
+        var imageParametersF = new esri.layers.ImageParameters();
+        imageParametersF.layerIds = [0, 1, 2, 3];
+        hydrant = new esri.layers.ArcGISDynamicMapServiceLayer("http://map.amherst.ny.us/gallifrey/rest/services/Fire/FireHydrants/MapServer", {
+            "imageParameters": imageParametersF
+        });
+        map.addLayer(hydrant);
+
+
+
+        var imageParameters = new esri.layers.ImageParameters();
+        imageParameters.layerIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 17, 18, 19, 22, 23, 29, 30];
+        imageParameters.layerOption = esri.layers.ImageParameters.LAYER_OPTION_SHOW;
+        imageParameters.transparent = true;
+
+        layer = new esri.layers.ArcGISDynamicMapServiceLayer("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer", {
+            "imageParameters": imageParameters
+        });
+        layer.setImageFormat("png32");
+
+        map.addLayer(layer);
+
+        exportMapGP = new esri.tasks.Geoprocessor("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/ExportToPDF/GPServer/ExportToPDF");
+        contactGP = new esri.tasks.Geoprocessor("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/Contact/GPServer/Contact");
+
+
+        navToolbar = new esri.toolbars.Navigation(map);
+        dojo.connect(navToolbar, "onExtentHistoryChange", extentHistoryChangeHandler);
+
+
+        queryTask = new esri.tasks.QueryTask("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer/22");
+
+        //build query filter
+        query = new esri.tasks.Query();
+        query.outSpatialReference = {
+            "wkid": 2262
+        };
+        query.returnGeometry = true;
+        query.outFields = ["Printkey", "PARCELID", "GLink", "ONAME1", "PARCELADD", "CPILink"];
+
+        identifyTask = new esri.tasks.IdentifyTask("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer");
+
+        identifyParams = new esri.tasks.IdentifyParameters();
+        //identifyParams.tolerance = 3;
+        identifyParams.tolerance = 0; //prevent for multiple parcels selected
+        identifyParams.returnGeometry = true;
+        identifyParams.layerIds = [22, 25, 26, 27, 32];
+        identifyParams.layerOption = esri.tasks.IdentifyParameters.LAYER_OPTION_ALL;
+        identifyParams.width = map.width;
+        identifyParams.height = map.height;
+
+        symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_DASHDOT, new dojo.Color([255, 0, 0]), 2), new dojo.Color([255, 255, 0, 0.5]));
+
+        //Create Find Task using the URL of the map service to search
+        findTask = new esri.tasks.FindTask("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer");
+
+        //Create the find parameters
+        findParams = new esri.tasks.FindParameters();
+        findParams.returnGeometry = true;
+        findParams.layerIds = [22];
+        findParams.searchFields = ["Printkey"];
+        findParams.outSpatialReference = map.spatialReference;
+
+        var div = document.getElementById('map_container');
+        if (div.addEventListener) {
+            //evt.preventDefault();
+            div.addEventListener('contextmenu', CPILink, true);
+        } else { //previous method, not in use anymore
+
+            if ($.browser.msie && parseInt($.browser.version, 10) === 8) {
+                document.getElementById('map_container').attachEvent('oncontextmenu', function(evt) {
+                    CPILink(evt);
+                    window.event.returnValue = false;
+                });
+            } else {
+                document.getElementById('map_container').attachEvent('oncontextmenu', function(evt) {
+                    CPILink(evt);
+                    window.event.returnValue = false;
+                });
+            }
+
+        }
+
+
+        dojo.connect(map, 'onLoad', function(theMap) {
+
+            var scalebar = new esri.dijit.Scalebar({
+                map: map,
+                scalebarUnit: 'english'
+            });
+
+            //resize the map when the browser resizes
+            // dojo.connect(dijit.byId('map'), 'resize', map, map.resize);
+
+            window.onresize = function() {
+                map.resize();
+                map.reposition();
+                $("#map").css("height", window.innerHeight - 20 + "px");
+                $('#mapLoadingImg').css("left", window.innerWidth / 2 - 16 + "px");
+                $('#mapLoadingImg').css("top", window.innerHeight / 2 - 16 + "px");
+                $("#alert").css("left", window.innerWidth / 2 - 505 + "px");
+
+
+            }
+
+            map.setExtent(startExtent);
+
+        });
+
+        /*06042015*/
+        esri.config.defaults.geometryService = new esri.tasks.GeometryService("http://map.amherst.ny.us/gallifrey/rest/services/Utilities/Geometry/GeometryServer");
+        dojo.connect(map, "onLoad", function() {
+            measurement = new esri.dijit.Measurement({
+                map: map,
+                defaultLengthUnit: esri.Units.FEET
+            }, dojo.byId('measurement-div'));
+
+            dojo.style("measurement-div", {
+                "position": "absolute",
+                "background": "#fff",
+                "z-index": "100",
+                "left": "115px",
+                "top": "25px",
+                "width": "290px",
+                "height": "150px",
+                "padding": "10px 10px 10px 10px",
+                "display": "none"
+            });
+
+            measurement.startup();
+            measurement.resultLabel.setContent("Measurement Result (hold CTRL to snap)"); //06182015
+            /*06172015 snappingmanager*/
+            snapManager = map.enableSnapping();
+            var layerInfosSnap = [{
+                layer: parcellayer
+            }];
+            snapManager.setLayerInfos(layerInfosSnap);
+
+            measurement.on("measure-end", function(evt) {
+                this.setTool(evt.toolName, false);
+                console.log("measure-end event triggered");
+            });
+        });
+        /* /06042015*/
+
+    }
+
+    function makelegend(layer) {
+        var tocDOM = dojo.byId("legendDiv"); //changeto lengendDiv
+
+        esri.request({
+            url: layer.url + "/legend",
+            content: {
+                f: "json"
+            },
+            handleAs: "json",
+            preventCache: true,
+            callbackParamName: "callback",
+            load: function(response, io) {
+
+                //var newcontent = document.createElement('ul');
+                dojo.forEach(response.layers, function(layerInfo, i) {
+                    var min = layerInfo.minScale;
+                    if (min == 0) {
+                        min = 9999999;
+                    }
+                    if (jQuery.inArray(layerInfo.layerId, layer.visibleLayers) != -1 && map.getScale() > layerInfo.maxScale && map.getScale() <= min && layerInfo.layerId > 19) {
+
+                        var legendUl = document.getElementById("legendUl");
+                        var newcontent = document.createElement('li');
+
+                        if (layerInfo.legend.length > 1) {
+                            newcontent.innerHTML += "<span>" + layerInfo.layerName + "</span>";
+
+                            var newcontent2 = document.createElement('ul');
+                            dojo.forEach(layerInfo.legend, function(symbol, n) {
+                                newcontent2.innerHTML += "<li><img style=\"vertical-align:middle;\" src='" + layer.url + "/" + layerInfo.layerId + "/images/" + layerInfo.legend[n].url + "'/>&nbsp;" + layerInfo.legend[n].label + "</li>";
+
+                            });
+                            newcontent.appendChild(newcontent2);
+
+                        } else {
+                            newcontent.innerHTML += "<img style=\"vertical-align:middle;\" src='" + layer.url + "/" + layerInfo.layerId + "/images/" + layerInfo.legend[0].url + "'/>&nbsp;" + layerInfo.layerName;
+
+                        }
+
+                        legendUl.appendChild(newcontent);
+
+                    }
+                });
+            },
+            error: function(error, io) {
+                tocDOM.innerHTML = "An error occured, please refresh your browser.";
+            }
+        });
+        $("#legendDiv").trigger('resetBar', [-99]);
+    }
+
+    function extentHistoryChangeHandler() {
+        dijit.byId("zoomprev").disabled = navToolbar.isFirstExtent();
+        dijit.byId("zoomnext").disabled = navToolbar.isLastExtent();
+    }
+
+    function CPILink(evt) {
+        map.infoWindow.hide();
+
+        if ($.browser.msie) {
+
+            //screen coordinates to map coordinates
+            if (parseInt($.browser.version, 10) === 9) {
+                try {
+                    evt.preventDefault();
+                } catch (err) {
+
+                }
+            }
+            var winx = evt.clientX;
+            var winy = evt.clientY - 20;
+
+        } else {
+            evt.preventDefault();
+            var winx = evt.clientX;
+            var winy = evt.clientY - 20;
+        }
+
+        //var screenPoint=new esri.geometry.Point(evt.screenX, evt.screenY-80);//need to consider screen size as well.
+        var screenPoint = new esri.geometry.Point(winx, winy); //new point
+        var mapPoint = map.toMap(screenPoint);
+        query.geometry = mapPoint;
+
+        //Execute task and call showResults on completion
+        queryTask.execute(query, function(fset) {
+            var feature = fset.features[0];
+            var attr = feature.attributes;
+            map.graphics.remove(currentGraphic);
+            //set symbol
+            var symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([250, 0, 197]), 2), new dojo.Color([255, 255, 0, 0.5]));
+            feature.setSymbol(symbol);
+
+            map.graphics.add(feature);
+            currentGraphic = feature;
+
+            window.open(attr['CPILink'], "_blank", 'scrollbars=1,toolbar=0,location=0,menubar=0,left=0px,top=0px,height=' + screen.height + 'px ,width=' + screen.width + 'px');
+        });
+
+    }
+
+    function identify() {
+
+        if (handle != null) {
+            dojo.disconnect(handle);
+        }
+        handle = dojo.connect(map, "onClick", executeQueryIdentifyTask);
+        //Listent for infoWindow onHide event
+        dojo.connect(map.infoWindow, "onHide", function() {
+            map.graphics.remove(currentGraphic);
+        });
+
+        $("#map_layers").css("cursor", "url(images/info_mid.png) 12 12, -moz-zoom-in");
+        dojo.byId("map_layers").style.cursor = "url(images/info_mid.png) 12 12, -moz-zoom-in";
+        down = dojo.connect(map, "onMouseDown", function(evt) {
+            dojo.byId("map_layers").style.cursor = "url(images/hand_1.png) 16 16, -moz-zoom-in";
+        });
+        dojo.connect(map, "onMouseUp", function(evt) {
+            dojo.byId("map_layers").style.cursor = "url(images/info_mid.png) 12 12, -moz-zoom-in";
+        });
+    }
+
+    function executeQueryIdentifyTask(evt) {
+        map.infoWindow.hide();
+        $("#mapLoadingImg").show();
+        //map.graphics.clear();
+        map.graphics.remove(currentGraphic);
+        featureSet = null;
+
+        //onClick event returns the evt point where the user clicked on the map.
+        //This is contains the mapPoint (esri.geometry.point) and the screenPoint (pixel xy where the user clicked).
+        //set query geometry = to evt.mapPoint Geometry
+        identifyParams.geometry = evt.mapPoint;
+        identifyParams.mapExtent = map.extent;
+
+        //Execute task and call showResults on completion
+        identifyTask.execute(identifyParams, function(fset) {
+            showQueryIdentifyResult(fset, evt);
+        });
+
+    }
+
+    function showQueryIdentifyResult(fset, evt) {
+
+        map.graphics.remove(currentGraphic);
+        var title = "";
+        var content = "";
+        var printkey = "";
+
+        for (var i = 0, il = fset.length; i < il; i++) {
+            var features = fset[i];
+
+            var feature = features.feature;
+            var attr = feature.attributes;
+            switch (features.layerId) {
+                case 22:
+                    var symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([250, 0, 197]), 2), new dojo.Color([255, 255, 0, 0.5]));
+                    feature.setSymbol(symbol);
+                    map.graphics.add(feature);
+                    currentGraphic = feature;
+
+                    if (title != "") {
+                        content += "<br />";
+                    } else {
+
+                    }
+                    printkey = attr.Printkey;
+                    title = "SBL: " + attr.Printkey;
+                    content += "Address: " + attr.PARCELADD + "<br />Owner Name: " + attr.ONAME1;
+
+                    break;
+                case 20:
+
+                    if (title != "") {
+                        content += "<br />";
+                    } else {
+                        title = "Zoning: " + attr.Zoning;
+                    }
+                    content += "Zoning: " + attr.Zoning + "<br />Zoning Definition: " + attr.Definition;
+                    break;
+                case 25:
+                    if (title != "") {
+                        content += "<br />";
+                    } else {
+                        title = "Zip Code: " + attr.ZIPCODE;
+                    }
+                    content += "Zip Code: " + attr.ZIPCODE;
+                    break;
+                case 26:
+                    if (title != "") {
+                        content += "<br />";
+                    } else {
+                        title = "School District: " + attr.NAME;
+                    }
+                    //content+="School District: "+attr.DISTRICT_N;
+                    content += "School District: " + attr.NAME;
+                    break;
+                case 27:
+                    if (title != "") {
+                        content += "<br />";
+                    } else {
+                        title = "Fire District: " + attr.DISTRICTNA;
+                    }
+                    content += "Fire District: " + attr.DISTRICTNA;
+                    break;
+                case 32:
+                    if (title != "") {
+                        content += "<br />";
+                    } else {
+                        title = "Soil: " + attr.SOIL_NAME;
+                    }
+                    content += "Soil: " + attr.SOIL_NAME;
+                    break;
+            }
+        }
+
+        if (printkey != "") {
+            content += "<br /><br /><a onClick='getCurrentGraphicExtent()'>Zoom to</a>";
+        }
+        map.infoWindow.setTitle(title);
+        map.infoWindow.setContent(content);
+
+        var aa = map.getInfoWindowAnchor(evt.screenPoint);
+        (evt) ? map.infoWindow.show(evt.screenPoint, esri.dijit.InfoWindow.ANCHOR_LOWERLEFT): null;
+        $("#mapLoadingImg").hide();
+    }
+
+
+
+
+    function hyperlink() {
+        if (handle != null) {
+            dojo.disconnect(handle);
+        }
+        handle = dojo.connect(map, "onClick", executeQueryTask);
+        //Listent for infoWindow onHide event
+        dojo.connect(map.infoWindow, "onHide", function() {
+            map.graphics.remove(currentGraphic);
+        });
+        $("#alert").show();
+
+        $("#map_layers").css("cursor", "url(images/triview3.png) 16 16, -moz-zoom-in");
+        dojo.byId("map_layers").style.cursor = "url(images/triview3.png) 16 16, -moz-zoom-in";
+        down = dojo.connect(map, "onMouseDown", function(evt) {
+            dojo.byId("map_layers").style.cursor = "url(images/hand_1.png), -moz-zoom-in";
+        });
+        dojo.connect(map, "onMouseUp", function(evt) {
+            dojo.byId("map_layers").style.cursor = "url(images/triview3.png) 16 16, -moz-zoom-in";
+        });
+    }
+
+    function executeQueryTask(evt) {
+        map.infoWindow.hide();
+        map.graphics.remove(currentGraphic);
+        featureSet = null;
+
+        //onClick event returns the evt point where the user clicked on the map.
+        //This is contains the mapPoint (esri.geometry.point) and the screenPoint (pixel xy where the user clicked).
+        //set query geometry = to evt.mapPoint Geometry
+        query.geometry = evt.mapPoint;
+
+        //Execute task and call showResults on completion
+        queryTask.execute(query, function(fset) {
+            showQueryResult(fset.features[0], evt);
+        });
+        //stop event bubbling
+        evt.stopPropagation();
+
+    }
+
+    function showQueryResult(feature, evt) {
+        map.graphics.remove(currentGraphic);
+
+        //set symbol
+        var symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([250, 0, 197]), 2), new dojo.Color([255, 255, 0, 0.5]));
+        feature.setSymbol(symbol);
+
+        map.graphics.add(feature);
+        currentGraphic = feature;
+
+        //construct infowindow title and content
+        var attr = feature.attributes;
+        //07282015 replace street view from dual map, with the customized google street web page
+        ////window.open(attr["GLink"], '_blank','toolbar=0,location=0,menubar=0,left=0px,top=0px,height='+screen.height+'px ,width='+screen.width+'px');
+        window.open(attr["GLink"], '_blank', 'toolbar=0,location=0,menubar=0,left=0px,top=0px,height=' + screen.height + 'px ,width=' + screen.width + 'px');
+    }
+
+    function getCurrentGraphicExtent() {
+        map.setExtent(currentGraphic.geometry.getExtent(), true);
+        tempstatus = 99;
+    }
+
+    function gosearch() {
+        $("#mapLoadingImg").show();
+        map.infoWindow.hide();
+        map.graphics.clear();
+
+        var selectedOption = document.getElementById('selectedOption').textContent;
+        if (selectedOption == null) {
+            selectedOption = document.getElementById('selectedOption').outerText;
+        }
+        if (selectedOption == "Search By:") {
+            $("#mapLoadingImg").hide();
+            return
+        }
+        var dropdownValue = getDropdownValue(selectedOption);
+
+        var inputValue = document.getElementById("index").value;
+
+        if (inputValue == "") {
+            alert("Please input a value!");
+            $("#mapLoadingImg").hide();
+            return
+        }
+
+
+        findParams.searchFields = [dropdownValue];
+        findParams.searchText = inputValue;
+        findTask.execute(findParams, showSearchResults);
+    }
+
+    //original
+    function showSearchResults(results) {
+        //This function works with an array of FindResult that the task returns
+        map.graphics.clear();
+        if (map.infowindow != null) {
+            map.infowindow.hide();
+        }
+        var symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([250, 0, 197]), 2), new dojo.Color([255, 255, 0, 0.5]));
+
+        if (results.length == 0) {
+            $("#mapLoadingImg").hide();
+            $('#alertclicker').trigger('click');
+            return;
+        }
+        //create array of attributes
+        var items = dojo.map(results, function(result) {
+            var graphic = result.feature;
+            graphic.setSymbol(symbol);
+            tempFeatures.push(graphic);
+            return result.feature.attributes;
+        });
+
+        //test clearTable
+        clearTable(document.getElementById("large"));
+        //test fillTable
+        fillTable(items);
+
+        if ($(".sorttable_sorted").length > 0) {
+            $('.sorttable_sorted').find("span:first-child").remove();
+            $('.sorttable_sorted').each(function() {
+                $(this).removeClass("sorttable_sorted");
+            });
+        }
+        if ($(".sorttable_sorted_reverse").length > 0) {
+            $('.sorttable_sorted_reverse').find("span:first-child").remove();
+            $('.sorttable_sorted_reverse').each(function() {
+                $(this).removeClass("sorttable_sorted_reverse");
+            });
+        }
+
+        $("#mapLoadingImg").hide();
+        $("#table").show();
+        $("#bigTable").trigger('scrollContent', [-99]); //return to top
+    }
+
+    //LixianDai-------------------------------------------------------------------------------------------------------------------
+
+    function showSearchResults1(results) {
+        //This function works with an array of FindResult that the task returns
+        map.graphics.clear();
+        if (map.infowindow != null) {
+            map.infowindow.hide();
+        }
+        var symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([250, 0, 197]), 2), new dojo.Color([255, 255, 0, 0.5]));
+
+        if (results.length == 0) {
+            $("#mapLoadingImg").hide();
+            $('#alertclicker').trigger('click');
+            return;
+        }
+        //create array of attributes
+        var items = dojo.map(results, function(result) {
+            var graphic = result.feature;
+            graphic.setSymbol(symbol);
+            tempFeatures.push(graphic);
+            return result.feature.attributes;
+        });
+
+        //test fillTable //test clearTable
+        clearTable(document.getElementById("large"));
+        //test fillTable
+        fillTable(items);
+
+        map.graphics.remove(tempGraphic);
+
+        var clickedTaxLotId = document.getElementById("index").value; //replase <SBL Number> with the variable that has the SBL number(ex. "28.10-3-12") of the property.
+
+        var selectedTaxLot;
+
+        dojo.forEach(tempFeatures, function(graphic) {
+            if ((graphic.attributes) && graphic.attributes.SBL == clickedTaxLotId) {
+                selectedTaxLot = graphic;
+                tempGraphic = graphic;
+                map.graphics.add(tempGraphic);
+                return;
+            }
+        });
+        var taxLotExtent = selectedTaxLot.geometry.getExtent();
+        map.setExtent(taxLotExtent, true);
+        tempstatus = 99;
+
+        if ($(".sorttable_sorted").length > 0) {
+            $('.sorttable_sorted').find("span:first-child").remove();
+            $('.sorttable_sorted').each(function() {
+                $(this).removeClass("sorttable_sorted");
+            });
+        }
+        if ($(".sorttable_sorted_reverse").length > 0) {
+            $('.sorttable_sorted_reverse').find("span:first-child").remove();
+            $('.sorttable_sorted_reverse').each(function() {
+                $(this).removeClass("sorttable_sorted_reverse");
+            });
+        }
+
+        $("#mapLoadingImg").hide();
+        $("#table").show();
+        $("#bigTable").trigger('scrollContent', [-99]); //return to top
+
+    }
+
+    //print start
+    function getFeatureSet(type) {
+        var fset = new esri.tasks.FeatureSet();
+        dojo.forEach(map.graphics.graphics, function(graphic) {
+            if (graphic.geometry.type === type) {
+                fset.features.push(graphic);
+            }
+        });
+        if (fset.features.length > 0) {
+            return fset;
+        } else {
+            return "";
+        }
+    }
+    /*
+    	//evoked after printer button pressed
+    	function exportPDF(evt){
+
+    		dojo.style("pdfRequestFinished", "display", "none");
+    		dojo.style("pdfRequestError", "display", "none");
+    		dojo.style("pdfRequest", "display", "block");
+    		dijit.byId("exportPDFBtn").set("disabled", true);
+    		var visiblelayers = {};
+    		dojo.forEach(map.layerIds, function(layer, i1){
+    			var ml = map.getLayer(layer);
+    			switch (ml.declaredClass) {
+    				case "esri.layers.ArcGISDynamicMapServiceLayer":
+    					var s = dojo.forEach(ml.layerInfos, function(sublayer, i2){
+    						if (dojo.indexOf(ml.visibleLayers, sublayer.id.toString()) !== -1) {
+    							visiblelayers[sublayer.name] = "True";
+    						}
+    						else {
+    							visiblelayers[sublayer.name] = "False";
+    						}
+
+    						if(sublayer.subLayerIds!=null){
+    						visiblelayers[sublayer.name] = "True";
+    						}
+    					});
+    					break;
+    				default:
+    					var ov = ml.visible.toString();
+    					visiblelayers["OrthoBase/NYSOrthos2011"] = ov.charAt(0).toUpperCase() + ov.slice(1);
+    					break;
+    			}
+    		});
+
+    		var params = {
+    			"xMin": map.extent.xmin,
+    			"yMin": map.extent.ymin,
+    			"xMax": map.extent.xmax,
+    			"yMax": map.extent.ymax,
+    			"Spatial_Reference": map.spatialReference.wkid,
+    			"Map_Scale": esri.geometry.getScale(map),
+    			"Visiblelayers": dojo.toJson(visiblelayers),
+    			"Layout": dijit.byId("mapLayout").value,
+    			"Include_Attributes": true,//dijit.byId("incAttribs").checked,
+    			"Map_Title": dijit.byId("mapTitle").value,
+    			"PointGraphics": getFeatureSet("point"),
+    			"LineGraphics": getFeatureSet("polyline"),
+    			"PolyGraphics": getFeatureSet("polygon")
+    		};
+    		try
+    		{
+    		//Run some code here
+    		exportMapGP.submitJob(params, pdfCompleteCallback, pdfStatusCallback, pdfErrorCallback);
+    		}
+    		catch(err)
+    		{
+    		//Handle errors here
+    		var error=err;
+    		}
+
+    	}
+
+    	function pdfCompleteCallback(jobInfo){
+    	try{
+    		if (jobInfo.jobStatus == "esriJobSucceeded") {
+    			exportMapGP.getResultData(jobInfo.jobId, "PDF", setPdfDownloadLink);
+    		}
+    		else {
+    			pdfErrorCallback();
+    		}
+    		}
+    		catch(err){
+    		var error=err;
+    		}
+    	}
+    	function pdfStatusCallback(jobInfo){
+    	try{
+    		if (jobInfo.jobStatus === "esriJobFailed") {
+    			pdfErrorCallback();
+    		}
+    		}
+    		catch(err){
+    		var error=err;
+    		}
+    	}
+    	function pdfErrorCallback(error){
+    		var err=error;
+    		dijit.byId("exportPDFBtn").set("disabled", false);
+    dojo.style("pdfRequest", "display", "none");
+    dojo.style("pdfRequestFinished", "display", "none");
+    dojo.style("pdfRequestError", "display", "block");
+    	}
+    	*/
+
+    var myVar;
+    //evoked after printer button pressed
+    function exportPDF(evt) {
+
+        dojo.style("pdfRequestFinished", "display", "none");
+        dojo.style("pdfRequestError", "display", "none");
+        dojo.style("pdfRequest", "display", "block");
+        dijit.byId("exportPDFBtn").set("disabled", true);
+        var visiblelayers = {};
+        dojo.forEach(map.layerIds, function(layer, i1) {
+            var ml = map.getLayer(layer);
+            switch (ml.declaredClass) {
+                case "esri.layers.ArcGISDynamicMapServiceLayer":
+                    var s = dojo.forEach(ml.layerInfos, function(sublayer, i2) {
+                        if (dojo.indexOf(ml.visibleLayers, sublayer.id.toString()) !== -1) {
+                            visiblelayers[sublayer.name] = "True";
+                        } else {
+                            visiblelayers[sublayer.name] = "False";
+                        }
+
+                        if (sublayer.subLayerIds != null) {
+                            visiblelayers[sublayer.name] = "True";
+                        }
+                    });
+                    break;
+                default:
+                    var ov = ml.visible.toString();
+                    visiblelayers["OrthoBase/NYS_Imagery_2014"] = ov.charAt(0).toUpperCase() + ov.slice(1);
+                    break;
+            }
+        });
+
+        var params = {
+            "xMin": map.extent.xmin,
+            "yMin": map.extent.ymin,
+            "xMax": map.extent.xmax,
+            "yMax": map.extent.ymax,
+            "Spatial_Reference": map.spatialReference.wkid,
+            "Map_Scale": esri.geometry.getScale(map),
+            "Visiblelayers": dojo.toJson(visiblelayers),
+            "Layout": dijit.byId("mapLayout").value,
+            "Include_Attributes": true, //dijit.byId("incAttribs").checked,
+            "Map_Title": dijit.byId("mapTitle").value,
+            "PointGraphics": getFeatureSet("point"),
+            "LineGraphics": getFeatureSet("polyline"),
+            "PolyGraphics": getFeatureSet("polygon")
+        };
+        try {
+            //Run some code here
+            exportMapGP.submitJob(params, pdfCompleteCallback, pdfStatusCallback, pdfErrorCallback);
+
+            myVar = setInterval(function() {
+                testtimer()
+            }, 5000);
+            //1. Add a timer here count to 20s.if pdfdownloadlink is none. get jobid from 1st status. ....
+            //2. jump ..... from town's data
+            //3. Add a tool(Measure)
+        } catch (err) {
+            //Handle errors here
+            var error = err;
+        }
+
+    }
+    var jobinfotemp;
+    var testcount = 2;
+
+    function testtimer() {
+        if (testcount == 1) {
+            /*exportMapGP.submitJob(params, pdfCompleteCallback, pdfStatusCallback, pdfErrorCallback);*/
+        } else {
+            exportMapGP.checkJobStatus(jobinfotemp.jobId, pdfStatusCallback, pdfErrorCallback);
+        }
+
+        testcount += 1;
+
+    }
+
+    function pdfCompleteCallback(jobInfo) {
+        try {
+            if (jobInfo.jobStatus == "esriJobSucceeded") {
+                testcount = 1;
+                clearInterval(myVar);
+                exportMapGP.getResultData(jobInfo.jobId, "PDF", setPdfDownloadLink);
+                //var jobId = jobInfo.message.replace(/Job '([a-z,0-9]*)' does not exist or is inaccessible\./, "$1");
+                //exportMapGP.checkJobStatus(jobId,pdfStatusCallback,pdfErrorCallback);
+            } else {
+                pdfErrorCallback();
+            }
+        } catch (err) {
+            var error = err;
+        }
+    }
+
+    function pdfStatusCallback(jobInfo) {
+        if (testcount == 2) {
+            jobinfotemp = jobInfo;
+            testcount += 1;
+        }
+        try {
+            if (jobInfo.jobStatus === "esriJobFailed") {
+                pdfErrorCallback();
+            } else if (jobInfo.jobStatus == "esriJobSucceeded") {
+                pdfCompleteCallback(jobInfo);
+            } else if (jobInfo.message.search("does not exist or is inaccessible") > -1) {
+                //var jobId = jobInfo.message.replace(/Job '([a-z,0-9]*)' does not exist or is inaccessible\./, "$1");
+                exportMapGP.checkJobStatus(jobinfotemp.jobId, pdfStatusCallback, pdfErrorCallback);
+            }
+            /*
+            		else{
+            		pdfErrorCallback();
+            		}*/
+        } catch (err) {
+            var error = err;
+            testcount = 2;
+        }
+    }
+
+    function pdfErrorCallback(error) {
+        if (error.message.search("does not exist or is inaccessible") > -1) {
+            //var jobId = jobInfo.message.replace(/Job '([a-z,0-9]*)' does not exist or is inaccessible\./, "$1");
+            //exportMapGP.checkJobStatus(jobId,pdfStatusCallback,pdfErrorCallback);
+        } else {
+            var err = error;
+            dijit.byId("exportPDFBtn").set("disabled", false);
+            dojo.style("pdfRequest", "display", "none");
+            dojo.style("pdfRequestFinished", "display", "none");
+            dojo.style("pdfRequestError", "display", "block");
+            testcount = 2;
+            clearInterval(myVar);
+        }
+
+    }
+
+    function setPdfDownloadLink(pdf) {
+        dijit.byId("exportPDFBtn").set("disabled", false);
+        dojo.style("pdfRequest", "display", "none");
+        dojo.style("pdfRequestError", "display", "none");
+        dojo.style("pdfRequestFinished", "display", "block");
+        var pdfurl = pdf.value.url;
+        var nurl = pdfurl.replace("glyphcode", "map.amherst.ny.us");
+        dojo.byId("pdfLink").href = nurl;
+    }
+    //print end
+
+    function clearContact() {
+        $("#email")[0].value = '';
+        $("#name")[0].value = '';
+        $("#comments")[0].value = '';
+        $("#contactinfo").find("table").show();
+        $("#submitting").hide();
+        dijit.byId("submitContact").set("disabled", false);
+        var a = document.getElementById("antispam");
+        a.value = "lalalala";
+        clearTimeout(spamDetect);
+    }
+
+    function emailValidation(email) {
+        var atpos = email.indexOf("@");
+        var dotpos = email.lastIndexOf(".");
+        if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= email.length) {
+            return false;
+        }
+        return true;
+    }
+
+    function contact() {
+        var a = document.getElementById("antispam");
+        if (a.value == "lalalala" || a.value <= 7) {
+            alert("Spam!");
+            var a = document.getElementById("antispam");
+            a.value = "lalalala";
+            clearTimeout(spamDetect);
+            return;
+        }
+        var email = $("#email")[0].value;
+        var name = $("#name")[0].value;
+        var comments = $("#comments")[0].value;
+
+        if (email != "" && name != "" && comments != "") {
+            if (emailValidation(email) != true) {
+                alert("Invalid email address!");
+                return;
+            }
+        } else {
+            alert("Please fill out the form before you submit!");
+            return;
+        }
+
+        dijit.byId("submitContact").set("disabled", true);
+        $("#contactinfo").find("table").hide();
+        $("#submitting")[0].innerHTML = "Submitting...";
+        $("#submitting").show();
+
+        var params = {
+            "Name": name,
+            "Email": email,
+            "Comments": comments,
+            "OS": OSName,
+            "Browser": browser
+        };
+        contactGP.submitJob(params, contactCompleteCallback, contactStatusCallback, contactErrorCallback);
+    }
+
+    function contactCompleteCallback(jobInfo) {
+        try {
+            if (jobInfo.jobStatus == "esriJobSucceeded") {
+
+                $("#submitting")[0].innerHTML = "Your comment has been submitted.<br /> We will reply you as soon as possible.<br />Thank you!";
+            } else {
+                contactErrorCallback();
+            }
+        } catch (err) {
+            var error = err;
+        }
+    }
+
+    function contactStatusCallback(jobInfo) {
+        try {
+            if (jobInfo.jobStatus === "esriJobFailed") {
+                contactErrorCallback();
+            }
+        } catch (err) {
+            var error = err;
+        }
+    }
+
+    function contactErrorCallback(error) {
+        $("#submitting")[0].innerHTML = "Failed. Please try again later.";
+        var err = error;
+    }
+
+
+
+
+    function dryicons() {
+        window.open("http://www.dryicons.com", '_blank');
+    }
+
+    function zoomCursor() {
+        $("#map_layers").css("cursor", "crosshair");
+        dojo.byId("map_layers").style.cursor = "crosshair";
+        down = dojo.connect(map, "onMouseDown", function(evt) {
+            dojo.byId("map_layers").style.cursor = "crosshair";
+        });
+        dojo.connect(map, "onMouseUp", function(evt) {
+            dojo.byId("map_layers").style.cursor = "crosshair";
+        });
+    }
+
+    function defaultCursor() {
+        $("#map_layers").css("cursor", "default");
+        dojo.byId("map_layers").style.cursor = "default";
+        down = dojo.connect(map, "onMouseDown", function(evt) {
+            dojo.byId("map_layers").style.cursor = "url(images/hand_1.png), -moz-zoom-in";
+        });
+        dojo.connect(map, "onMouseUp", function(evt) {
+            dojo.byId("map_layers").style.cursor = "default";
+        });
+    }
+
+    function activatePan() {
+        tempnav = 2;
+        //navToolbar.deactivate();
+        this.navToolbar.activate(esri.toolbars.Navigation.PAN);
+        $("#map_layers").css("cursor", "url(images/hand_1.png), -moz-zoom-in");
+        dojo.byId("map_layers").style.cursor = "url(images/hand_1.png), -moz-zoom-in";
+        down = dojo.connect(map, "onMouseDown", function(evt) {
+            dojo.byId("map_layers").style.cursor = "url(images/hand_1.png), -moz-zoom-in";
+        });
+        dojo.connect(map, "onMouseUp", function(evt) {
+            dojo.byId("map_layers").style.cursor = "url(images/hand_1.png), -moz-zoom-in";
+        });
+    }
+
+    function activateZoomIn() {
+        tempnav = 0; // use for loading icon hide event.
+        navToolbar.deactivate();
+        dojo.disconnect(handle);
+        navToolbar.activate(esri.toolbars.Navigation.ZOOM_IN);
+        zoomCursor();
+    }
+
+    function activateZoomOut() {
+        tempnav = 1;
+        navToolbar.deactivate();
+        dojo.disconnect(handle);
+        navToolbar.activate(esri.toolbars.Navigation.ZOOM_OUT);
+        zoomCursor();
+    }
+
+    function showLoading() {
+        esri.show(loading);
+        map.disableMapNavigation();
+        //map.hideZoomSlider();
+    }
+
+    function print() {
+        $('#printerSettings').show();
+        dijit.byId("exportPDFBtn").set("disabled", false);
+        dojo.style("pdfRequest", "display", "none");
+    }
+    <!--06042015,0616-->
+
+    function measure(evt) {
+        navToolbar.deactivate();
+        if (handle != null) {
+            dojo.disconnect(handle);
+        }
+        map.infoWindow.hide();
+
+        measurement.setTool("area", false);
+        measurement.setTool("distance", false);
+        measurement.setTool("location", false);
+        $("#measurement-div").toggle();
+        zoomCursor();
+    }
+
+    function hideLoading(error) {
+        var legendDiv = document.getElementById("legendUl"); //test
+        legendDiv.innerHTML = "";
+        makelegend(layer);
+        esri.hide(loading);
+        map.enableMapNavigation();
+        if (tempnav == 0) {
+            activateZoomIn();
+        } else if (tempnav == 1) {
+            activateZoomOut();
+        } else if (tempnav == 2) {
+            activatePan();
+        }
+        if (tempstatus == 99) {
+            map.setLevel(7);
+            tempstatus = 0;
+        }
+
+        $("#legendDiv").trigger('scrollContent', [-99]);
+        $("#legendDiv").trigger('resetBar', [-99]);
+    }
+
+    dojo.addOnLoad(init);
+    </script>
 </head>
+
 <body class="claro">
-<div style="margin:0;position:relative;width:100%;height:100%;padding:0;overflow: hidden;">
-<div id="banner" style="width:100%;height:20px; margin:0; background-color:#5DA1D7;overflow: hidden;color:white;">
-<div style="position:relative;float:left;">Town of Amherst------The Map Machine</div>
-<div style="float:right;height:20px;margin:0; overflow:hidden;position:relative;"><a id="clicker" href="doc/User Guide.pdf" target="_blank"><img src="images/help.png" border="none" width='19px' height='19px'/></a></div>
-</div>
-<div id="tools" style="float:left; position:relative; top:0px;left:0px; height:415px;width:50px;z-index:100; background-color:rgba(0,0,0,0.6);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#60000000,endColorstr=#60000000);border-radius:5px;-moz-border-radius:5px;">
-<div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="zoomin" class="tool" data-dojo-props="iconClass:'zoominIcon', onClick:function(){activateZoomIn();}"></div>
-<span id="zoomin_tt" dojoType="dijit.Tooltip" connectId="zoomin">Zoom In</span>
-<div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="zoomout" class="tool" data-dojo-props="iconClass:'zoomoutIcon', onClick:function(){activateZoomOut();}"></div>
-<span id="zoomout_tt" dojoType="dijit.Tooltip" connectId="zoomout">Zoom Out</span>
-<div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="zoomfullext" class="tool" data-dojo-props="iconClass:'zoomfullextIcon', onClick:function(){map.setExtent(startExtent);}"></div>
-<span id="zoomfullext_tt" dojoType="dijit.Tooltip" connectId="zoomfullext">Full Extent</span>
-<div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="zoomprev" class="tool" data-dojo-props="iconClass:'zoomprevIcon', onClick:function(){navToolbar.deactivate();navToolbar.zoomToPrevExtent();}"></div>
-<span id="zoomprev_tt" dojoType="dijit.Tooltip" connectId="zoomprev">Previous Extent</span>
-<div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="zoomnext" class="tool" data-dojo-props="iconClass:'zoomnextIcon', onClick:function(){navToolbar.zoomToNextExtent();}"></div>
-<span id="zoomnext_tt" dojoType="dijit.Tooltip" connectId="zoomnext">Next Extent</span>
-<div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="pan" class="tool" data-dojo-props="iconClass:'panIcon', onClick:function(){activatePan();}"></div>
-<span id="pan_tt" dojoType="dijit.Tooltip" connectId="pan">Pan</span>
-<div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="identify" class="tool" data-dojo-props="iconClass:'identifyIcon' ,onClick:function(){navToolbar.deactivate();defaultCursor();identify();tempnav=-1;}"></div>
-<span id="identify_tt" dojoType="dijit.Tooltip" connectId="identify">Identify</span>
-<!--06042015-->
-<div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="measure" class="tool" data-dojo-props="iconClass:'measureIcon' ,onClick:function(){navToolbar.deactivate();measure();tempnav=-1;}"></div>
-<span id="measure_tt" dojoType="dijit.Tooltip" connectId="measure">Measure Tool</span>
-<div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="hyperlink" class="tool" data-dojo-props="iconClass:'hyperlinkIcon' ,onClick:function(){navToolbar.deactivate();defaultCursor();hyperlink();tempnav=-1;}"></div>
-<span id="hyperlink_tt" dojoType="dijit.Tooltip" connectId="hyperlink">TriView Tool</span>
-<div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="clear" class="tool" data-dojo-props="iconClass:'clearIcon' ,onClick:function(){map.graphics.clear();}"></div>
-<span id="clear_tt" dojoType="dijit.Tooltip" connectId="clear">Clear Graphics</span>
-<div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="printer" class="tool" data-dojo-props="iconClass:'printerIcon' ,onClick:function(){print();}"></div>
-<span id="printer_tt" dojoType="dijit.Tooltip" connectId="printer">Print</span>
-
-</div>
-<div id="alert" style="font-family:calibri;font-size:18px;font-style:bold; color:black;width:460px; height:auto;z-index:100; float:left;position:relative;background-color:rgba(255,255,0,0.9);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#15999900,endColorstr=#15999900);display:none">
-<div style="float:left;position:relative;padding-left:10px; width:93%">Note: The TriView Hyperlink Tool will open a new window.  It may respond slowly at times.  Please be patient.</div>
-<div style="float: right;position:relative;border: 1px 1px 1px 1px; border-color:black;height:100%;width:5px; margin-left:5px;padding-right:10px;">x</div>
-</div>
-<div id="search" style="background:transparent; height:34px;float:right;position:relative;overflow:none;z-index:101;width:auto;">
-<div class='selectBox'>
-<span id='selectedOption' class='selected zposition'></span>
-<span class='selectArrow zposition'>&#9660</span>
-<div class="selectOptions" >
-<span class="selectOption" value="Printkey">SBL</span>
-<span class="selectOption" value="PARCELADD">Address</span>
-<span class="selectOption" value="ONAME1">Owner Name</span>
-</div>
-</div>
-<input type="text" id="index" style="float:left;position:relative;z-index:100;" placeholder="">
-<a id="go" onclick="gosearch()" style="float:left; left:0px;border:2px;border-color:black;z-index:100;position:relative;"><img src="images/search.png" width='32px' height='32px'/></a>
-<div id="mapInfo" class='selectBox' style="float:right;left:0px;position:relative;clear:none;width: 150px;">
-<span id='selectedOption2' class='infoTitle zposition'></span>
-<div class="selectOptions" >
-<span class="selectOption" value="LayerList"><span>&#8730;&nbsp;</span>Layer List</span>
-<span class="selectOption" value="legend"><span>&#8730;&nbsp;</span>Legend</span>
-<span class="selectOption" value="video" onclick="window.open('http://www.youtube.com/user/AmherstNYGIS','_blank');"><span>&nbsp;&nbsp;&nbsp;</span>Training Video</span>
-<span class="selectOption" value="Help" onclick="window.open('doc/User Guide.pdf','_blank');"><span>&nbsp;&nbsp;&nbsp;</span>Help</span>
-<span id="contactclicker" class="selectOption" value="Contact" onclick="antiSpam();"><span>&nbsp;&nbsp;&nbsp;</span>Contact</span>
-</div>
-</div>
-
-
-</div>
-<div id="loading" style="width:32px;height:32px;float:right;right:200px;top:200px;position:absolute;z-index:101;">
-<img src="images/loadingEsri.gif" width="32px" height="32px">
-</div>
-<div id="table" style="float:right;position:absolute;width:500px; height:420px;z-index:100; background-color:transparent;
+    <div style="margin:0;position:relative;width:100%;height:100%;padding:0;overflow: hidden;">
+        <div id="banner" style="width:100%;height:20px; margin:0; background-color:#5DA1D7;overflow: hidden;color:white;">
+            <div style="position:relative;float:left;">Town of Amherst------The Map Machine</div>
+            <div style="float:right;height:20px;margin:0; overflow:hidden;position:relative;">
+                <a id="clicker" href="doc/User Guide.pdf" target="_blank"><img src="images/help.png" border="none" width='19px' height='19px' /></a>
+            </div>
+        </div>
+        <div id="tools" style="float:left; position:relative; top:0px;left:0px; height:415px;width:50px;z-index:100; background-color:rgba(0,0,0,0.6);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#60000000,endColorstr=#60000000);border-radius:5px;-moz-border-radius:5px;">
+            <div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="zoomin" class="tool" data-dojo-props="iconClass:'zoominIcon', onClick:function(){activateZoomIn();}"></div>
+            <span id="zoomin_tt" dojoType="dijit.Tooltip" connectId="zoomin">Zoom In</span>
+            <div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="zoomout" class="tool" data-dojo-props="iconClass:'zoomoutIcon', onClick:function(){activateZoomOut();}"></div>
+            <span id="zoomout_tt" dojoType="dijit.Tooltip" connectId="zoomout">Zoom Out</span>
+            <div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="zoomfullext" class="tool" data-dojo-props="iconClass:'zoomfullextIcon', onClick:function(){map.setExtent(startExtent);}"></div>
+            <span id="zoomfullext_tt" dojoType="dijit.Tooltip" connectId="zoomfullext">Full Extent</span>
+            <div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="zoomprev" class="tool" data-dojo-props="iconClass:'zoomprevIcon', onClick:function(){navToolbar.deactivate();navToolbar.zoomToPrevExtent();}"></div>
+            <span id="zoomprev_tt" dojoType="dijit.Tooltip" connectId="zoomprev">Previous Extent</span>
+            <div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="zoomnext" class="tool" data-dojo-props="iconClass:'zoomnextIcon', onClick:function(){navToolbar.zoomToNextExtent();}"></div>
+            <span id="zoomnext_tt" dojoType="dijit.Tooltip" connectId="zoomnext">Next Extent</span>
+            <div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="pan" class="tool" data-dojo-props="iconClass:'panIcon', onClick:function(){activatePan();}"></div>
+            <span id="pan_tt" dojoType="dijit.Tooltip" connectId="pan">Pan</span>
+            <div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="identify" class="tool" data-dojo-props="iconClass:'identifyIcon' ,onClick:function(){navToolbar.deactivate();defaultCursor();identify();tempnav=-1;}"></div>
+            <span id="identify_tt" dojoType="dijit.Tooltip" connectId="identify">Identify</span>
+            <!--06042015-->
+            <div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="measure" class="tool" data-dojo-props="iconClass:'measureIcon' ,onClick:function(){navToolbar.deactivate();measure();tempnav=-1;}"></div>
+            <span id="measure_tt" dojoType="dijit.Tooltip" connectId="measure">Measure Tool</span>
+            <div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="hyperlink" class="tool" data-dojo-props="iconClass:'hyperlinkIcon' ,onClick:function(){navToolbar.deactivate();defaultCursor();hyperlink();tempnav=-1;}"></div>
+            <span id="hyperlink_tt" dojoType="dijit.Tooltip" connectId="hyperlink">TriView Tool</span>
+            <div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="clear" class="tool" data-dojo-props="iconClass:'clearIcon' ,onClick:function(){map.graphics.clear();}"></div>
+            <span id="clear_tt" dojoType="dijit.Tooltip" connectId="clear">Clear Graphics</span>
+            <div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="printer" class="tool" data-dojo-props="iconClass:'printerIcon' ,onClick:function(){print();}"></div>
+            <span id="printer_tt" dojoType="dijit.Tooltip" connectId="printer">Print</span>
+        </div>
+        <div id="alert" style="font-family:calibri;font-size:18px;font-style:bold; color:black;width:460px; height:auto;z-index:100; float:left;position:relative;background-color:rgba(255,255,0,0.9);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#15999900,endColorstr=#15999900);display:none">
+            <div style="float:left;position:relative;padding-left:10px; width:93%">Note: The TriView Hyperlink Tool will open a new window. It may respond slowly at times. Please be patient.</div>
+            <div style="float: right;position:relative;border: 1px 1px 1px 1px; border-color:black;height:100%;width:5px; margin-left:5px;padding-right:10px;">x</div>
+        </div>
+        <div id="search" style="background:transparent; height:34px;float:right;position:relative;overflow:none;z-index:101;width:auto;">
+            <div class='selectBox'>
+                <span id='selectedOption' class='selected zposition'></span>
+                <span class='selectArrow zposition'>&#9660</span>
+                <div class="selectOptions">
+                    <span class="selectOption" value="Printkey">SBL</span>
+                    <span class="selectOption" value="PARCELADD">Address</span>
+                    <span class="selectOption" value="ONAME1">Owner Name</span>
+                </div>
+            </div>
+            <input type="text" id="index" style="float:left;position:relative;z-index:100;" placeholder="">
+            <a id="go" onclick="gosearch()" style="float:left; left:0px;border:2px;border-color:black;z-index:100;position:relative;"><img src="images/search.png" width='32px' height='32px' /></a>
+            <div id="mapInfo" class='selectBox' style="float:right;left:0px;position:relative;clear:none;width: 150px;">
+                <span id='selectedOption2' class='infoTitle zposition'></span>
+                <div class="selectOptions">
+                    <span class="selectOption" value="LayerList"><span>&#8730;&nbsp;</span>Layer List</span>
+                    <span class="selectOption" value="legend"><span>&#8730;&nbsp;</span>Legend</span>
+                    <span class="selectOption" value="video" onclick="window.open('http://www.youtube.com/user/AmherstNYGIS','_blank');"><span>&nbsp;&nbsp;&nbsp;</span>Training Video</span>
+                    <span class="selectOption" value="Help" onclick="window.open('doc/User Guide.pdf','_blank');"><span>&nbsp;&nbsp;&nbsp;</span>Help</span>
+                    <span id="contactclicker" class="selectOption" value="Contact" onclick="antiSpam();"><span>&nbsp;&nbsp;&nbsp;</span>Contact</span>
+                </div>
+            </div>
+        </div>
+        <div id="loading" style="width:32px;height:32px;float:right;right:200px;top:200px;position:absolute;z-index:101;">
+            <img src="images/loadingEsri.gif" width="32px" height="32px">
+        </div>
+        <div id="table" style="float:right;position:absolute;width:500px; height:420px;z-index:100; background-color:transparent;
 	-moz-box-shadow: 1px 1px 3px #000000;-webkit-box-shadow: 1px 1px 3px #000000;box-shadow: 1px 1px 3px #000000;
 	border:solid 1px #5DA1D7;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;display:none;">
-
-<div class="title" style="float:left;position:relative;width:100%;height:20px;border:solid 0.1px #5DA1D7;color:white;background:#5DA1D7;">
-<div style="float:left;font-family:calibri;width:90%;margin-left:10px;position:relative;">Search Results</div>
-<div id="closeTable" style="width:auto;height:auto;float:right;text-align: right;font-family:calibri;margin-right:5px;position:relative;">x</div>
-</div>
-<div style="width:100%;float:left;position:relative;height:30px;top:0px;margin-top:0px;background-color:white;">
-<table class="sortable" style="width:100%;float:left;margin-top:0px;margin-bottom: 0px;table-layout: fixed;">
-<thead>
-<tr width=100%>
-<th width=20% onclick="sorttable.innerSortFunction.apply(document.getElementById('sbl'), []);">SBL</th>
-<th width=29% onclick="sorttable.innerSortFunction.apply(document.getElementById('tadd'), []);">Address</th>
-<th width=41% onclick="sorttable.innerSortFunction.apply(document.getElementById('toname'), []);">Owner Name</th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
-</div>
-<div id="bigTable" style="width:100%;float:left;position:relative;height:370px;top:0px;margin-top:0px;background-color:white;">
-<table id="large" cellspacing="0" class="sortable" style="width:100%;float:left;margin-top:0px;margin-bottom: 0px;table-layout: fixed;">
-<thead style="display: none;">
-<tr width=100%>
-<th id="sbl" width=20%>SBL</th>
-<th id="tadd" width=29%>Address</th>
-<th id="toname" width=41%>Owner Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-
-
-<div id="LayerList" class="draggabletest" style="float:right;right:0px;top:100px;position:absolute;width:300px; min-height:300px;z-index:100;overflow:hidden; background-color:white;
+            <div class="title" style="float:left;position:relative;width:100%;height:20px;border:solid 0.1px #5DA1D7;color:white;background:#5DA1D7;">
+                <div style="float:left;font-family:calibri;width:90%;margin-left:10px;position:relative;">Search Results</div>
+                <div id="closeTable" style="width:auto;height:auto;float:right;text-align: right;font-family:calibri;margin-right:5px;position:relative;">x</div>
+            </div>
+            <div style="width:100%;float:left;position:relative;height:30px;top:0px;margin-top:0px;background-color:white;">
+                <table class="sortable" style="width:100%;float:left;margin-top:0px;margin-bottom: 0px;table-layout: fixed;">
+                    <thead>
+                        <tr width=100%>
+                            <th width=20% onclick="sorttable.innerSortFunction.apply(document.getElementById('sbl'), []);">SBL</th>
+                            <th width=29% onclick="sorttable.innerSortFunction.apply(document.getElementById('tadd'), []);">Address</th>
+                            <th width=41% onclick="sorttable.innerSortFunction.apply(document.getElementById('toname'), []);">Owner Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div id="bigTable" style="width:100%;float:left;position:relative;height:370px;top:0px;margin-top:0px;background-color:white;">
+                <table id="large" cellspacing="0" class="sortable" style="width:100%;float:left;margin-top:0px;margin-bottom: 0px;table-layout: fixed;">
+                    <thead style="display: none;">
+                        <tr width=100%>
+                            <th id="sbl" width=20%>SBL</th>
+                            <th id="tadd" width=29%>Address</th>
+                            <th id="toname" width=41%>Owner Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="LayerList" class="draggabletest" style="float:right;right:0px;top:100px;position:absolute;width:300px; min-height:300px;z-index:100;overflow:hidden; background-color:white;
 	-moz-box-shadow: 1px 1px 3px #000000;-webkit-box-shadow: 1px 1px 3px #000000;box-shadow: 1px 1px 3px #000000;
 	border:solid 1px #5DA1D7;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;">
-
-<div class="title" style="float:left;position:relative;width:100%;height:20px;border:solid 0.1px #5DA1D7;color:white;background:#5DA1D7;">
-<div style="float:left;font-family:calibri;width:90%;margin-left:10px;position:relative;">
-Layer List</div>
-<div id="closeList" style="width:auto;height:auto;float:right;text-align:right;font-family:calibri;margin-right:5px;position:relative;">x</div>
-</div>
-<div id="tree3" style="height:auto; width:99%;overflow: hidden;position:relative;float:left;"></div>
-<div style="margin-left:5px;margin-right:5px;font-size: 12px;position:relative;float:left;bottom:0px;height:auto;">
-<b>Note:</b> GIS Layers are scale dependant. Certain information may only draw at a specific map scale. If you do not see a layer when it appears checked above, then try to zoom in or out.
-</div>
-
-</div>
-
-<!--
+            <div class="title" style="float:left;position:relative;width:100%;height:20px;border:solid 0.1px #5DA1D7;color:white;background:#5DA1D7;">
+                <div style="float:left;font-family:calibri;width:90%;margin-left:10px;position:relative;">
+                    Layer List</div>
+                <div id="closeList" style="width:auto;height:auto;float:right;text-align:right;font-family:calibri;margin-right:5px;position:relative;">x</div>
+            </div>
+            <div id="tree3" style="height:auto; width:99%;overflow: hidden;position:relative;float:left;"></div>
+            <div style="margin-left:5px;margin-right:5px;font-size: 12px;position:relative;float:left;bottom:0px;height:auto;">
+                <b>Note:</b> GIS Layers are scale dependant. Certain information may only draw at a specific map scale. If you do not see a layer when it appears checked above, then try to zoom in or out.
+            </div>
+        </div>
+        <!--
 legend detail is retrievable, example: export2pdf david example from code gallery
 -->
-<div id="legend" style="width:400px; min-height:220px; background-color:white; overflow:hidden;position:absolute;float:right;right:0px;top:50px; z-index: 100;
+        <div id="legend" style="width:400px; min-height:220px; background-color:white; overflow:hidden;position:absolute;float:right;right:0px;top:50px; z-index: 100;
 	-moz-box-shadow: 1px 1px 3px #000000;-webkit-box-shadow: 1px 1px 3px #000000;box-shadow: 1px 1px 3px #000000;
 	border:solid 1px #5DA1D7;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;">
-<div class="title" style="z-index: 100;float:left;position:relative;width:100%;height:20px;border:solid 0.1px #5DA1D7;color:white;background:#5DA1D7;">
-<div style="float:left;font-family:calibri;width:80%;margin-left:10px;position:relative;">Legend</div>
-<div id="closeLegend" style="width:auto;height:auto;float:right;text-align:right;font-family:calibri;margin-right:5px;position:relative;z-index: 100;">x</div>
-</div>
-<div id="legendDiv" style="float:left;position:relative;height:auto;">
-<ul id="legendUl">
-<ul>
-</div>
-</div>
-
-
-<div id="printerSettings" style="width:400px;height:320px; position:absolute;left:200px;top:200px;background-color:white;z-index: 100;-moz-box-shadow: 1px 1px 3px #000000;-webkit-box-shadow: 1px 1px 3px #000000;box-shadow: 1px 1px 3px #000000;
+            <div class="title" style="z-index: 100;float:left;position:relative;width:100%;height:20px;border:solid 0.1px #5DA1D7;color:white;background:#5DA1D7;">
+                <div style="float:left;font-family:calibri;width:80%;margin-left:10px;position:relative;">Legend</div>
+                <div id="closeLegend" style="width:auto;height:auto;float:right;text-align:right;font-family:calibri;margin-right:5px;position:relative;z-index: 100;">x</div>
+            </div>
+            <div id="legendDiv" style="float:left;position:relative;height:auto;">
+                <ul id="legendUl">
+                    <ul>
+            </div>
+        </div>
+        <div id="printerSettings" style="width:400px;height:320px; position:absolute;left:200px;top:200px;background-color:white;z-index: 100;-moz-box-shadow: 1px 1px 3px #000000;-webkit-box-shadow: 1px 1px 3px #000000;box-shadow: 1px 1px 3px #000000;
 	border:solid 1px #5DA1D7;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;display:none;">
+            <div class="title" style="float:left;position:relative;width:100%;height:20px;border:solid 0.1px #5DA1D7;color:white;background:#5DA1D7;">
+                <div style="float:left;font-family:calibri;width:90%;margin-left:10px;position:relative;">Export map to PDF</div>
+                <div id="closePrinter" style="width:auto;height:auto;float:right;text-align:right;font-family:calibri;margin-right:5px;position:relative;">x</div>
+            </div>
+            <div>
+                <div>
+                    PDF Options:
+                </div>
+                <table cellspacing="5">
+                    <tr>
+                        <td>
+                            Map Title
+                        </td>
+                        <td>
+                            <input type="text" name="mapTitle" value="My Map" dojoType="dijit.form.TextBox" trim="true" id="mapTitle">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Map Layout
+                        </td>
+                        <td>
+                            <select dojoType="dijit.form.FilteringSelect" id="mapLayout" name="mapLayout">
+                                <option value="Landscape8x11" selected="selected">8 1/2 x 11 Landscape</option>
+                                <option value="Portrait8x11">8 1/2 x 11 Portrait</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align:left;">
+                            <div id="exportPDFBtn" dojotype="dijit.form.Button" onclick="exportPDF();">
+                                Export PDF
+                            </div>
+                            <div>(When your PDF is ready, you can click and view it in another window or right click and save link to your local directory)</div>
+                        </td>
+                    </tr>
+                </table>
+                <div id="pdfResult" style="width:100%;">
+                    <div id="pdfRequest" class="pdf" style="display:none;">
+                        <div style="text-align:center;margin:auto;">
+                            Your PDF will be available here when finished.
+                        </div>
+                        <div dojoType="dijit.ProgressBar" indeterminate="true" style="width:95%;margin:auto;">
+                        </div>
+                    </div>
+                    <div id="pdfRequestFinished" class="pdf" style="display:none;">
+                        <div style="text-align:center;margin:auto;">
+                            Click to download your PDF:
+                        </div>
+                        <div style="text-align:center;margin:auto;">
+                            <a id="pdfLink" href="" target="_blank"><img src="images/pdf.png" /></a>
+                        </div>
+                    </div>
+                    <div id="pdfRequestError" class="pdf" style="display:none;">
+                        <div style="text-align:center;margin:auto;">
+                            Your PDF export encountered an error. Please try again.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <input type="button" id="alertclicker" style="display:hidden;">
+        <div id="alertinfo" style="background-color: #fff;width:300px;height:220px;text-align: center;margin:auto;">
+            <div style="float:left;position:relative;height:160px;width:100%;">
+                <br />Results were not found! Please check your spelling and try again.
+                <br />
+                <br /> If the problem persists, try another search method or contact the:
+                <br />
+                <br /> Assessor office: 716.631.7038
+                <br /> Hours: 9:00AM - 5:00PM(Mon-Fri)
+                <br />
+            </div>
+            <div style="float:left;position:relative;text-align: center;margin:auto;width:100%;">
+                <div style="text-align:center; margin:auto;width:100%;position:relative;top:15px;">
+                    <div id="close-btn3" dojotype="dijit.form.Button">OK</div>
+                </div>
+            </div>
+        </div>
+        <input type="button" id="popupclicker" style="display:hidden;">
+        <input type="button" id="close-btn" style="display:none;">
+        <div id="popupinfo" style="background-color: #fff;width:300px;height:410px;text-align: center;margin:auto;">
+            <div id="disclaimer" style="float:left;position:relative;height:300px;width:100%;padding-top:5px;"><b>Amherst Map Machine Disclaimer:</b>
+                <br>
+                <br>
+                <div id="disclaimer-content" style="width:90%;margin-left:10px;margin-right:0px;font-family:calibri;font-size:14px;">The Town of Amherst, New York (Amherst), provides this Geographic Information System (GIS) data and related mapping as a service to residents and businesses.The GIS data is meant for informational purposes only. The maps, related datasets,and the tabular data presented in this Internet mapping application are developedand maintained from public records, various data sources, and are under constant revisions. It is not meant to be construed as a survey or legal document. Users of this mapping application should consult the original information source(s) or Town department for verification of the information contained on this application. While efforts have been made to use the most current and accurate data, Amherst, assumes no legal responsibility for the information contained in this Internet-based Geographic Information System. The information contained herein is provided for informational purposes only. Amherst provides this GIS data and metadata with no claim as to the completeness, usefulness, or accuracy of its content, positional or otherwise. Your use and browsing of information on this site is at your own risk. In providing this data and application or access to it, Amherst, assumes no obligation to assist the user in the use of such data or in the development, use, or maintenance of any applications applied to or associated with the data or metadata. For more detailed information please see the “Terms and Conditions” linked below. You can also contact us using the main form under the “Map Info” button in the upper right of these applications.</div>
+                <br /><a href="doc/Terms_and_Conditions.pdf" target="_blank">Terms and Conditions</a></div>
+            <div style="float:left;position:relative;text-align: center;margin:auto;width:100%;">
+                <div style="height:12px;top:4px;display:inline;">
+                    <input type="checkbox" id="agree" class="agree" disabled="disabled" style="border:none; background:white;" /><span>&nbsp; I Accept</span>
+                    <br />
+                </div>
+                <div style="text-align:center; margin:auto;width:100%;left:60px;position:relative;top:8px;">
+                    <div id="ug" dojotype="dijit.form.Button" style="float:left;" onclick="userGuide();"></div>
+                    <div id="continue" dojotype="dijit.form.Button" style="float:left;" disabled="disabled" onclick="mcontinue();">
+                    </div>
+                </div>
+                <div style="position:relative;float:left; font-size: 14px;top:10px;padding:5px 5px 5px 0px;">User Guide is also available on the upper right corner of the webpage.</div>
+            </div>
+        </div>
+        <input type="button" id="popupclicker2" style="display:hidden;">
+        <input type="button" id="close-btn2" style="display:hidden;">
+        <div id="popupinfo2" style="background-color: #fff;width:300px;height:425px;text-align: center;margin:auto;">
+            <div style="float:left;position:relative;height:330px;width:100%;"><b>Zoning Data Disclaimer:</b>
+                <br/>
+                <br/>This map was prepared with data maintained by various agencies at both the Town and County levels. While every effort was made to use the best available information, this map is intended to be used for informational purposes only. The Zoning Layer is not to be construed as the Official Zoning Map of the Town of Amherst.
+                <br>
+                <br>Please contact the Town of Amherst Building Department for official Zoning determinations.
+                <br>
+                <br>716.631.7080 (M-F 9am-5pm)
+                <br>
+                <br>
+            </div>
+            <div style="float:left;position:relative;text-align: center;margin:auto;width:100%;">
+                <div>
+                    <input type="checkbox" id="agree2" class="agree" style="border:none; background:white;" />&nbsp; I Accept
+                    <br />
+                </div>
+                <div style="text-align:center; margin:auto;width:100%;left:60px;position:relative;">
+                    <div id="return" dojotype="dijit.form.Button" style="float:left;" onclick="zreturn();">Return</div>
+                    <div id="continue2" dojotype="dijit.form.Button" style="float:left;" onclick="zcontinue();">
+                        Continue
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="contactinfo" style="background-color: #fff;width:300px;height:410px;text-align: center;margin:auto;">
+            <div style="float:left;position:relative;height:350px;width:100%;"><b>Contact Form:</b>
+                <br>(Your response will be sent to gis@amherst.ny.us)
+                <br />
+                <table>
+                    <tr>
+                        <td>Name</td>
+                        <td>
+                            <textarea id="name" placeholder="Name" style="width:200px;height:18px;resize:none;"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Email</td>
+                        <td>
+                            <textarea id="email" placeholder="Email" type="text" style="width:200px;margin-top:10px;height:18px;resize:none;"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Comments
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                        </td>
+                        <td>
+                            <textarea id="comments" placeholder="Comment" style="width:200px;height:200px;margin-top:10px;resize:none;"></textarea>
+                        </td>
+                    </tr>
+                </table>
+                <div id="submitting" style="position:absolute;top: 200px;width:100%;text-align: center;margin:auto;">submitting...</div>
+            </div>
+            <div style="float:left;position:relative;text-align: center;margin:auto;width:100%;left:80px;">
+                <div id="close-btn4" dojotype="dijit.form.Button" style="float:left;position:relative;" onclick="clearContact();">
+                    Return
+                </div>
+                <div id="submitContact" dojotype="dijit.form.Button" style="float:left;position:relative;" disabled="false" onclick="contact();">
+                    Submit
+                </div>
+            </div>
+        </div>
+        <div id="map" style="width:100%; overflow: hidden;padding:0;left:0px;right:0px;bottom:0px;top:20px;position:absolute;float:left;">
+            <img id="mapLoadingImg" src="images/loadingEsri.gif" style="position:absolute; width:32px; height:32px; z-index:100;" />
+        </div>
+        <!--06042015-->
+        <div id="measurement-div"></div>
+        <div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="dryicon" style="float:left; left:170px; bottom:15px; z-index:100;position:absolute;" data-dojo-props="iconClass:'dryicon', onClick:function(){dryicons();}"></div>
+        <span id="dryicon_tt" dojoType="dijit.Tooltip" connectId="dryicon">All icons are from DryIcons.com. Click here for more information!</span>
+        <!--<div id="dryicon" style="width:auto;height:auto;float:left;left:500px;position:relative; bottom:30px;z-index: 100;"><img src="images/logo_24px.png" /></div>-->
+        <input type="hidden" name="antispam" id="antispam" value="lalalala" />
+    </div>
+    <script>
+    //$("#close-btn").attr("disabled", "disabled");
+    $("#continue2").attr("disabled", "disabled");
 
-<div class="title" style="float:left;position:relative;width:100%;height:20px;border:solid 0.1px #5DA1D7;color:white;background:#5DA1D7;">
-<div style="float:left;font-family:calibri;width:90%;margin-left:10px;position:relative;">Export map to PDF</div>
-<div id="closePrinter" style="width:auto;height:auto;float:right;text-align:right;font-family:calibri;margin-right:5px;position:relative;">x</div>
-</div>
+    $("#legendDiv").css("position", "none");
+    $("#alert").hide();
+    $("#alert").click(function() {
+        $(this).hide();
+    });
+    $("#table").hide();
+    $("#closeTable").click(function() {
+        //$("#table").hide('fast',function(){map.graphics.clear();});
+        $("#table").hide();
+        //$('thead').scrollIntoView();
+        $('#table').css("top", 100 + "px");
+        $('#table').css("left", 100 + "px");
+        $("#bigTable").trigger('scrollContent', [-99]);
+    });
+    $("#closeList").click(function() {
+        $("#LayerList").hide();
+        //$("#LayerList").css("float","right");
+        //$("#LayerList").css("right","0px");
+        //$("#LayerList").css("top","100px");
 
-<div>
-<div>
-PDF Options:
-</div>
-<table cellspacing="5">
-<tr>
-<td>
-Map Title
-</td>
-<td>
-<input type="text" name="mapTitle" value="My Map" dojoType="dijit.form.TextBox" trim="true" id="mapTitle">
-</td>
-</tr>
-<tr>
-<td>
-Map Layout
-</td>
-<td>
-<select dojoType="dijit.form.FilteringSelect" id="mapLayout" name="mapLayout">
-<option value="Landscape8x11" selected="selected">8 1/2 x 11 Landscape</option>
-<option value="Portrait8x11">8 1/2 x 11 Portrait</option>
-</select>
-</td>
-</tr>
-<tr>
-<td colspan="2" style="text-align:left;">
-<div id="exportPDFBtn" dojotype="dijit.form.Button" onclick="exportPDF();">
-Export PDF
-</div>
-<div>(When your PDF is ready, you can click and view it in another window or right click and save link to your local directory)</div>
+        //untoggle layerList checkbox in mapinfo
+        $("#mapInfo").find('span.selectOption').each(function() {
+            if ($(this).attr('value') == 'LayerList') {
+                $(this).find("span").addClass("hiddenspan");
+            }
+        });
 
-</td>
-</tr>
-</table>
-<div id="pdfResult" style="width:100%;">
-<div id="pdfRequest" class="pdf" style="display:none;">
-<div style="text-align:center;margin:auto;">
-Your PDF will be available here when finished.
-</div>
-<div dojoType="dijit.ProgressBar" indeterminate="true" style="width:95%;margin:auto;">
-</div>
-</div>
-<div id="pdfRequestFinished" class="pdf" style="display:none;">
-<div style="text-align:center;margin:auto;">
-Click to download your PDF:
-</div>
-<div style="text-align:center;margin:auto;">
-<a id="pdfLink" href="" target="_blank"><img src="images/pdf.png"/></a>
-</div>
-</div>
-<div id="pdfRequestError" class="pdf" style="display:none;">
-<div style="text-align:center;margin:auto;">
-Your PDF export encountered an error. Please try again.
-</div>
-</div>
-</div>
-</div>
+    });
+    $('#index').focus(function() {
+        $(this).addClass("orangeBorder");
+        var aa = $("#selectedOption")[0].textContent;
+        if (aa == null) {
+            aa = $("#selectedOption")[0].innerText;
+        }
+        var bb = "Enter " + aa + " here...";
+        if (aa == "Search By:") {
+            bb = "Select Search field";
+        }
+        $(this).attr("placeholder", bb);
+        Placeholder.init();
+        $(this).css("color", "black");
+        //$(this).select();
+    });
+    $('#index').blur(function() {
+        $(this).removeClass("orangeBorder");
+        $(this).css("color", "white");
+    });
+    /*$('#index').change(function(){
+    		$("#go").trigger("mouseover");
+    		alert("b");
+    	});*/
+    $('#index').bind('input', function() {
+        //alert("a");
+    });
 
-</div>
-<input type="button" id="alertclicker" style="display:hidden;">
-<div id="alertinfo" style="background-color: #fff;width:300px;height:220px;text-align: center;margin:auto;">
-<div style="float:left;position:relative;height:160px;width:100%;"><br />Results were not found! Please check your spelling and try again.<br /><br /> If the problem persists, try another search method or contact the: <br /> <br /> Assessor office: 716.631.7038 <br /> Hours: 9:00AM - 5:00PM(Mon-Fri)<br /></div>
-<div style="float:left;position:relative;text-align: center;margin:auto;width:100%;">
-<div style="text-align:center; margin:auto;width:100%;position:relative;top:15px;">
-<div id="close-btn3" dojotype="dijit.form.Button">OK</div>
-</div>
-</div>
-
-</div>
-
-<input type="button" id="popupclicker" style="display:hidden;">
-<input type="button" id="close-btn" style="display:none;">
-<div id="popupinfo" style="background-color: #fff;width:300px;height:410px;text-align: center;margin:auto;">
-<div id="disclaimer" style="float:left;position:relative;height:300px;width:100%;padding-top:5px;"><b>Amherst Map Machine Disclaimer:</b><br><br><div id="disclaimer-content" style="width:90%;margin-left:10px;margin-right:0px;font-family:calibri;font-size:14px;">The Town of Amherst, New York (Amherst), provides this Geographic Information System (GIS) data and related mapping as a service to residents and businesses.The GIS data is meant for informational purposes only. The maps, related datasets,and the tabular data presented in this Internet mapping application are developedand maintained from public records, various data sources, and are under constant revisions. It is not meant to be construed as a survey or legal document. Users of this mapping application should consult the original information source(s) or Town department for verification of the information contained on this application. While efforts have been made to use the most current and accurate data, Amherst, assumes no legal responsibility for the information contained in this Internet-based Geographic Information System. The information contained herein is provided for informational purposes only. Amherst provides this GIS data and metadata with no claim as to the completeness, usefulness, or accuracy of its content, positional or otherwise. Your use and browsing of information on this site is at your own risk. In providing this data and application or access to it, Amherst, assumes no obligation to assist the user in the use of such data or in the development, use, or maintenance of any applications applied to or associated with the data or metadata. For more detailed information please see the “Terms and Conditions” linked below. You can also contact us using the main form under the “Map Info” button in the upper right of these applications.</div>
-<br /><a href="doc/Terms_and_Conditions.pdf" target="_blank">Terms and Conditions</a></div>
-<div style="float:left;position:relative;text-align: center;margin:auto;width:100%;">
-<div style="height:12px;top:4px;display:inline;">
-<input type="checkbox" id="agree" class="agree" disabled="disabled" style="border:none; background:white;"/><span>&nbsp; I Accept</span>
-<br />
-</div>
-<div style="text-align:center; margin:auto;width:100%;left:60px;position:relative;top:8px;">
-<div id="ug" dojotype="dijit.form.Button" style="float:left;" onclick="userGuide();"></div>
-<div id="continue" dojotype="dijit.form.Button" style="float:left;" disabled="disabled" onclick="mcontinue();">
-
-</div>
-
-</div>
-<div style="position:relative;float:left; font-size: 14px;top:10px;padding:5px 5px 5px 0px;">User Guide is also available on the upper right corner of the webpage.</div>
-</div>
-
-</div>
-
-<input type="button" id="popupclicker2" style="display:hidden;">
-<input type="button" id="close-btn2" style="display:hidden;">
-<div id="popupinfo2" style="background-color: #fff;width:300px;height:425px;text-align: center;margin:auto;">
-<div style="float:left;position:relative;height:330px;width:100%;"><b>Zoning Data Disclaimer:</b><br/><br/>This map was prepared with data maintained by various agencies at both the Town and County levels.  While every effort was made to use the best available information, this map is intended to be used for informational purposes only.  The Zoning Layer is not to be construed as the Official Zoning Map of the Town of Amherst.<br><br>Please contact the Town of Amherst Building Department for official Zoning determinations.<br><br>716.631.7080 (M-F 9am-5pm)<br><br></div>
-<div style="float:left;position:relative;text-align: center;margin:auto;width:100%;">
-<div>
-<input type="checkbox" id="agree2" class="agree" style="border:none; background:white;"/>&nbsp; I Accept
-<br />
-</div>
-<div style="text-align:center; margin:auto;width:100%;left:60px;position:relative;">
-<div id="return" dojotype="dijit.form.Button" style="float:left;"  onclick="zreturn();">Return</div>
-<div id="continue2" dojotype="dijit.form.Button" style="float:left;"  onclick="zcontinue();">
-Continue
-</div>
-</div>
-</div>
-
-</div>
-
-<div id="contactinfo" style="background-color: #fff;width:300px;height:410px;text-align: center;margin:auto;">
-<div style="float:left;position:relative;height:350px;width:100%;"><b>Contact Form:</b><br>(Your response will be sent to gis@amherst.ny.us)<br />
-<table>
-<tr>
-<td>Name</td>
-<td><textarea id="name" placeholder="Name" style="width:200px;height:18px;resize:none;"></textarea></td>
-</tr>
-<tr>
-<td>Email</td>
-<td><textarea id="email" placeholder="Email" type="text" style="width:200px;margin-top:10px;height:18px;resize:none;"></textarea></td>
-</tr>
-<tr>
-<td>Comments<br><br><br><br><br><br><br><br><br><br><br></td>
-<td><textarea id="comments" placeholder="Comment" style="width:200px;height:200px;margin-top:10px;resize:none;"></textarea></td>
-</tr>
-</table>
-<div id="submitting" style="position:absolute;top: 200px;width:100%;text-align: center;margin:auto;">submitting...</div>
-</div>
-<div style="float:left;position:relative;text-align: center;margin:auto;width:100%;left:80px;">
-
-<div id="close-btn4" dojotype="dijit.form.Button" style="float:left;position:relative;" onclick="clearContact();">
-Return
-</div>
-
-<div id="submitContact" dojotype="dijit.form.Button" style="float:left;position:relative;" disabled="false" onclick="contact();">
-Submit
-</div>
-
-</div>
-
-</div>
-
-
-<div id="map" style="width:100%; overflow: hidden;padding:0;left:0px;right:0px;bottom:0px;top:20px;position:absolute;float:left;">
-<img id="mapLoadingImg" src="images/loadingEsri.gif" style="position:absolute; width:32px; height:32px; z-index:100;" />
-</div>
-<!--06042015-->
-<div id="measurement-div" ></div>
-<div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="dryicon" style="float:left; left:170px; bottom:15px; z-index:100;position:absolute;"
-data-dojo-props="iconClass:'dryicon', onClick:function(){dryicons();}"></div>
-<span id="dryicon_tt" dojoType="dijit.Tooltip" connectId="dryicon">All icons are from DryIcons.com. Click here for more information!</span>
-<!--<div id="dryicon" style="width:auto;height:auto;float:left;left:500px;position:relative; bottom:30px;z-index: 100;"><img src="images/logo_24px.png" /></div>-->
-<input type="hidden" name="antispam" id="antispam" value="lalalala" />
-</div>
-<script>
-
-//$("#close-btn").attr("disabled", "disabled");
-$("#continue2").attr("disabled", "disabled");
-
-$("#legendDiv").css("position","none");
-$("#alert").hide();
-$("#alert").click(function(){
-	$(this).hide();
-});
-$("#table").hide();
-$("#closeTable").click(function(){
-	//$("#table").hide('fast',function(){map.graphics.clear();});
-	$("#table").hide();
-	//$('thead').scrollIntoView();
-	$('#table').css("top",100+"px");
-	$('#table').css("left",100+"px");
-	$("#bigTable").trigger('scrollContent', [-99] );
-});
-$("#closeList").click(function(){
-	$("#LayerList").hide();
-	//$("#LayerList").css("float","right");
-	//$("#LayerList").css("right","0px");
-	//$("#LayerList").css("top","100px");
-
-	//untoggle layerList checkbox in mapinfo
-	$("#mapInfo").find('span.selectOption').each(function(){
-		if($(this).attr('value')=='LayerList'){
-			$(this).find("span").addClass("hiddenspan");
-		}
-	});
-
-});
-$('#index').focus(function(){
-	$(this).addClass("orangeBorder");
-	var aa=$("#selectedOption")[0].textContent;
-	if(aa==null){
-		aa=$("#selectedOption")[0].innerText;
-	}
-	var bb="Enter "+aa+" here...";
-	if(aa=="Search By:"){
-		bb="Select Search field";
-	}
-	$(this).attr("placeholder",bb);
-	Placeholder.init();
-	$(this).css("color","black");
-	//$(this).select();
-});
-$('#index').blur(function(){
-	$(this).removeClass("orangeBorder");
-	$(this).css("color","white");
-});
-/*$('#index').change(function(){
-		$("#go").trigger("mouseover");
-		alert("b");
-	});*/
-$('#index').bind('input', function() {
-	//alert("a");
-});
-
-$("#agree").click(function(){
-	accept();
-});
-$("#agree2").click(function(){
-	accept2();
-});
-
-
-
-$("#closeLegend").click(function(){
-	$("#legend").hide();
-	//untoggle layerList checkbox in mapinfo
-	$("#mapInfo").find('span.selectOption').each(function(){
-		if($(this).attr('value')=='legend'){
-			$(this).find("span").addClass("hiddenspan");
-		}
-	});
-
-});
-$("#closeLegend").click();
-
-$("#closePrinter").click(function(){
-	$("#printerSettings").hide();
-	dojo.style("pdfRequestFinished", "display", "none");
-
-	dojo.style("pdfRequest", "display", "none");
-	dojo.style("pdfRequestError", "display", "none");
-	document.getElementsByName("mapTitle")[0].value="My Map";
-
-	//untoggle layerList checkbox in mapinfo
-});
+    $("#agree").click(function() {
+        accept();
+    });
+    $("#agree2").click(function() {
+        accept2();
+    });
 
 
-$("#loading").hide();
 
-// $("div[title='Maximize']").hide();
-//shortcut key "Enter"
-$(document).keyup(function(event) {
-	if(event.which==13){
-		gosearch();
-	}
-}).keydown(function(event) {
-	if (event.which == 13) {
-		event.preventDefault();
-	}
-});
+    $("#closeLegend").click(function() {
+        $("#legend").hide();
+        //untoggle layerList checkbox in mapinfo
+        $("#mapInfo").find('span.selectOption').each(function() {
+            if ($(this).attr('value') == 'legend') {
+                $(this).find("span").addClass("hiddenspan");
+            }
+        });
 
-//write for IE8
-$(".close").click(function(){
-	map.infoWindow.hide();
-});
+    });
+    $("#closeLegend").click();
 
-var spamDetect;
-function antiSpam() {
-	if (document.getElementById("antispam")) {
-		a = document.getElementById("antispam");
-		if (isNaN(a.value) == true) {
-			a.value = 0;
-		} else {
-			a.value = parseInt(a.value) + 1;
-		}
-	}
-	spamDetect=setTimeout("antiSpam()", 1000);
-}
+    $("#closePrinter").click(function() {
+        $("#printerSettings").hide();
+        dojo.style("pdfRequestFinished", "display", "none");
+
+        dojo.style("pdfRequest", "display", "none");
+        dojo.style("pdfRequestError", "display", "none");
+        document.getElementsByName("mapTitle")[0].value = "My Map";
+
+        //untoggle layerList checkbox in mapinfo
+    });
 
 
-</script>
-<script type="text/javascript">
-$(document).ready(function () {
-	$("#popupclicker").hide();
-	var mainDisclaimer=getCookie("main");
-	if (mainDisclaimer!=null && mainDisclaimer!="" ){}
-	else{
-		$('#popupclicker').trigger('click');
-	}
+    $("#loading").hide();
 
-	$("#popupclicker2").hide();
-	$("#alertclicker").hide();
-	$("#close-btn2").hide();
-	$("#closePrinter").trigger('click');
-	//$('.esriPopupWrapper').attr("id","aaaaaa");
-	//dijit.byId("agree").setAttribute('disabled',false);
-	//$("#agree").attr("disabled","false");
+    // $("div[title='Maximize']").hide();
+    //shortcut key "Enter"
+    $(document).keyup(function(event) {
+        if (event.which == 13) {
+            gosearch();
+        }
+    }).keydown(function(event) {
+        if (event.which == 13) {
+            event.preventDefault();
+        }
+    });
 
-	$("#submitting").hide();
-	//activatePan();
-});
-dojo.ready(function() {
+    //write for IE8
+    $(".close").click(function() {
+        map.infoWindow.hide();
+    });
 
-	$("#continue").text("Continue");
-	$("#ug").text("User Guide");
-	$("#agree").removeAttr('disabled');
-	$("div.myInfoWindow").draggable({containment: "parent",handle:".title"}); //Include dojo contents. Has to wait until dojo is ready.
-});
+    var spamDetect;
 
-</script>
+    function antiSpam() {
+        if (document.getElementById("antispam")) {
+            a = document.getElementById("antispam");
+            if (isNaN(a.value) == true) {
+                a.value = 0;
+            } else {
+                a.value = parseInt(a.value) + 1;
+            }
+        }
+        spamDetect = setTimeout("antiSpam()", 1000);
+    }
+    </script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $("#popupclicker").hide();
+        var mainDisclaimer = getCookie("main");
+        if (mainDisclaimer != null && mainDisclaimer != "") {} else {
+            $('#popupclicker').trigger('click');
+        }
+
+        $("#popupclicker2").hide();
+        $("#alertclicker").hide();
+        $("#close-btn2").hide();
+        $("#closePrinter").trigger('click');
+        //$('.esriPopupWrapper').attr("id","aaaaaa");
+        //dijit.byId("agree").setAttribute('disabled',false);
+        //$("#agree").attr("disabled","false");
+
+        $("#submitting").hide();
+        //activatePan();
+    });
+    dojo.ready(function() {
+
+        $("#continue").text("Continue");
+        $("#ug").text("User Guide");
+        $("#agree").removeAttr('disabled');
+        $("div.myInfoWindow").draggable({
+            containment: "parent",
+            handle: ".title"
+        }); //Include dojo contents. Has to wait until dojo is ready.
+    });
+    </script>
 </body>
+
 </html>
