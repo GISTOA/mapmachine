@@ -110,16 +110,16 @@ on iOS devices-->
         });
     });
     $(function() {
-        $('#alertinfo').modalPopLite({
-            openButton: '#alertclicker',
-            closeButton: '#close-btn3',
+        $('#popupinfo2').modalPopLite({
+            openButton: '#popupclicker2',
+            closeButton: '#close-btn2',
             isModal: true
         });
     });
     $(function() {
-        $('#popupinfo2').modalPopLite({
-            openButton: '#popupclicker2',
-            closeButton: '#close-btn2',
+        $('#alertinfo').modalPopLite({
+            openButton: '#alertclicker',
+            closeButton: '#close-btn3',
             isModal: true
         });
     });
@@ -1376,17 +1376,16 @@ on iOS devices-->
     //print end
 
     function clearContact() {
-    	console.log("Clicked on return contact");
         $("#email")[0].value = '';
         $("#name")[0].value = '';
         $("#comments")[0].value = '';
         $("#contactinfo").find("table").show();
         $("#submitting").hide();
-        console.log(dijit.byId("submitContact").get("disabled"));
         dijit.byId("submitContact").set("disabled", false);
         var a = document.getElementById("antispam");
         a.value = "lalalala";
         clearTimeout(spamDetect);
+	   $('#close-btn4').trigger('click');
     }
 
     function emailValidation(email) {
