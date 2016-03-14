@@ -14,130 +14,47 @@
 on iOS devices-->
     <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
     <title>Town of Amherst-----The Map Machine</title>
+
+    <script>
+    dojoConfig = {
+        parseOnLoad: true,
+        packages: [{
+            "name": "myModules",
+            "location": location.pathname.replace(/\/[^/]+$/, "") + "myModules"
+        }]
+    }
+    </script>
+
     <link rel="stylesheet" type="text/css" href="https://js.arcgis.com/3.13/dijit/themes/claro/claro.css">
     <link rel="stylesheet" type="text/css" href="https://js.arcgis.com/3.13/esri/css/esri.css">
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <link rel="stylesheet" type="text/css" href="css/map.css">
-    <!-- Some style setting going to be add so a css file later -->
-    <style type="text/css">
-    .zoominIcon {
-        background-image: url(images/blue_zoom_in.png);
-        width: 32px;
-        height: 32px;
-    }
+    <link rel="stylesheet" type="text/css" href="css/button.css">
+    <link rel="stylesheet" type="text/css" href="css/skin-vista/ui.dynatree.css" id="skinSheet">
+    <link rel="stylesheet" type="text/css" href="css/modalPopLite.css" />
+    <link rel="stylesheet" type="text/css" href="myModules/InfoWindow.css">
 
-    .zoomoutIcon {
-        background-image: url(images/blue_zoom_out.png);
-        width: 32px;
-        height: 32px;
-    }
 
-    .zoomfullextIcon {
-        background-image: url(images/globe.png);
-        width: 32px;
-        height: 32px;
-    }
+    <script src="https://js.arcgis.com/3.13/"></script>
+    <script src="js/jquery-1.8.2.min.js"></script>
+    <script src="js/jquery.tablesorter.js"></script>
+    <script src="js/sorttable.js"></script>
+    <script src="js/jquery-ui-1.8.23.custom.min.js"></script>
+    <script src="js/slimScroll.js"></script>
+    <script src="js/jquery.cookie.js"></script>
+    <script src="js/jquery.dynatree.js"></script>
+    <script src="js/modalPopLite.js"></script>
+    <script src="js/placeholder.js"></script>
 
-    .zoomprevIcon {
-        background-image: url(images/white_arrow_left.png);
-        width: 32px;
-        height: 32px;
-    }
-
-    .zoomnextIcon {
-        background-image: url(images/white_arrow_right2.png);
-        width: 32px;
-        height: 32px;
-    }
-
-    .panIcon {
-        background-image: url(images/hand_1.png);
-        width: 32px;
-        height: 32px;
-    }
-
-    .hyperlinkIcon {
-        background-image: url(images/triview_google.png);
-        width: 32px;
-        height: 32px;
-    }
-
-    .identifyIcon {
-        background-image: url(images/info.png);
-        width: 32px;
-        height: 32px;
-    }
-
-    .measureIcon {
-        background-image: url(images/measure.png);
-        width: 32px;
-        height: 32px;
-    }
-
-    <!--06042015--> .deactivateIcon {
-        background-image: url(images/Deactivate_32.png);
-        width: 32px;
-        height: 32px;
-    }
-
-    .clearIcon {
-        background-image: url(images/map_delete.png);
-        width: 32px;
-        height: 32px;
-    }
-
-    .printerIcon {
-        background-image: url(images/printer.png);
-        width: 32px;
-        height: 32px;
-    }
-
-    .go {
-        background-image: url(images/search.png);
-        width: 32px;
-        height: 32px;
-    }
-
-    .dryicon {
-        background-image: url(images/logo_24px.png);
-        width: 24px;
-        height: 24px;
-    }
-
-    .tombutton {
-        float: left;
-        position: relative;
-        left: 10px;
-        border: 0px;
-        text-align: center;
-        border: hidden;
-    }
-
-    .tombutton .dijitButtonNode {
-        border: 0px;
-    }
-
-    .mybutton {
-        float: left;
-        left: 0px;
-        border: 3px;
-        border-color: white;
-        background: rgba(255, 255, 255, 0.9);
-        padding: 3px;
-    }
-
-    .tool {
-        padding-top: 5px;
-    }
-    </style>
     <!-- try to retrieve information for URL passed from webpage.[for Neiborhood application use] -->
-    <script type="text/javascript">
+    <script>
     function parseURLParams(url) {
         var queryStart = url.indexOf("?") + 1;
         var queryEnd = url.indexOf("#") + 1 || url.length + 1;
         var query = url.slice(queryStart, queryEnd - 1);
 
-        if (query === url || query === "") return;
+        if (query === url || query === "")
+        	return;
 
         var params = {};
         var nvPairs = query.replace(/\+/g, " ").split("&");
@@ -160,14 +77,14 @@ on iOS devices-->
         test = urlParams.mnu_swissbl;
     }
     </script>
-    <script type="text/javascript">
+    <script>
     var urlString = document.URL;
     var urlParams = parseURLParams(urlString);
     if (urlParams != null) {
         var swiss = urlParams.swiss;
     }
     </script>
-    <script type="text/javascript">
+    <script>
     var OSName = "Unknown OS";
     if (navigator.appVersion.indexOf("Win") != -1) OSName = "Windows";
     if (navigator.appVersion.indexOf("Mac") != -1) OSName = "MacOS";
@@ -204,28 +121,8 @@ on iOS devices-->
         winH = window.innerHeight;
     }
     </script>
-    <script type="text/javascript">
-    dojoConfig = {
-        parseOnLoad: true,
-        packages: [{
-            "name": "myModules",
-            "location": location.pathname.replace(/\/[^/]+$/, "") + "/myModules"
-        }]
-    }
-    </script>
-    <script src="https://js.arcgis.com/3.13/"></script>
-    <script src="js/jquery-1.8.2.min.js" type="text/javascript"></script>
-    <script type="text/javascript" src="js/jquery.tablesorter.js"></script>
-    <script type="text/javascript" src="js/sorttable.js"></script>
-    <script type="text/javascript" src="js/jquery-ui-1.8.23.custom.min.js"></script>
-    <script type="text/javascript" src="js/slimScroll.js"></script>
-    <script src="js/jquery.cookie.js" type="text/javascript"></script>
-    <link href="css/skin-vista/ui.dynatree.css" rel="stylesheet" type="text/css" id="skinSheet">
-    <script src="js/jquery.dynatree.js" type="text/javascript"></script>
-    <link href="css/modalPopLite.css" rel="stylesheet" type="text/css" />
-    <script type="text/javascript" src="js/modalPopLite.js"></script>
-    <link rel="stylesheet" type="text/css" href="myModules/InfoWindow.css">
-    <script src="js/placeholder.js" type="text/javascript"></script>
+
+
     <!-- Add Style Dynamically -->
     <script>
     $(document).ready(function() {
@@ -241,7 +138,7 @@ on iOS devices-->
         $("#legendDiv").addClass("absolutePosition");
     });
     </script>
-    <script type="text/javascript">
+    <script>
     $(function() {
         $('#popupinfo').modalPopLite({
             openButton: '#popupclicker',
@@ -271,7 +168,7 @@ on iOS devices-->
         });
     });
     </script>
-    <script type="text/javascript">
+    <script>
     $(document).ready(function() {
 
         //Draggable Table from JQuery UI
@@ -394,8 +291,6 @@ on iOS devices-->
 
         $("#large").trigger('update');
     }
-
-
 
     //Zoom to the parcel when the user clicks a row
     function shownMap(evt) {
@@ -521,7 +416,7 @@ on iOS devices-->
         });
     });
     </script>
-    <script type="text/javascript">
+    <script>
     var treeData = [{
         title: "Base Information",
         expand: true,
@@ -683,7 +578,7 @@ on iOS devices-->
         });
     });
     </script>
-    <script type="text/javascript">
+    <script>
     dojo.require("dojo.parser");
     dojo.require("esri.map");
 
@@ -1370,98 +1265,8 @@ on iOS devices-->
             return "";
         }
     }
-    /*
-    	//evoked after printer button pressed
-    	function exportPDF(evt){
 
-    		dojo.style("pdfRequestFinished", "display", "none");
-    		dojo.style("pdfRequestError", "display", "none");
-    		dojo.style("pdfRequest", "display", "block");
-    		dijit.byId("exportPDFBtn").set("disabled", true);
-    		var visiblelayers = {};
-    		dojo.forEach(map.layerIds, function(layer, i1){
-    			var ml = map.getLayer(layer);
-    			switch (ml.declaredClass) {
-    				case "esri.layers.ArcGISDynamicMapServiceLayer":
-    					var s = dojo.forEach(ml.layerInfos, function(sublayer, i2){
-    						if (dojo.indexOf(ml.visibleLayers, sublayer.id.toString()) !== -1) {
-    							visiblelayers[sublayer.name] = "True";
-    						}
-    						else {
-    							visiblelayers[sublayer.name] = "False";
-    						}
 
-    						if(sublayer.subLayerIds!=null){
-    						visiblelayers[sublayer.name] = "True";
-    						}
-    					});
-    					break;
-    				default:
-    					var ov = ml.visible.toString();
-    					visiblelayers["OrthoBase/NYSOrthos2011"] = ov.charAt(0).toUpperCase() + ov.slice(1);
-    					break;
-    			}
-    		});
-
-    		var params = {
-    			"xMin": map.extent.xmin,
-    			"yMin": map.extent.ymin,
-    			"xMax": map.extent.xmax,
-    			"yMax": map.extent.ymax,
-    			"Spatial_Reference": map.spatialReference.wkid,
-    			"Map_Scale": esri.geometry.getScale(map),
-    			"Visiblelayers": dojo.toJson(visiblelayers),
-    			"Layout": dijit.byId("mapLayout").value,
-    			"Include_Attributes": true,//dijit.byId("incAttribs").checked,
-    			"Map_Title": dijit.byId("mapTitle").value,
-    			"PointGraphics": getFeatureSet("point"),
-    			"LineGraphics": getFeatureSet("polyline"),
-    			"PolyGraphics": getFeatureSet("polygon")
-    		};
-    		try
-    		{
-    		//Run some code here
-    		exportMapGP.submitJob(params, pdfCompleteCallback, pdfStatusCallback, pdfErrorCallback);
-    		}
-    		catch(err)
-    		{
-    		//Handle errors here
-    		var error=err;
-    		}
-
-    	}
-
-    	function pdfCompleteCallback(jobInfo){
-    	try{
-    		if (jobInfo.jobStatus == "esriJobSucceeded") {
-    			exportMapGP.getResultData(jobInfo.jobId, "PDF", setPdfDownloadLink);
-    		}
-    		else {
-    			pdfErrorCallback();
-    		}
-    		}
-    		catch(err){
-    		var error=err;
-    		}
-    	}
-    	function pdfStatusCallback(jobInfo){
-    	try{
-    		if (jobInfo.jobStatus === "esriJobFailed") {
-    			pdfErrorCallback();
-    		}
-    		}
-    		catch(err){
-    		var error=err;
-    		}
-    	}
-    	function pdfErrorCallback(error){
-    		var err=error;
-    		dijit.byId("exportPDFBtn").set("disabled", false);
-    dojo.style("pdfRequest", "display", "none");
-    dojo.style("pdfRequestFinished", "display", "none");
-    dojo.style("pdfRequestError", "display", "block");
-    	}
-    	*/
 
     var myVar;
     //evoked after printer button pressed
@@ -2245,7 +2050,7 @@ legend detail is retrievable, example: export2pdf david example from code galler
         spamDetect = setTimeout("antiSpam()", 1000);
     }
     </script>
-    <script type="text/javascript">
+    <script>
     $(document).ready(function() {
         $("#popupclicker").hide();
         var mainDisclaimer = getCookie("main");
