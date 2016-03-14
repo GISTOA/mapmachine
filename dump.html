@@ -37,3 +37,103 @@ if(urlParams!=null){
 	var swiss=urlParams.swiss;
 }
 </script>
+
+
+
+/*06042015*/
+		esri.config.defaults.geometryService = new esri.tasks.GeometryService("http://map.amherst.ny.us/gallifrey/rest/services/Utilities/Geometry/GeometryServer");
+		dojo.connect(map, "onLoad", function(){
+			measurement = new esri.dijit.Measurement({
+			map: map,
+			defaultLengthUnit: esri.Units.FEET
+			}, dojo.byId('measurement-div'));
+
+			dojo.style("measurement-div", {
+				"position":"absolute",
+				"background":"#fff",
+				"z-index":"100",
+				"left":"115px",
+				"top":"25px",
+				"width":"290px",
+				"height":"150px",
+				"padding":"10px 10px 10px 10px",
+				"display":"none"
+			});
+
+			measurement.startup();
+			measurement.resultLabel.setContent("Measurement Result (hold CTRL to snap)");	//06182015
+			/*06172015 snappingmanager*/
+		snapManager = map.enableSnapping();
+		var layerInfosSnap = [{layer:parcellayer}];
+		snapManager.setLayerInfos(layerInfosSnap);
+
+			measurement.on("measure-end", function(evt){
+				console.log(evt);
+				this.setTool(evt.toolName, false);
+				console.log("measure-end event triggered");
+			});
+		});
+	/* /06042015*/
+
+	    <link rel="stylesheet"href="https://js.arcgis.com/3.16/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.16/esri/css/esri.css">
+
+
+
+        require("esri.Color");
+        require("dojo.parser");
+        require("esri.config");
+        require("esri.map");
+        require("esri.SnappingManager");
+        require("esri.dijit.Measurement");
+        require("esri.layers.FeatureLayer");
+        require("esri.renderers.SimpleRenderer");
+        require("esri.tasks.GeometryService");
+        require("esri.symbols.SimpleLineSymbol");
+        require("esri.symbols.SimpleFillSymbol");
+        require("esri.dijit.Scalebar");
+        require("dijit.layout.BorderContainer");
+        require("dijit.layout.ContentPane");
+        require("dijit.TitlePane");
+        require("dijit.form.CheckBox");
+        require("dojo.domReady!");
+
+        #Line 48
+        <!-- try to retrieve information for URL passed from webpage.[for Neiborhood application use] -->
+    <script>
+    function parseURLParams(url) {
+        var queryStart = url.indexOf("?") + 1;
+        var queryEnd = url.indexOf("#") + 1 || url.length + 1;
+        var query = url.slice(queryStart, queryEnd - 1);
+
+        if (query === url || query === "")
+        	return;
+
+        var params = {};
+        var nvPairs = query.replace(/\+/g, " ").split("&");
+        for (var i = 0; i < nvPairs.length; i++) {
+            var nv = nvPairs[i].split("=");
+            var n = decodeURIComponent(nv[0]);
+            var v = decodeURIComponent(nv[1]);
+            if (!(n in params)) {
+                params[n] = [];
+            }
+            params[n].push(nv.length === 2 ? v : null);
+        }
+        return params;
+    }
+    //<!---- LIXIAN DAI Grab SwissCode from CPI-->--------------------------------------------------------------------------------------------------------
+    var urlString = document.URL;
+    var urlParams = parseURLParams(urlString);
+    var test;
+    if (urlParams != null) {
+        test = urlParams.mnu_swissbl;
+    }
+    </script>
+    <script>
+    var urlString = document.URL;
+    var urlParams = parseURLParams(urlString);
+    if (urlParams != null) {
+        var swiss = urlParams.swiss;
+    }
+    </script>

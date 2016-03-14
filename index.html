@@ -33,8 +33,6 @@ on iOS devices-->
     <link rel="stylesheet" type="text/css" href="css/skin-vista/ui.dynatree.css" id="skinSheet">
     <link rel="stylesheet" type="text/css" href="css/modalPopLite.css" />
     <link rel="stylesheet" type="text/css" href="myModules/InfoWindow.css">
-
-
     <script src="https://js.arcgis.com/3.13/"></script>
     <script src="js/jquery-1.8.2.min.js"></script>
     <script src="js/jquery.tablesorter.js"></script>
@@ -46,45 +44,9 @@ on iOS devices-->
     <script src="js/modalPopLite.js"></script>
     <script src="js/placeholder.js"></script>
 
-    <!-- try to retrieve information for URL passed from webpage.[for Neiborhood application use] -->
-    <script>
-    function parseURLParams(url) {
-        var queryStart = url.indexOf("?") + 1;
-        var queryEnd = url.indexOf("#") + 1 || url.length + 1;
-        var query = url.slice(queryStart, queryEnd - 1);
 
-        if (query === url || query === "")
-        	return;
-
-        var params = {};
-        var nvPairs = query.replace(/\+/g, " ").split("&");
-        for (var i = 0; i < nvPairs.length; i++) {
-            var nv = nvPairs[i].split("=");
-            var n = decodeURIComponent(nv[0]);
-            var v = decodeURIComponent(nv[1]);
-            if (!(n in params)) {
-                params[n] = [];
-            }
-            params[n].push(nv.length === 2 ? v : null);
-        }
-        return params;
-    }
-    //<!---- LIXIAN DAI Grab SwissCode from CPI-->--------------------------------------------------------------------------------------------------------
-    var urlString = document.URL;
-    var urlParams = parseURLParams(urlString);
-    var test;
-    if (urlParams != null) {
-        test = urlParams.mnu_swissbl;
-    }
-    </script>
     <script>
-    var urlString = document.URL;
-    var urlParams = parseURLParams(urlString);
-    if (urlParams != null) {
-        var swiss = urlParams.swiss;
-    }
-    </script>
-    <script>
+    //
     var OSName = "Unknown OS";
     if (navigator.appVersion.indexOf("Win") != -1) OSName = "Windows";
     if (navigator.appVersion.indexOf("Mac") != -1) OSName = "MacOS";
@@ -123,7 +85,7 @@ on iOS devices-->
     </script>
 
 
-    <!-- Add Style Dynamically -->
+    <!-- Add Style Dynamically //going to be configed by bootstrap-->
     <script>
     $(document).ready(function() {
         var mapheight = winH - 20 + "px";
@@ -139,6 +101,7 @@ on iOS devices-->
     });
     </script>
     <script>
+    //jQuery light weight popup dialog box
     $(function() {
         $('#popupinfo').modalPopLite({
             openButton: '#popupclicker',
@@ -1413,11 +1376,13 @@ on iOS devices-->
     //print end
 
     function clearContact() {
+    	console.log("Clicked on return contact");
         $("#email")[0].value = '';
         $("#name")[0].value = '';
         $("#comments")[0].value = '';
         $("#contactinfo").find("table").show();
         $("#submitting").hide();
+        console.log(dijit.byId("submitContact").get("disabled"));
         dijit.byId("submitContact").set("disabled", false);
         var a = document.getElementById("antispam");
         a.value = "lalalala";
