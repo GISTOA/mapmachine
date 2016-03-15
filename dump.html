@@ -97,7 +97,33 @@ if(urlParams!=null){
         require("dijit.TitlePane");
         require("dijit.form.CheckBox");
         require("dojo.domReady!");
+    dojo.require("dojo.parser");
+    dojo.require("esri.map");
 
+    dojo.require("esri.layers.FeatureLayer");
+    dojo.require("esri.SnappingManager");
+    dojo.require("esri.symbol");
+    dojo.require("esri.renderer");
+
+    dojo.require("esri.tasks.query");
+    dojo.require("esri.tasks.identify");
+    dojo.require("esri.toolbars.navigation");
+    dojo.require("dijit.form.Button");
+    dojo.require("dijit.Toolbar");
+    dojo.require("esri.dijit.Scalebar");
+    dojo.require("dijit.Tooltip");
+    dojo.require("dojo.data.ItemFileReadStore");
+    dojo.require("esri.tasks.find");
+    dojo.require("esri.dijit.Legend");
+    dojo.require("dijit.Dialog");
+    dojo.require("dijit.ProgressBar");
+    dojo.require("dijit.form.FilteringSelect");
+    dojo.require("dijit.form.CheckBox");
+    dojo.require("dijit.form.TextBox");
+    dojo.require("esri.dijit.Measurement");
+    dojo.require("myModules.InfoWindow");
+    dojo.require("esri.tasks.gp");
+    dojo.require("esri.dijit.InfoWindow");
         #Line 48
         <!-- try to retrieve information for URL passed from webpage.[for Neiborhood application use] -->
     <script>
