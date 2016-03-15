@@ -272,7 +272,8 @@ on iOS devices-->
     </script>
     <script>
 
-require(["dojo/parser","dojo/data/ItemFileReadStore",
+require(["dojo/parser", "dojo/ready", "dojo/data/ItemFileReadStore",
+	"esri/config",
 	"esri/map", "esri/layers/FeatureLayer", "esri/SnappingManager", "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol",
 	"esri/tasks/query", "esri/tasks/IdentifyTask", "esri/tasks/IdentifyParameters", "esri/tasks/Geoprocessor", "esri/toolbars/navigation",
 	"esri/dijit/Scalebar", "esri/dijit/Measurement","esri/dijit/InfoWindow", "esri/tasks/FindTask", "esri/tasks/FindParameters", "esri/dijit/Legend",
@@ -280,13 +281,27 @@ require(["dojo/parser","dojo/data/ItemFileReadStore",
 	"dijit/form/FilteringSelect", "dijit/form/CheckBox", "dijit/form/TextBox", "dijit/form/Button",
 	"myModules/InfoWindow",
 	"dojo/domReady!"
-	],function(parser, ItemFileReadStore,
+	],function(parser, ready, ItemFileReadStore,
+		esriConfig,
 		Map, FeatureLayer, SnappingManager, SimpleFillSymbol, SimpleLineSymbol,
 		Query, IdentifyTask, IdentifyParameters, Geoprocessor, Navigation,
 		Scalebar, Measurement, InfoWindow, FindTask, FindParameters, Legend,
 		Tooltip, Dialog, ProgressBar, Toolbar,
 		FilteringSelect, CheckBox, TextBox, Button,
 		myInfoWindow){
+
+		ready(function(){
+			init();
+			esriConfig.defaults.io.proxyUrl= "proxy.ashx";
+
+			$("#continue").text("Continue");
+			$("#ug").text("User Guide");
+			$("#agree").removeAttr('disabled');
+			$("div.myInfoWindow").draggable({
+				containment: "parent",
+				handle: ".title"
+			}); //Include dojo contents. Has to wait until dojo is ready.
+		});
 
 });
 
@@ -308,9 +323,7 @@ require(["dojo/parser","dojo/data/ItemFileReadStore",
     var tempFeatures = []; //store graphics related with parcels's searching results
     var tempnav, exportMapGP, contactGP;
     var snapManager; //06172015
-    dojo.ready(function() {
-        esri.config.defaults.io.proxyUrl = "proxy.ashx";
-    });
+
 
     function init() {
 
@@ -1292,7 +1305,7 @@ require(["dojo/parser","dojo/data/ItemFileReadStore",
         $("#legendDiv").trigger('resetBar', [-99]);
     }
 
-    dojo.addOnLoad(init);
+
     </script>
 </head>
 
@@ -1754,16 +1767,7 @@ legend detail is retrievable, example: export2pdf david example from code galler
         $("#submitting").hide();
         //activatePan();
     });
-    dojo.ready(function() {
 
-        $("#continue").text("Continue");
-        $("#ug").text("User Guide");
-        $("#agree").removeAttr('disabled');
-        $("div.myInfoWindow").draggable({
-            containment: "parent",
-            handle: ".title"
-        }); //Include dojo contents. Has to wait until dojo is ready.
-    });
     </script>
 </body>
 
