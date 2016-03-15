@@ -342,18 +342,9 @@ legend detail is retrievable, example: export2pdf david example from code galler
     <script>
     dojoConfig = {
         parseOnLoad: true,
-        //async:true,
-        packages: [{
-            "name": "myModules",
-            "location": location.pathname.replace(/[^/]+$/, "") + "myModules"
-        }]
+
     }
     </script>
-
-
-
-
-
 
     <script src="https://js.arcgis.com/3.13/"></script>
     <script src="js/jquery-1.8.2.min.js"></script>
@@ -365,8 +356,50 @@ legend detail is retrievable, example: export2pdf david example from code galler
     <script src="js/jquery.dynatree.js"></script>
     <script src="js/modalPopLite.js"></script>
     <script src="js/placeholder.js"></script>
-    <script src="js/run.js"></script>
+    <script src="js/main.js"></script>
 
+
+    <script>
+var pathRX= new RegExp(/\/[^/]*$/),
+locationPath=location.pathname.replace(pathRX,'');
+require({
+	packages:[{
+		name:'myModules',
+		location:locationPath+'/myModules'
+	}]
+},["dojo/parser", "dojo/ready", "dojo/data/ItemFileReadStore",
+	"esri/config",
+	"esri/map", "esri/layers/FeatureLayer", "esri/SnappingManager", "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol",
+	"esri/tasks/query", "esri/tasks/IdentifyTask", "esri/tasks/IdentifyParameters", "esri/tasks/Geoprocessor", "esri/toolbars/navigation",
+	"esri/dijit/Scalebar", "esri/dijit/Measurement","esri/dijit/InfoWindow", "esri/tasks/FindTask", "esri/tasks/FindParameters", "esri/dijit/Legend",
+	"dijit/Tooltip", "dijit/Dialog", "dijit/ProgressBar","dijit/Toolbar",
+	"dijit/form/FilteringSelect", "dijit/form/CheckBox", "dijit/form/TextBox", "dijit/form/Button",
+	"myModules/InfoWindow",
+	"dojo/domReady!"
+	],function(parser, ready, ItemFileReadStore,
+		esriConfig,
+		Map, FeatureLayer, SnappingManager, SimpleFillSymbol, SimpleLineSymbol,
+		Query, IdentifyTask, IdentifyParameters, Geoprocessor, Navigation,
+		Scalebar, Measurement, InfoWindow, FindTask, FindParameters, Legend,
+		Tooltip, Dialog, ProgressBar, Toolbar,
+		FilteringSelect, CheckBox, TextBox, Button,
+		myInfoWindow){
+
+		ready(function(){
+			init();
+			esriConfig.defaults.io.proxyUrl= "proxy.ashx";
+
+			$("#continue").text("Continue");
+			$("#ug").text("User Guide");
+			$("#agree").removeAttr('disabled');
+			$("div.myInfoWindow").draggable({
+				containment: "parent",
+				handle: ".title"
+			}); //Include dojo contents. Has to wait until dojo is ready.
+		});
+
+});
+</script>
     <script>
     //
     var OSName = "Unknown OS";
@@ -591,41 +624,8 @@ legend detail is retrievable, example: export2pdf david example from code galler
         });
     });
     </script>
-    <script>
 
-require(["dojo/parser", "dojo/ready", "dojo/data/ItemFileReadStore",
-	"esri/config",
-	"esri/map", "esri/layers/FeatureLayer", "esri/SnappingManager", "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol",
-	"esri/tasks/query", "esri/tasks/IdentifyTask", "esri/tasks/IdentifyParameters", "esri/tasks/Geoprocessor", "esri/toolbars/navigation",
-	"esri/dijit/Scalebar", "esri/dijit/Measurement","esri/dijit/InfoWindow", "esri/tasks/FindTask", "esri/tasks/FindParameters", "esri/dijit/Legend",
-	"dijit/Tooltip", "dijit/Dialog", "dijit/ProgressBar","dijit/Toolbar",
-	"dijit/form/FilteringSelect", "dijit/form/CheckBox", "dijit/form/TextBox", "dijit/form/Button",
-	"myModules/InfoWindow",
-	"dojo/domReady!"
-	],function(parser, ready, ItemFileReadStore,
-		esriConfig,
-		Map, FeatureLayer, SnappingManager, SimpleFillSymbol, SimpleLineSymbol,
-		Query, IdentifyTask, IdentifyParameters, Geoprocessor, Navigation,
-		Scalebar, Measurement, InfoWindow, FindTask, FindParameters, Legend,
-		Tooltip, Dialog, ProgressBar, Toolbar,
-		FilteringSelect, CheckBox, TextBox, Button,
-		myInfoWindow){
-
-		ready(function(){
-			init();
-			esriConfig.defaults.io.proxyUrl= "proxy.ashx";
-
-			$("#continue").text("Continue");
-			$("#ug").text("User Guide");
-			$("#agree").removeAttr('disabled');
-			$("div.myInfoWindow").draggable({
-				containment: "parent",
-				handle: ".title"
-			}); //Include dojo contents. Has to wait until dojo is ready.
-		});
-
-});
-
+<script>
     var layer, ortho, layer2;
     var map, queryTask, query, navToolbar, loading; //, layervisible=[];//easy way to get visible layers in "layer"
     var legendDijit;
