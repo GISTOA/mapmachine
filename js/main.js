@@ -20,7 +20,7 @@
 
         ready(function() {
             init();
-            esriConfig.defaults.io.proxyUrl = "proxy.ashx";
+            esri.config.defaults.io.proxyUrl = "proxy.ashx";
 
             $("#continue").text("Continue");
             $("#ug").text("User Guide");
@@ -246,7 +246,7 @@
     })();
     var browser = '' + navigator.sayswho[0] + navigator.sayswho[1];
 
-    <!-- get resolution of the screen -->
+    // get resolution of the screen -->
 
     var winW = 1024,
         winH = 800;
@@ -267,7 +267,7 @@
 
 
 
-    <!-- Add Style Dynamically //going to be configed by bootstrap-->
+    //Add Style Dynamically //going to be configed by bootstrap-->
 
     $(document).ready(function() {
         var mapheight = winH - 20 + "px";
@@ -368,6 +368,9 @@
             alwaysVisible: true,
             railOpacity: '0.5'
         });
+
+
+
     });
 
     $(function() {
@@ -1224,7 +1227,7 @@
         dijit.byId("exportPDFBtn").set("disabled", false);
         dojo.style("pdfRequest", "display", "none");
     }
-    <!--06042015,0616-->
+    //06042015,0616-->
 
     function measure(evt) {
         navToolbar.deactivate();

@@ -1,5 +1,4 @@
 /*global define, require, location*/
-
 (function() {
     "use strict";
     var pathRX = new RegExp(/\/[^/]*$/),
