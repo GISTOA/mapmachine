@@ -11,7 +11,14 @@
             name: 'myModules',
             location: locationPath + '/myModules'
         },{
-
+            name:'controllers',
+            location: locationPath+'/js/controllers'
+        },{
+            name:'services',
+            location:locationPath+'/js/services'
+        },{
+            name:'utils',
+            location:locationPath+'/js/utils'
         },{
             name:'app',
             location:locationPath+'/js',

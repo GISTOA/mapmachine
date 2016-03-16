@@ -1,7 +1,6 @@
 /*global require*/
 /*jshint laxcomma:true*/
-
-    require( ["dojo/parser", "dojo/ready", "dojo/dom", "dojo/data/ItemFileReadStore",
+    require( ["dojo/parser", "dojo/ready", "dojo/dom","dojo/data/ItemFileReadStore",
         "esri/config",
         "esri/map", "esri/layers/FeatureLayer", "esri/SnappingManager", "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol",
         "esri/tasks/query", "esri/tasks/IdentifyTask", "esri/tasks/IdentifyParameters", "esri/tasks/Geoprocessor", "esri/toolbars/navigation",
@@ -10,7 +9,7 @@
         "dijit/form/FilteringSelect", "dijit/form/CheckBox", "dijit/form/TextBox", "dijit/form/Button",
         "myModules/InfoWindow",
         "dojo/domReady!"
-    ], function(parser, ready,dom, ItemFileReadStore,
+    ], function(parser, ready, ItemFileReadStore,
         esriConfig,
         Map, FeatureLayer, SnappingManager, SimpleFillSymbol, SimpleLineSymbol,
         Query, IdentifyTask, IdentifyParameters, Geoprocessor, Navigation,
@@ -34,10 +33,10 @@
 
     function init() {
 
-        loading = dom.byId("mapLoadingImg");
+        loading = dojo.byId("mapLoadingImg");
 
         var infoWindow = new myModules.InfoWindow({
-            domNode: dojo.create("div", null, dom.byId("map"))
+            domNode: dojo.create("div", null, dojo.byId("map"))
         });
 
         esri.config.defaults.map.sliderLabel = null;
@@ -193,7 +192,7 @@
             measurement = new esri.dijit.Measurement({
                 map: map,
                 defaultLengthUnit: esri.Units.FEET
-            }, dom.byId('measurement-div'));
+            }, dojo.byId('measurement-div'));
 
             dojo.style("measurement-div", {
                 "position": "absolute",
@@ -241,13 +240,13 @@
             ua = navigator.userAgent,
             tem;
         var M = ua.match(/(opera|chrome|safari|firefox|msie)\/?\s*(\.?\d+(\.\d+)*)/i);
-        if (M && (tem = ua.match(/version\/([\.\d]+)/i)) !== null) M[2] = tem[1];
+        if (M && (tem = ua.match(/version\/([\.\d]+)/i)) != null) M[2] = tem[1];
         M = M ? [M[1], M[2]] : [N, navigator.appVersion, '-?'];
         return M;
     })();
     var browser = '' + navigator.sayswho[0] + navigator.sayswho[1];
 
-    //get resolution of the screen
+    <!-- get resolution of the screen -->
 
     var winW = 1024,
         winH = 800;
@@ -268,7 +267,7 @@
 
 
 
-    // Add Style Dynamically //going to be configed by bootstrap-->
+    <!-- Add Style Dynamically //going to be configed by bootstrap-->
 
     $(document).ready(function() {
         var mapheight = winH - 20 + "px";
@@ -354,7 +353,7 @@
             size: '15px',
             color: "#000",
             railColor: "#666",
-            opacity: 0.6,
+            opacity: .6,
             alwaysVisible: true,
             railOpacity: '0.5'
         });
@@ -365,7 +364,7 @@
             size: '15px',
             color: "#000",
             railColor: "#666",
-            opacity: 0.6,
+            opacity: .6,
             alwaysVisible: true,
             railOpacity: '0.5'
         });
@@ -1225,7 +1224,7 @@
         dijit.byId("exportPDFBtn").set("disabled", false);
         dojo.style("pdfRequest", "display", "none");
     }
-    //06042015,0616-->
+    <!--06042015,0616-->
 
     function measure(evt) {
         navToolbar.deactivate();
