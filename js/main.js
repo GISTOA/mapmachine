@@ -1,3 +1,500 @@
+//=========================================GLOBAL VARIABLES========================================================
+var treeData = [{
+    title: "Base Information",
+    expand: true,
+    key: "100",
+    children: [{
+        title: "Zoning",
+        key: "20"
+    }, {
+        title: "Parcels",
+        select: true,
+        key: "22"
+    }, {
+        title: "Buildings",
+        key: "24"
+    }, {
+        title: "Zip Code",
+        key: "25"
+    }, {
+        title: "School Districts",
+        key: "26"
+    }, {
+        title: "Fire Districts",
+        key: "27"
+    }, {
+        title: "Fire Hydrant",
+        select: true,
+        key: "119"
+    }]
+}, {
+    title: "Environmental Features",
+    key: "129",
+    expand: true,
+    children: [{
+        title: "Lakes, Ponds, Creeks",
+        select: true,
+        key: "29"
+    }, {
+        title: "Drainage Ditches & Creeks",
+        key: "30",
+        select: true
+    }, {
+        title: "Contours 2ft (LiDAR Based)",
+        key: "31"
+    }, {
+        title: "Soils",
+        key: "32"
+    }, {
+        title: "Wetlands",
+        key: "134",
+        children: [{
+            title: "Wetlands - State (DEC)",
+            key: "34"
+        }, {
+            title: "Wetlands - Federal (FWS)",
+            key: "35"
+        }]
+    }, {
+        title: "FEMA FLoodplain Information",
+        key: "137",
+        expand: true,
+        children: [{
+            title: "(Existing)FEMA Floodplain",
+            expand: true,
+            key: "138",
+            children: [{
+                title: "Existing Floodway",
+                key: "38"
+            }, {
+                title: "Existing Floodplain",
+                key: "39"
+            }]
+        }, {
+            title: "(Proposed) FEMA Floodplain",
+            expand: true,
+            key: "141",
+            children: [{
+                title: "Proposed Floodway",
+                key: "41"
+            }, {
+                title: "Proposed Floodplain",
+                key: "42"
+            }]
+        }]
+    }]
+}, {
+    title: "2014 NYS Aerial Photography",
+    select: true,
+    key: "118"
+}];
+
+
+
+
+    //========================Exe part========================================
+    var OSName = "Unknown OS";
+    if (navigator.appVersion.indexOf("Win") != -1) OSName = "Windows";
+    if (navigator.appVersion.indexOf("Mac") != -1) OSName = "MacOS";
+    if (navigator.appVersion.indexOf("X11") != -1) OSName = "UNIX";
+    if (navigator.appVersion.indexOf("Linux") != -1) OSName = "Linux";
+
+    navigator.sayswho = (function() {
+        var N = navigator.appName,
+            ua = navigator.userAgent,
+            tem;
+        var M = ua.match(/(opera|chrome|safari|firefox|msie)\/?\s*(\.?\d+(\.\d+)*)/i);
+        if (M && (tem = ua.match(/version\/([\.\d]+)/i)) != null) M[2] = tem[1];
+        M = M ? [M[1], M[2]] : [N, navigator.appVersion, '-?'];
+        return M;
+    })();
+    var browser = '' + navigator.sayswho[0] + navigator.sayswho[1];
+
+
+    var winW = 1024,
+        winH = 800;
+    if (document.body && document.body.offsetWidth) {
+        winW = document.body.offsetWidth;
+        winH = document.body.offsetHeight;
+    }
+    if (document.compatMode == 'CSS1Compat' &&
+        document.documentElement &&
+        document.documentElement.offsetWidth) {
+        winW = document.documentElement.offsetWidth;
+        winH = document.documentElement.offsetHeight;
+    }
+    if (window.innerWidth && window.innerHeight) {
+        winW = window.innerWidth;
+        winH = window.innerHeight;
+    }
+
+
+
+
+    $(document).ready(function() {
+        var mapheight = winH - 20 + "px";
+        $("#map").css("height", mapheight);
+        $("#alert").css("left", winW / 2 - 505 + "px");
+        $('#mapLoadingImg').css("left", winW / 2 - 16 + "px");
+        $('#mapLoadingImg').css("top", winH / 2 - 16 + "px");
+        $('#table').css("top", 100 + "px");
+        $('#table').css("right", winW / 2 + "px");
+        $("#legendDiv").addClass("absolutePosition");
+    });
+
+    //jQuery light weight popup dialog box
+    $(function() {
+        $('#popupinfo').modalPopLite({
+            openButton: '#popupclicker',
+            closeButton: '#close-btn',
+            isModal: true
+        });
+    });
+    $(function() {
+        $('#popupinfo2').modalPopLite({
+            openButton: '#popupclicker2',
+            closeButton: '#close-btn2',
+            isModal: true
+        });
+    });
+    $(function() {
+        $('#alertinfo').modalPopLite({
+            openButton: '#alertclicker',
+            closeButton: '#close-btn3',
+            isModal: true
+        });
+    });
+    $(function() {
+        $('#contactinfo').modalPopLite({
+            openButton: '#contactclicker',
+            closeButton: '#close-btn4',
+            isModal: true
+        });
+    });
+
+    $(document).ready(function() {
+
+        //Draggable Table from JQuery UI
+        $("#table").draggable({
+            containment: "parent",
+            handle: ".title"
+        });
+        $("#LayerList").draggable({
+            containment: "parent",
+            handle: ".title"
+        });
+        $("#legend").draggable({
+            containment: "parent",
+            handle: ".title"
+        });
+        var printertest = $("#printerSettings");
+        printertest.draggable({
+            containment: "parent",
+            handle: ".title"
+        });
+
+        //slimScroll Add-on
+        $('#bigTable').slimScroll({
+            alwaysVisible: true,
+            railVisible: true,
+            start: $('#large'),
+            height: '370px',
+            width: '100%',
+            size: '10px'
+        });
+        //initializing search combo box
+        enableSelectBoxes();
+        $('#disclaimer-content').slimScroll({
+            railVisible: true,
+            height: '220px',
+            width: '100%',
+            size: '15px',
+            color: "#000",
+            railColor: "#666",
+            opacity: .6,
+            alwaysVisible: true,
+            railOpacity: '0.5'
+        });
+        $('#legendDiv').slimScroll({
+            railVisible: true,
+            height: '400px',
+            width: '100%',
+            size: '15px',
+            color: "#000",
+            railColor: "#666",
+            opacity: .6,
+            alwaysVisible: true,
+            railOpacity: '0.5'
+        });
+    });
+
+    $(function() {
+        Placeholder.init({
+            normal: "#000000",
+            placeholder: "#C0C0C0",
+            wait: true
+        });
+    });
+
+
+    $(function() {
+        $("#tree3").dynatree({
+            checkbox: true,
+            selectMode: 3,
+            children: treeData,
+            onSelect: function(select, node) {
+                var selKeys = $.map(node.tree.getSelectedNodes(), function(node) {
+                    return node.data.key;
+                });
+                var visible = $.map(selKeys, function(key) {
+                    return parseInt(key);
+
+                });
+                if (jQuery.inArray(22, visible) != -1) {
+                    visible.push(23);
+                }
+                identifyParams.layerIds = [22, 25, 26, 27, 32];
+                if (jQuery.inArray(20, visible) != -1) {
+                    var zoningPre = getCookie("zoning");
+                    if (zoningPre != null && zoningPre != "") {
+                        identifyParams.layerIds.push(20);
+                        /*identifyParams.layerIds.push(20);//add zoning to identify layers*/
+                    } else {
+                        visible.splice(jQuery.inArray(20, visible), 1);
+                        //node.toggleSelect();
+                        $("#tree3").dynatree("getTree").getNodeByKey("20").toggleSelect();
+                        //layervisible=visible;
+                        $('#popupclicker2').trigger('click');
+                    }
+                }
+
+                //if there aren't any layers visible set the array value to = -1
+                var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 17, 18, 19];
+                dojo.forEach(arr, function(a, i) {
+                    visible.push(a);
+                });
+
+                if (visible.length === 0) {
+                    visible.push(-1);
+                }
+                layer.setVisibleLayers(visible);
+                if (jQuery.inArray(118, visible) != -1) {
+                    ortho.show();
+                } else {
+                    ortho.hide();
+                }
+                if (jQuery.inArray(119, visible) != -1) {
+                    hydrant.show();
+                } else {
+                    hydrant.hide();
+                }
+
+                var selRootNodes = node.tree.getSelectedNodes(true);
+                var selRootKeys = $.map(selRootNodes, function(node) {
+                    return node.data.key;
+                });
+
+            },
+            onDblClick: function(node, event) {
+                node.toggleSelect();
+            },
+            onKeydown: function(node, event) {
+                if (event.which == 32) {
+                    node.toggleSelect();
+                    return false;
+                }
+            },
+            cookieId: "dynatree-Cb3",
+            idPrefix: "dynatree-Cb3-"
+        });
+    });
+
+
+
+
+
+    //$("#close-btn").attr("disabled", "disabled");
+    $("#continue2").attr("disabled", "disabled");
+
+    $("#legendDiv").css("position", "none");
+    $("#alert").hide();
+    $("#alert").click(function() {
+        $(this).hide();
+    });
+    $("#table").hide();
+    $("#closeTable").click(function() {
+        //$("#table").hide('fast',function(){map.graphics.clear();});
+        $("#table").hide();
+        //$('thead').scrollIntoView();
+        $('#table').css("top", 100 + "px");
+        $('#table').css("left", 100 + "px");
+        $("#bigTable").trigger('scrollContent', [-99]);
+    });
+    $("#closeList").click(function() {
+        $("#LayerList").hide();
+        //$("#LayerList").css("float","right");
+        //$("#LayerList").css("right","0px");
+        //$("#LayerList").css("top","100px");
+
+        //untoggle layerList checkbox in mapinfo
+        $("#mapInfo").find('span.selectOption').each(function() {
+            if ($(this).attr('value') == 'LayerList') {
+                $(this).find("span").addClass("hiddenspan");
+            }
+        });
+
+    });
+    $('#index').focus(function() {
+        $(this).addClass("orangeBorder");
+        var aa = $("#selectedOption")[0].textContent;
+        if (aa == null) {
+            aa = $("#selectedOption")[0].innerText;
+        }
+        var bb = "Enter " + aa + " here...";
+        if (aa == "Search By:") {
+            bb = "Select Search field";
+        }
+        $(this).attr("placeholder", bb);
+        Placeholder.init();
+        $(this).css("color", "black");
+        //$(this).select();
+    });
+    $('#index').blur(function() {
+        $(this).removeClass("orangeBorder");
+        $(this).css("color", "white");
+    });
+    /*$('#index').change(function(){
+            $("#go").trigger("mouseover");
+            alert("b");
+        });*/
+    $('#index').bind('input', function() {
+        //alert("a");
+    });
+
+    $("#agree").click(function() {
+        accept();
+    });
+    $("#agree2").click(function() {
+        accept2();
+    });
+
+
+
+    $("#closeLegend").click(function() {
+        $("#legend").hide();
+        //untoggle layerList checkbox in mapinfo
+        $("#mapInfo").find('span.selectOption').each(function() {
+            if ($(this).attr('value') == 'legend') {
+                $(this).find("span").addClass("hiddenspan");
+            }
+        });
+
+    });
+    $("#closeLegend").click();
+
+    $("#closePrinter").click(function() {
+        $("#printerSettings").hide();
+        dojo.style("pdfRequestFinished", "display", "none");
+
+        dojo.style("pdfRequest", "display", "none");
+        dojo.style("pdfRequestError", "display", "none");
+        document.getElementsByName("mapTitle")[0].value = "My Map";
+
+        //untoggle layerList checkbox in mapinfo
+    });
+
+
+    $("#loading").hide();
+
+    // $("div[title='Maximize']").hide();
+    //shortcut key "Enter"
+    $(document).keyup(function(event) {
+        if (event.which == 13) {
+            gosearch();
+        }
+    }).keydown(function(event) {
+        if (event.which == 13) {
+            event.preventDefault();
+        }
+    });
+
+    //write for IE8
+    $(".close").click(function() {
+        map.infoWindow.hide();
+    });
+
+    $(document).ready(function() {
+        $("#popupclicker").hide();
+        var mainDisclaimer = getCookie("main");
+        if (mainDisclaimer != null && mainDisclaimer != "") {} else {
+            $('#popupclicker').trigger('click');
+        }
+
+        $("#popupclicker2").hide();
+        $("#alertclicker").hide();
+        $("#close-btn2").hide();
+        $("#closePrinter").trigger('click');
+        //$('.esriPopupWrapper').attr("id","aaaaaa");
+        //dijit.byId("agree").setAttribute('disabled',false);
+        //$("#agree").attr("disabled","false");
+
+        $("#submitting").hide();
+        //activatePan();
+    });
+
+
+require(["dojo/parser", "dojo/ready", "dojo/data/ItemFileReadStore",
+    "esri/config",
+    "esri/map", "esri/layers/FeatureLayer", "esri/SnappingManager", "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol",
+    "esri/tasks/query", "esri/tasks/IdentifyTask", "esri/tasks/IdentifyParameters", "esri/tasks/Geoprocessor", "esri/toolbars/navigation",
+    "esri/dijit/Scalebar", "esri/dijit/Measurement","esri/dijit/InfoWindow", "esri/tasks/FindTask", "esri/tasks/FindParameters", "esri/dijit/Legend",
+    "dijit/Tooltip", "dijit/Dialog", "dijit/ProgressBar","dijit/Toolbar",
+    "dijit/form/FilteringSelect", "dijit/form/CheckBox", "dijit/form/TextBox", "dijit/form/Button",
+    "myModules/InfoWindow",
+    "dojo/domReady!"
+    ],function(parser, ready, ItemFileReadStore,
+        esriConfig,
+        Map, FeatureLayer, SnappingManager, SimpleFillSymbol, SimpleLineSymbol,
+        Query, IdentifyTask, IdentifyParameters, Geoprocessor, Navigation,
+        Scalebar, Measurement, InfoWindow, FindTask, FindParameters, Legend,
+        Tooltip, Dialog, ProgressBar, Toolbar,
+        FilteringSelect, CheckBox, TextBox, Button,
+        myInfoWindow){
+
+        ready(function(){
+            init();
+            esriConfig.defaults.io.proxyUrl= "proxy.ashx";
+
+            $("#continue").text("Continue");
+            $("#ug").text("User Guide");
+            $("#agree").removeAttr('disabled');
+            $("div.myInfoWindow").draggable({
+                containment: "parent",
+                handle: ".title"
+            }); //Include dojo contents. Has to wait until dojo is ready.
+        });
+
+});
+
+    var layer, ortho, layer2;
+    var map, queryTask, query, navToolbar, loading; //, layervisible=[];//easy way to get visible layers in "layer"
+    var legendDijit;
+    var symbol, infoTemplate;
+    var handle, startExtent;
+    var currentGraphic; //This variable is used to store symbol highlighted by hyperlink tool.
+    var tempGraphic;
+    //var popupTemplate;
+    var measurement; //06042015
+
+    var findTask, findParams;
+    var identifyTask, identifyParams;
+
+    var tempcells = -1;
+    var tempstatus; //control shown level id for selected parcel
+    var tempFeatures = []; //store graphics related with parcels's searching results
+    var tempnav, exportMapGP, contactGP;
+    var snapManager; //06172015
+
 //=========================================GLOBAL FUNCTIONS========================================================
 
 function accept() {
@@ -182,376 +679,6 @@ function setCookie(c_name, value, exdays) {
     var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate);
     document.cookie = c_name + "=" + c_value;
 }
-//=========================================GLOBAL VARIABLES========================================================
-var treeData = [{
-    title: "Base Information",
-    expand: true,
-    key: "100",
-    children: [{
-        title: "Zoning",
-        key: "20"
-    }, {
-        title: "Parcels",
-        select: true,
-        key: "22"
-    }, {
-        title: "Buildings",
-        key: "24"
-    }, {
-        title: "Zip Code",
-        key: "25"
-    }, {
-        title: "School Districts",
-        key: "26"
-    }, {
-        title: "Fire Districts",
-        key: "27"
-    }, {
-        title: "Fire Hydrant",
-        select: true,
-        key: "119"
-    }]
-}, {
-    title: "Environmental Features",
-    key: "129",
-    expand: true,
-    children: [{
-        title: "Lakes, Ponds, Creeks",
-        select: true,
-        key: "29"
-    }, {
-        title: "Drainage Ditches & Creeks",
-        key: "30",
-        select: true
-    }, {
-        title: "Contours 2ft (LiDAR Based)",
-        key: "31"
-    }, {
-        title: "Soils",
-        key: "32"
-    }, {
-        title: "Wetlands",
-        key: "134",
-        children: [{
-            title: "Wetlands - State (DEC)",
-            key: "34"
-        }, {
-            title: "Wetlands - Federal (FWS)",
-            key: "35"
-        }]
-    }, {
-        title: "FEMA FLoodplain Information",
-        key: "137",
-        expand: true,
-        children: [{
-            title: "(Existing)FEMA Floodplain",
-            expand: true,
-            key: "138",
-            children: [{
-                title: "Existing Floodway",
-                key: "38"
-            }, {
-                title: "Existing Floodplain",
-                key: "39"
-            }]
-        }, {
-            title: "(Proposed) FEMA Floodplain",
-            expand: true,
-            key: "141",
-            children: [{
-                title: "Proposed Floodway",
-                key: "41"
-            }, {
-                title: "Proposed Floodplain",
-                key: "42"
-            }]
-        }]
-    }]
-}, {
-    title: "2014 NYS Aerial Photography",
-    select: true,
-    key: "118"
-}];
-
-
-
-
-    //
-    var OSName = "Unknown OS";
-    if (navigator.appVersion.indexOf("Win") != -1) OSName = "Windows";
-    if (navigator.appVersion.indexOf("Mac") != -1) OSName = "MacOS";
-    if (navigator.appVersion.indexOf("X11") != -1) OSName = "UNIX";
-    if (navigator.appVersion.indexOf("Linux") != -1) OSName = "Linux";
-
-    navigator.sayswho = (function() {
-        var N = navigator.appName,
-            ua = navigator.userAgent,
-            tem;
-        var M = ua.match(/(opera|chrome|safari|firefox|msie)\/?\s*(\.?\d+(\.\d+)*)/i);
-        if (M && (tem = ua.match(/version\/([\.\d]+)/i)) != null) M[2] = tem[1];
-        M = M ? [M[1], M[2]] : [N, navigator.appVersion, '-?'];
-        return M;
-    })();
-    var browser = '' + navigator.sayswho[0] + navigator.sayswho[1];
-
-
-    var winW = 1024,
-        winH = 800;
-    if (document.body && document.body.offsetWidth) {
-        winW = document.body.offsetWidth;
-        winH = document.body.offsetHeight;
-    }
-    if (document.compatMode == 'CSS1Compat' &&
-        document.documentElement &&
-        document.documentElement.offsetWidth) {
-        winW = document.documentElement.offsetWidth;
-        winH = document.documentElement.offsetHeight;
-    }
-    if (window.innerWidth && window.innerHeight) {
-        winW = window.innerWidth;
-        winH = window.innerHeight;
-    }
-
-
-
-
-    $(document).ready(function() {
-        var mapheight = winH - 20 + "px";
-
-
-        $("#map").css("height", mapheight);
-        $("#alert").css("left", winW / 2 - 505 + "px");
-        $('#mapLoadingImg').css("left", winW / 2 - 16 + "px");
-        $('#mapLoadingImg').css("top", winH / 2 - 16 + "px");
-        $('#table').css("top", 100 + "px");
-        $('#table').css("right", winW / 2 + "px");
-        $("#legendDiv").addClass("absolutePosition");
-    });
-
-
-    //jQuery light weight popup dialog box
-    $(function() {
-        $('#popupinfo').modalPopLite({
-            openButton: '#popupclicker',
-            closeButton: '#close-btn',
-            isModal: true
-        });
-    });
-    $(function() {
-        $('#popupinfo2').modalPopLite({
-            openButton: '#popupclicker2',
-            closeButton: '#close-btn2',
-            isModal: true
-        });
-    });
-    $(function() {
-        $('#alertinfo').modalPopLite({
-            openButton: '#alertclicker',
-            closeButton: '#close-btn3',
-            isModal: true
-        });
-    });
-    $(function() {
-        $('#contactinfo').modalPopLite({
-            openButton: '#contactclicker',
-            closeButton: '#close-btn4',
-            isModal: true
-        });
-    });
-
-
-    $(document).ready(function() {
-
-        //Draggable Table from JQuery UI
-        $("#table").draggable({
-            containment: "parent",
-            handle: ".title"
-        });
-        $("#LayerList").draggable({
-            containment: "parent",
-            handle: ".title"
-        });
-        $("#legend").draggable({
-            containment: "parent",
-            handle: ".title"
-        });
-        var printertest = $("#printerSettings");
-        printertest.draggable({
-            containment: "parent",
-            handle: ".title"
-        });
-
-        //slimScroll Add-on
-        $('#bigTable').slimScroll({
-            alwaysVisible: true,
-            railVisible: true,
-            start: $('#large'),
-            height: '370px',
-            width: '100%',
-            size: '10px'
-        });
-        //initializing search combo box
-        enableSelectBoxes();
-        $('#disclaimer-content').slimScroll({
-            railVisible: true,
-            height: '220px',
-            width: '100%',
-            size: '15px',
-            color: "#000",
-            railColor: "#666",
-            opacity: .6,
-            alwaysVisible: true,
-            railOpacity: '0.5'
-        });
-        $('#legendDiv').slimScroll({
-            railVisible: true,
-            height: '400px',
-            width: '100%',
-            size: '15px',
-            color: "#000",
-            railColor: "#666",
-            opacity: .6,
-            alwaysVisible: true,
-            railOpacity: '0.5'
-        });
-    });
-
-    $(function() {
-        Placeholder.init({
-            normal: "#000000",
-            placeholder: "#C0C0C0",
-            wait: true
-        });
-    });
-
-
-    $(function() {
-        $("#tree3").dynatree({
-            checkbox: true,
-            selectMode: 3,
-            children: treeData,
-            onSelect: function(select, node) {
-                var selKeys = $.map(node.tree.getSelectedNodes(), function(node) {
-                    return node.data.key;
-                });
-                var visible = $.map(selKeys, function(key) {
-                    return parseInt(key);
-
-                });
-                if (jQuery.inArray(22, visible) != -1) {
-                    visible.push(23);
-                }
-                identifyParams.layerIds = [22, 25, 26, 27, 32];
-                if (jQuery.inArray(20, visible) != -1) {
-                    var zoningPre = getCookie("zoning");
-                    if (zoningPre != null && zoningPre != "") {
-                        identifyParams.layerIds.push(20);
-                        /*identifyParams.layerIds.push(20);//add zoning to identify layers*/
-                    } else {
-                        visible.splice(jQuery.inArray(20, visible), 1);
-                        //node.toggleSelect();
-                        $("#tree3").dynatree("getTree").getNodeByKey("20").toggleSelect();
-                        //layervisible=visible;
-                        $('#popupclicker2').trigger('click');
-                    }
-                }
-
-                //if there aren't any layers visible set the array value to = -1
-                var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 17, 18, 19];
-                dojo.forEach(arr, function(a, i) {
-                    visible.push(a);
-                });
-
-                if (visible.length === 0) {
-                    visible.push(-1);
-                }
-                layer.setVisibleLayers(visible);
-                if (jQuery.inArray(118, visible) != -1) {
-                    ortho.show();
-                } else {
-                    ortho.hide();
-                }
-                if (jQuery.inArray(119, visible) != -1) {
-                    hydrant.show();
-                } else {
-                    hydrant.hide();
-                }
-
-                var selRootNodes = node.tree.getSelectedNodes(true);
-                var selRootKeys = $.map(selRootNodes, function(node) {
-                    return node.data.key;
-                });
-
-            },
-            onDblClick: function(node, event) {
-                node.toggleSelect();
-            },
-            onKeydown: function(node, event) {
-                if (event.which == 32) {
-                    node.toggleSelect();
-                    return false;
-                }
-            },
-            cookieId: "dynatree-Cb3",
-            idPrefix: "dynatree-Cb3-"
-        });
-    });
-
-
-
-require(["dojo/parser", "dojo/ready", "dojo/data/ItemFileReadStore",
-    "esri/config",
-    "esri/map", "esri/layers/FeatureLayer", "esri/SnappingManager", "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol",
-    "esri/tasks/query", "esri/tasks/IdentifyTask", "esri/tasks/IdentifyParameters", "esri/tasks/Geoprocessor", "esri/toolbars/navigation",
-    "esri/dijit/Scalebar", "esri/dijit/Measurement","esri/dijit/InfoWindow", "esri/tasks/FindTask", "esri/tasks/FindParameters", "esri/dijit/Legend",
-    "dijit/Tooltip", "dijit/Dialog", "dijit/ProgressBar","dijit/Toolbar",
-    "dijit/form/FilteringSelect", "dijit/form/CheckBox", "dijit/form/TextBox", "dijit/form/Button",
-    "myModules/InfoWindow",
-    "dojo/domReady!"
-    ],function(parser, ready, ItemFileReadStore,
-        esriConfig,
-        Map, FeatureLayer, SnappingManager, SimpleFillSymbol, SimpleLineSymbol,
-        Query, IdentifyTask, IdentifyParameters, Geoprocessor, Navigation,
-        Scalebar, Measurement, InfoWindow, FindTask, FindParameters, Legend,
-        Tooltip, Dialog, ProgressBar, Toolbar,
-        FilteringSelect, CheckBox, TextBox, Button,
-        myInfoWindow){
-
-        ready(function(){
-            init();
-            esriConfig.defaults.io.proxyUrl= "proxy.ashx";
-
-            $("#continue").text("Continue");
-            $("#ug").text("User Guide");
-            $("#agree").removeAttr('disabled');
-            $("div.myInfoWindow").draggable({
-                containment: "parent",
-                handle: ".title"
-            }); //Include dojo contents. Has to wait until dojo is ready.
-        });
-
-});
-
-    var layer, ortho, layer2;
-    var map, queryTask, query, navToolbar, loading; //, layervisible=[];//easy way to get visible layers in "layer"
-    var legendDijit;
-    var symbol, infoTemplate;
-    var handle, startExtent;
-    var currentGraphic; //This variable is used to store symbol highlighted by hyperlink tool.
-    var tempGraphic;
-    //var popupTemplate;
-    var measurement; //06042015
-
-    var findTask, findParams;
-    var identifyTask, identifyParams;
-
-    var tempcells = -1;
-    var tempstatus; //control shown level id for selected parcel
-    var tempFeatures = []; //store graphics related with parcels's searching results
-    var tempnav, exportMapGP, contactGP;
-    var snapManager; //06172015
-
-
     function init() {
 
         loading = dojo.byId("mapLoadingImg");
@@ -1534,119 +1661,6 @@ require(["dojo/parser", "dojo/ready", "dojo/data/ItemFileReadStore",
 
 
 
-
-
-
-    //$("#close-btn").attr("disabled", "disabled");
-    $("#continue2").attr("disabled", "disabled");
-
-    $("#legendDiv").css("position", "none");
-    $("#alert").hide();
-    $("#alert").click(function() {
-        $(this).hide();
-    });
-    $("#table").hide();
-    $("#closeTable").click(function() {
-        //$("#table").hide('fast',function(){map.graphics.clear();});
-        $("#table").hide();
-        //$('thead').scrollIntoView();
-        $('#table').css("top", 100 + "px");
-        $('#table').css("left", 100 + "px");
-        $("#bigTable").trigger('scrollContent', [-99]);
-    });
-    $("#closeList").click(function() {
-        $("#LayerList").hide();
-        //$("#LayerList").css("float","right");
-        //$("#LayerList").css("right","0px");
-        //$("#LayerList").css("top","100px");
-
-        //untoggle layerList checkbox in mapinfo
-        $("#mapInfo").find('span.selectOption').each(function() {
-            if ($(this).attr('value') == 'LayerList') {
-                $(this).find("span").addClass("hiddenspan");
-            }
-        });
-
-    });
-    $('#index').focus(function() {
-        $(this).addClass("orangeBorder");
-        var aa = $("#selectedOption")[0].textContent;
-        if (aa == null) {
-            aa = $("#selectedOption")[0].innerText;
-        }
-        var bb = "Enter " + aa + " here...";
-        if (aa == "Search By:") {
-            bb = "Select Search field";
-        }
-        $(this).attr("placeholder", bb);
-        Placeholder.init();
-        $(this).css("color", "black");
-        //$(this).select();
-    });
-    $('#index').blur(function() {
-        $(this).removeClass("orangeBorder");
-        $(this).css("color", "white");
-    });
-    /*$('#index').change(function(){
-            $("#go").trigger("mouseover");
-            alert("b");
-        });*/
-    $('#index').bind('input', function() {
-        //alert("a");
-    });
-
-    $("#agree").click(function() {
-        accept();
-    });
-    $("#agree2").click(function() {
-        accept2();
-    });
-
-
-
-    $("#closeLegend").click(function() {
-        $("#legend").hide();
-        //untoggle layerList checkbox in mapinfo
-        $("#mapInfo").find('span.selectOption').each(function() {
-            if ($(this).attr('value') == 'legend') {
-                $(this).find("span").addClass("hiddenspan");
-            }
-        });
-
-    });
-    $("#closeLegend").click();
-
-    $("#closePrinter").click(function() {
-        $("#printerSettings").hide();
-        dojo.style("pdfRequestFinished", "display", "none");
-
-        dojo.style("pdfRequest", "display", "none");
-        dojo.style("pdfRequestError", "display", "none");
-        document.getElementsByName("mapTitle")[0].value = "My Map";
-
-        //untoggle layerList checkbox in mapinfo
-    });
-
-
-    $("#loading").hide();
-
-    // $("div[title='Maximize']").hide();
-    //shortcut key "Enter"
-    $(document).keyup(function(event) {
-        if (event.which == 13) {
-            gosearch();
-        }
-    }).keydown(function(event) {
-        if (event.which == 13) {
-            event.preventDefault();
-        }
-    });
-
-    //write for IE8
-    $(".close").click(function() {
-        map.infoWindow.hide();
-    });
-
     var spamDetect;
 
     function antiSpam() {
@@ -1661,24 +1675,5 @@ require(["dojo/parser", "dojo/ready", "dojo/data/ItemFileReadStore",
         spamDetect = setTimeout("antiSpam()", 1000);
     }
 
-
-    $(document).ready(function() {
-        $("#popupclicker").hide();
-        var mainDisclaimer = getCookie("main");
-        if (mainDisclaimer != null && mainDisclaimer != "") {} else {
-            $('#popupclicker').trigger('click');
-        }
-
-        $("#popupclicker2").hide();
-        $("#alertclicker").hide();
-        $("#close-btn2").hide();
-        $("#closePrinter").trigger('click');
-        //$('.esriPopupWrapper').attr("id","aaaaaa");
-        //dijit.byId("agree").setAttribute('disabled',false);
-        //$("#agree").attr("disabled","false");
-
-        $("#submitting").hide();
-        //activatePan();
-    });
 
 
