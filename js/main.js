@@ -469,7 +469,7 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/on",
     "esri/map",
     "esri/layers/FeatureLayer", "esri/layers/ArcGISTiledMapServiceLayer", "esri/layers/ArcGISDynamicMapServiceLayer","esri/layers/ImageParameters",
     "esri/SnappingManager", "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol",
-    "esri/tasks/query", "esri/tasks/IdentifyTask", "esri/tasks/IdentifyParameters", "esri/tasks/Geoprocessor", "esri/toolbars/navigation",
+    "esri/tasks/query", "esri/tasks/QueryTask", "esri/tasks/IdentifyTask", "esri/tasks/IdentifyParameters", "esri/tasks/Geoprocessor", "esri/toolbars/navigation",
     "esri/dijit/Scalebar", "esri/dijit/Measurement","esri/dijit/InfoWindow", "esri/tasks/FindTask", "esri/tasks/FindParameters", "esri/dijit/Legend",
     "dijit/Tooltip", "dijit/Dialog", "dijit/ProgressBar","dijit/Toolbar",
     "dijit/form/FilteringSelect", "dijit/form/CheckBox", "dijit/form/TextBox", "dijit/form/Button",
@@ -482,14 +482,13 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/on",
         Map,
         FeatureLayer, ArcGISTiledMapServiceLayer,ArcGISDynamicMapServiceLayer,ImageParameters,
         SnappingManager, SimpleFillSymbol, SimpleLineSymbol,
-        Query, IdentifyTask, IdentifyParameters, Geoprocessor, Navigation,
+        Query, QueryTask, IdentifyTask, IdentifyParameters, Geoprocessor, Navigation,
         Scalebar, Measurement, InfoWindow, FindTask, FindParameters, Legend,
         Tooltip, Dialog, ProgressBar, Toolbar,
         FilteringSelect, CheckBox, TextBox, Button,
         myInfoWindow, SymbolUtil){
 
         ready(function(){
-            init1();
             init();
             esriConfig.defaults.io.proxyUrl= "proxy.ashx";
        //esriConfig.defaults.map.sliderLabel = null;
@@ -509,8 +508,15 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/on",
             }); //Include dojo contents. Has to wait until dojo is ready.
         });
 
-        function init1(){
+        function init(){
         esriConfig.defaults.geometryService = new esri.tasks.GeometryService("http://map.amherst.ny.us/gallifrey/rest/services/Utilities/Geometry/GeometryServer");
+
+        exportMapGP = new Geoprocessor("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/ExportToPDF/GPServer/ExportToPDF");
+        contactGP = new Geoprocessor("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/Contact/GPServer/Contact");
+        queryTask = new QueryTask("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer/22");
+        identifyTask = new IdentifyTask("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer");
+        findTask = new FindTask("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer");
+
         parcelLayer = new esri.layers.FeatureLayer("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer/22", {
             mode: esri.layers.FeatureLayer.MODE_SELECTION,
             outFields: ["*"]
@@ -558,6 +564,32 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/on",
             //sliderStyle:"large",
         });
 
+        navToolbar = new Navigation(map);
+        on(navToolbar, "extent-history-change", extentHistoryChangeHandler);
+
+        //build query filter
+        query = new Query();
+        query.outSpatialReference = {
+            "wkid": 2262
+        };
+        query.returnGeometry = true;
+        query.outFields = ["Printkey", "PARCELID", "GLink", "ONAME1", "PARCELADD", "CPILink"];
+
+        identifyParams = new IdentifyParameters();
+        //identifyParams.tolerance = 3;
+        identifyParams.tolerance = 0; //prevent for multiple parcels selected
+        identifyParams.returnGeometry = true;
+        identifyParams.layerIds = [22, 25, 26, 27, 32];
+        identifyParams.layerOption = IdentifyParameters.LAYER_OPTION_ALL;
+        identifyParams.width = map.width;
+        identifyParams.height = map.height;
+        //Create the find parameters
+        findParams = new FindParameters();
+        findParams.returnGeometry = true;
+        findParams.layerIds = [22];
+        findParams.searchFields = ["Printkey"];
+        findParams.outSpatialReference = map.spatialReference;
+
         map.addLayer(ortho);
         map.addLayer(hydrant);
         map.addLayer(layer);
@@ -571,8 +603,26 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/on",
         on(map, "load",loadMap);
         /* /06042015*/
         on(window,"resize",windowResize);
+//TODO
+        var div = document.getElementById('map_container');
+        if (div.addEventListener) {
+            //evt.preventDefault();
+            div.addEventListener('contextmenu', CPILink, true);
+        } else { //previous method, not in use anymore
 
+            if ($.browser.msie && parseInt($.browser.version, 10) === 8) {
+                document.getElementById('map_container').attachEvent('oncontextmenu', function(evt) {
+                    CPILink(evt);
+                    window.event.returnValue = false;
+                });
+            } else {
+                document.getElementById('map_container').attachEvent('oncontextmenu', function(evt) {
+                    CPILink(evt);
+                    window.event.returnValue = false;
+                });
+            }
 
+        }
 
         }
 
@@ -624,7 +674,7 @@ depreciate by Assessor, they perfer continuely measure.
             map.setExtent(startExtent);
             var scalebar = new Scalebar({
                 map: map,
-                //scalebarUnit: 'english'
+                scalebarUnit: 'dual'
             });
         }
 
@@ -635,77 +685,7 @@ depreciate by Assessor, they perfer continuely measure.
 
 
 //=========================================GLOBAL FUNCTIONS========================================================
-    function init() {
-        /*06172015*/
 
-
-
-        exportMapGP = new esri.tasks.Geoprocessor("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/ExportToPDF/GPServer/ExportToPDF");
-        contactGP = new esri.tasks.Geoprocessor("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/Contact/GPServer/Contact");
-
-
-        navToolbar = new esri.toolbars.Navigation(map);
-        dojo.connect(navToolbar, "onExtentHistoryChange", extentHistoryChangeHandler);
-
-
-        queryTask = new esri.tasks.QueryTask("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer/22");
-
-        //build query filter
-        query = new esri.tasks.Query();
-        query.outSpatialReference = {
-            "wkid": 2262
-        };
-        query.returnGeometry = true;
-        query.outFields = ["Printkey", "PARCELID", "GLink", "ONAME1", "PARCELADD", "CPILink"];
-
-        identifyTask = new esri.tasks.IdentifyTask("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer");
-
-        identifyParams = new esri.tasks.IdentifyParameters();
-        //identifyParams.tolerance = 3;
-        identifyParams.tolerance = 0; //prevent for multiple parcels selected
-        identifyParams.returnGeometry = true;
-        identifyParams.layerIds = [22, 25, 26, 27, 32];
-        identifyParams.layerOption = esri.tasks.IdentifyParameters.LAYER_OPTION_ALL;
-        identifyParams.width = map.width;
-        identifyParams.height = map.height;
-        //into init2 //symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_DASHDOT, new dojo.Color([255, 0, 0]), 2), new dojo.Color([255, 255, 0, 0.5]));
-
-        //Create Find Task using the URL of the map service to search
-        findTask = new esri.tasks.FindTask("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer");
-
-        //Create the find parameters
-        findParams = new esri.tasks.FindParameters();
-        findParams.returnGeometry = true;
-        findParams.layerIds = [22];
-        findParams.searchFields = ["Printkey"];
-        findParams.outSpatialReference = map.spatialReference;
-
-        var div = document.getElementById('map_container');
-        if (div.addEventListener) {
-            //evt.preventDefault();
-            div.addEventListener('contextmenu', CPILink, true);
-        } else { //previous method, not in use anymore
-
-            if ($.browser.msie && parseInt($.browser.version, 10) === 8) {
-                document.getElementById('map_container').attachEvent('oncontextmenu', function(evt) {
-                    CPILink(evt);
-                    window.event.returnValue = false;
-                });
-            } else {
-                document.getElementById('map_container').attachEvent('oncontextmenu', function(evt) {
-                    CPILink(evt);
-                    window.event.returnValue = false;
-                });
-            }
-
-        }
-
-
-
-
-
-
-    }
 function accept() {
     if (document.getElementById('agree').checked) {
         dijit.byId("continue").setAttribute('disabled', false);
