@@ -441,30 +441,43 @@ var treeData = [{
         $("#submitting").hide();
         //activatePan();
     });
+//========================================================AMD start here=====================================
+var symbol, loading;
 
-
-require(["dojo/parser", "dojo/ready", "dojo/data/ItemFileReadStore",
+require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/on",
+    "dojo/dom-construct", "dojo/data/ItemFileReadStore",
     "esri/config",
+    "esri/geometry/Extent",
     "esri/map", "esri/layers/FeatureLayer", "esri/SnappingManager", "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol",
     "esri/tasks/query", "esri/tasks/IdentifyTask", "esri/tasks/IdentifyParameters", "esri/tasks/Geoprocessor", "esri/toolbars/navigation",
     "esri/dijit/Scalebar", "esri/dijit/Measurement","esri/dijit/InfoWindow", "esri/tasks/FindTask", "esri/tasks/FindParameters", "esri/dijit/Legend",
     "dijit/Tooltip", "dijit/Dialog", "dijit/ProgressBar","dijit/Toolbar",
     "dijit/form/FilteringSelect", "dijit/form/CheckBox", "dijit/form/TextBox", "dijit/form/Button",
-    "myModules/InfoWindow",
+    "myModules/InfoWindow", "utils/symbolutil",
     "dojo/domReady!"
-    ],function(parser, ready, ItemFileReadStore,
+    ],function(parser, ready, dom, on,
+        domConstruct, ItemFileReadStore,
         esriConfig,
+        Extent,
         Map, FeatureLayer, SnappingManager, SimpleFillSymbol, SimpleLineSymbol,
         Query, IdentifyTask, IdentifyParameters, Geoprocessor, Navigation,
         Scalebar, Measurement, InfoWindow, FindTask, FindParameters, Legend,
         Tooltip, Dialog, ProgressBar, Toolbar,
         FilteringSelect, CheckBox, TextBox, Button,
-        myInfoWindow){
+        myInfoWindow, SymbolUtil){
 
         ready(function(){
+            init1();
             init();
             esriConfig.defaults.io.proxyUrl= "proxy.ashx";
-
+       //esriConfig.defaults.map.sliderLabel = null;
+       esriConfig.defaults.map.sliderStyle = 'large';
+        esriConfig.defaults.map.slider = {
+            left: "80px",
+            top: "20px",
+            width: null,
+            height: "500px"
+        };
             $("#continue").text("Continue");
             $("#ug").text("User Guide");
             $("#agree").removeAttr('disabled');
@@ -474,12 +487,40 @@ require(["dojo/parser", "dojo/ready", "dojo/data/ItemFileReadStore",
             }); //Include dojo contents. Has to wait until dojo is ready.
         });
 
+        function init1(){
+        loading = dom.byId("mapLoadingImg");
+        symbol=SymbolUtil.renderSymbol();
+        startExtent = new Extent({
+            "xmin": 1081699,
+            "ymin": 1073385,
+            "xmax": 1117959,
+            "ymax": 1124831,
+            "spatialReference": {
+                "wkid": 2262
+            }
+        });
+
+        var infoWindow = new myInfoWindow({
+            domNode: domConstruct.create("div", null, dom.byId("map"))
+        });
+
+        map = new esri.Map("map", {
+            infoWindow: infoWindow,
+            //sliderPosition: "bottom-left",
+            //sliderStyle:"large",
+        });
+
+        on(map, "update-start", showLoading);
+        on(map, "update-end", hideLoading);
+
+        }
+
 });
 
     var layer, ortho, layer2;
-    var map, queryTask, query, navToolbar, loading; //, layervisible=[];//easy way to get visible layers in "layer"
+    var map, queryTask, query, navToolbar; //, layervisible=[];//easy way to get visible layers in "layer"
     var legendDijit;
-    var symbol, infoTemplate;
+    var infoTemplate;
     var handle, startExtent;
     var currentGraphic; //This variable is used to store symbol highlighted by hyperlink tool.
     var tempGraphic;
@@ -496,7 +537,167 @@ require(["dojo/parser", "dojo/ready", "dojo/data/ItemFileReadStore",
     var snapManager; //06172015
 
 //=========================================GLOBAL FUNCTIONS========================================================
+    function init() {
+        /*06172015*/
 
+        parcellayer = new esri.layers.FeatureLayer("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer/22", {
+            mode: esri.layers.FeatureLayer.MODE_SELECTION,
+            outFields: ["*"]
+        });
+
+        ortho = new esri.layers.ArcGISTiledMapServiceLayer("http://map.amherst.ny.us/gallifrey/rest/services/OrthoBase/NYS_Imagery_2014/MapServer", {
+            "id": "2011nys_true_color",
+            "opacity": 1.0,
+            "visible": true
+        });
+
+        map.addLayer(ortho);
+
+        //Add Hydrant Layer MJiang 03.03.2015
+        var imageParametersF = new esri.layers.ImageParameters();
+        imageParametersF.layerIds = [0, 1, 2, 3];
+        hydrant = new esri.layers.ArcGISDynamicMapServiceLayer("http://map.amherst.ny.us/gallifrey/rest/services/Fire/FireHydrants/MapServer", {
+            "imageParameters": imageParametersF
+        });
+        map.addLayer(hydrant);
+
+
+
+        var imageParameters = new esri.layers.ImageParameters();
+        imageParameters.layerIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 17, 18, 19, 22, 23, 29, 30];
+        imageParameters.layerOption = esri.layers.ImageParameters.LAYER_OPTION_SHOW;
+        imageParameters.transparent = true;
+
+        layer = new esri.layers.ArcGISDynamicMapServiceLayer("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer", {
+            "imageParameters": imageParameters
+        });
+        layer.setImageFormat("png32");
+
+        map.addLayer(layer);
+
+        exportMapGP = new esri.tasks.Geoprocessor("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/ExportToPDF/GPServer/ExportToPDF");
+        contactGP = new esri.tasks.Geoprocessor("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/Contact/GPServer/Contact");
+
+
+        navToolbar = new esri.toolbars.Navigation(map);
+        dojo.connect(navToolbar, "onExtentHistoryChange", extentHistoryChangeHandler);
+
+
+        queryTask = new esri.tasks.QueryTask("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer/22");
+
+        //build query filter
+        query = new esri.tasks.Query();
+        query.outSpatialReference = {
+            "wkid": 2262
+        };
+        query.returnGeometry = true;
+        query.outFields = ["Printkey", "PARCELID", "GLink", "ONAME1", "PARCELADD", "CPILink"];
+
+        identifyTask = new esri.tasks.IdentifyTask("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer");
+
+        identifyParams = new esri.tasks.IdentifyParameters();
+        //identifyParams.tolerance = 3;
+        identifyParams.tolerance = 0; //prevent for multiple parcels selected
+        identifyParams.returnGeometry = true;
+        identifyParams.layerIds = [22, 25, 26, 27, 32];
+        identifyParams.layerOption = esri.tasks.IdentifyParameters.LAYER_OPTION_ALL;
+        identifyParams.width = map.width;
+        identifyParams.height = map.height;
+        //into init2 //symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_DASHDOT, new dojo.Color([255, 0, 0]), 2), new dojo.Color([255, 255, 0, 0.5]));
+
+        //Create Find Task using the URL of the map service to search
+        findTask = new esri.tasks.FindTask("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer");
+
+        //Create the find parameters
+        findParams = new esri.tasks.FindParameters();
+        findParams.returnGeometry = true;
+        findParams.layerIds = [22];
+        findParams.searchFields = ["Printkey"];
+        findParams.outSpatialReference = map.spatialReference;
+
+        var div = document.getElementById('map_container');
+        if (div.addEventListener) {
+            //evt.preventDefault();
+            div.addEventListener('contextmenu', CPILink, true);
+        } else { //previous method, not in use anymore
+
+            if ($.browser.msie && parseInt($.browser.version, 10) === 8) {
+                document.getElementById('map_container').attachEvent('oncontextmenu', function(evt) {
+                    CPILink(evt);
+                    window.event.returnValue = false;
+                });
+            } else {
+                document.getElementById('map_container').attachEvent('oncontextmenu', function(evt) {
+                    CPILink(evt);
+                    window.event.returnValue = false;
+                });
+            }
+
+        }
+
+
+        dojo.connect(map, 'onLoad', function(theMap) {
+
+            var scalebar = new esri.dijit.Scalebar({
+                map: map,
+                scalebarUnit: 'english'
+            });
+
+            //resize the map when the browser resizes
+            // dojo.connect(dijit.byId('map'), 'resize', map, map.resize);
+
+            window.onresize = function() {
+                map.resize();
+                map.reposition();
+                $("#map").css("height", window.innerHeight - 20 + "px");
+                $('#mapLoadingImg').css("left", window.innerWidth / 2 - 16 + "px");
+                $('#mapLoadingImg').css("top", window.innerHeight / 2 - 16 + "px");
+                $("#alert").css("left", window.innerWidth / 2 - 505 + "px");
+
+
+            }
+
+            map.setExtent(startExtent);
+
+        });
+
+        /*06042015*/
+        esri.config.defaults.geometryService = new esri.tasks.GeometryService("http://map.amherst.ny.us/gallifrey/rest/services/Utilities/Geometry/GeometryServer");
+        dojo.connect(map, "onLoad", function() {
+            measurement = new esri.dijit.Measurement({
+                map: map,
+                defaultLengthUnit: esri.Units.FEET
+            }, dojo.byId('measurement-div'));
+
+            dojo.style("measurement-div", {
+                "position": "absolute",
+                "background": "#fff",
+                "z-index": "100",
+                "left": "115px",
+                "top": "25px",
+                "width": "290px",
+                "height": "150px",
+                "padding": "10px 10px 10px 10px",
+                "display": "none"
+            });
+
+            measurement.startup();
+            measurement.resultLabel.setContent("Measurement Result (hold CTRL to snap)"); //06182015
+            /*06172015 snappingmanager*/
+            snapManager = map.enableSnapping();
+            var layerInfosSnap = [{
+                layer: parcellayer
+            }];
+            snapManager.setLayerInfos(layerInfosSnap);
+
+            measurement.on("measure-end", function(evt) {
+                this.setTool(evt.toolName, false);
+                console.log("measure-end event triggered");
+            });
+        });
+        /* /06042015*/
+
+    }
 function accept() {
     if (document.getElementById('agree').checked) {
         dijit.byId("continue").setAttribute('disabled', false);
@@ -679,198 +880,7 @@ function setCookie(c_name, value, exdays) {
     var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate);
     document.cookie = c_name + "=" + c_value;
 }
-    function init() {
 
-        loading = dojo.byId("mapLoadingImg");
-
-        var infoWindow = new myModules.InfoWindow({
-            domNode: dojo.create("div", null, dojo.byId("map"))
-        });
-
-        esri.config.defaults.map.sliderLabel = null;
-        esri.config.defaults.map.slider = {
-            left: "80px",
-            top: "20px",
-            width: null,
-            height: "200px"
-        };
-
-        startExtent = new esri.geometry.Extent({
-            "xmin": 1081699,
-            "ymin": 1073385,
-            "xmax": 1117959,
-            "ymax": 1124831,
-            "spatialReference": {
-                "wkid": 2262
-            }
-        });
-        map = new esri.Map("map", {
-            infoWindow: infoWindow
-        });
-        dojo.connect(map, "onUpdateStart", showLoading);
-        dojo.connect(map, "onUpdateEnd", hideLoading);
-
-        /*06172015*/
-
-        parcellayer = new esri.layers.FeatureLayer("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer/22", {
-            mode: esri.layers.FeatureLayer.MODE_SELECTION,
-            outFields: ["*"]
-        });
-
-        ortho = new esri.layers.ArcGISTiledMapServiceLayer("http://map.amherst.ny.us/gallifrey/rest/services/OrthoBase/NYS_Imagery_2014/MapServer", {
-            "id": "2011nys_true_color",
-            "opacity": 1.0,
-            "visible": true
-        });
-
-        map.addLayer(ortho);
-
-        //Add Hydrant Layer MJiang 03.03.2015
-        var imageParametersF = new esri.layers.ImageParameters();
-        imageParametersF.layerIds = [0, 1, 2, 3];
-        hydrant = new esri.layers.ArcGISDynamicMapServiceLayer("http://map.amherst.ny.us/gallifrey/rest/services/Fire/FireHydrants/MapServer", {
-            "imageParameters": imageParametersF
-        });
-        map.addLayer(hydrant);
-
-
-
-        var imageParameters = new esri.layers.ImageParameters();
-        imageParameters.layerIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 17, 18, 19, 22, 23, 29, 30];
-        imageParameters.layerOption = esri.layers.ImageParameters.LAYER_OPTION_SHOW;
-        imageParameters.transparent = true;
-
-        layer = new esri.layers.ArcGISDynamicMapServiceLayer("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer", {
-            "imageParameters": imageParameters
-        });
-        layer.setImageFormat("png32");
-
-        map.addLayer(layer);
-
-        exportMapGP = new esri.tasks.Geoprocessor("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/ExportToPDF/GPServer/ExportToPDF");
-        contactGP = new esri.tasks.Geoprocessor("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/Contact/GPServer/Contact");
-
-
-        navToolbar = new esri.toolbars.Navigation(map);
-        dojo.connect(navToolbar, "onExtentHistoryChange", extentHistoryChangeHandler);
-
-
-        queryTask = new esri.tasks.QueryTask("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer/22");
-
-        //build query filter
-        query = new esri.tasks.Query();
-        query.outSpatialReference = {
-            "wkid": 2262
-        };
-        query.returnGeometry = true;
-        query.outFields = ["Printkey", "PARCELID", "GLink", "ONAME1", "PARCELADD", "CPILink"];
-
-        identifyTask = new esri.tasks.IdentifyTask("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer");
-
-        identifyParams = new esri.tasks.IdentifyParameters();
-        //identifyParams.tolerance = 3;
-        identifyParams.tolerance = 0; //prevent for multiple parcels selected
-        identifyParams.returnGeometry = true;
-        identifyParams.layerIds = [22, 25, 26, 27, 32];
-        identifyParams.layerOption = esri.tasks.IdentifyParameters.LAYER_OPTION_ALL;
-        identifyParams.width = map.width;
-        identifyParams.height = map.height;
-
-        symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_DASHDOT, new dojo.Color([255, 0, 0]), 2), new dojo.Color([255, 255, 0, 0.5]));
-
-        //Create Find Task using the URL of the map service to search
-        findTask = new esri.tasks.FindTask("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer");
-
-        //Create the find parameters
-        findParams = new esri.tasks.FindParameters();
-        findParams.returnGeometry = true;
-        findParams.layerIds = [22];
-        findParams.searchFields = ["Printkey"];
-        findParams.outSpatialReference = map.spatialReference;
-
-        var div = document.getElementById('map_container');
-        if (div.addEventListener) {
-            //evt.preventDefault();
-            div.addEventListener('contextmenu', CPILink, true);
-        } else { //previous method, not in use anymore
-
-            if ($.browser.msie && parseInt($.browser.version, 10) === 8) {
-                document.getElementById('map_container').attachEvent('oncontextmenu', function(evt) {
-                    CPILink(evt);
-                    window.event.returnValue = false;
-                });
-            } else {
-                document.getElementById('map_container').attachEvent('oncontextmenu', function(evt) {
-                    CPILink(evt);
-                    window.event.returnValue = false;
-                });
-            }
-
-        }
-
-
-        dojo.connect(map, 'onLoad', function(theMap) {
-
-            var scalebar = new esri.dijit.Scalebar({
-                map: map,
-                scalebarUnit: 'english'
-            });
-
-            //resize the map when the browser resizes
-            // dojo.connect(dijit.byId('map'), 'resize', map, map.resize);
-
-            window.onresize = function() {
-                map.resize();
-                map.reposition();
-                $("#map").css("height", window.innerHeight - 20 + "px");
-                $('#mapLoadingImg').css("left", window.innerWidth / 2 - 16 + "px");
-                $('#mapLoadingImg').css("top", window.innerHeight / 2 - 16 + "px");
-                $("#alert").css("left", window.innerWidth / 2 - 505 + "px");
-
-
-            }
-
-            map.setExtent(startExtent);
-
-        });
-
-        /*06042015*/
-        esri.config.defaults.geometryService = new esri.tasks.GeometryService("http://map.amherst.ny.us/gallifrey/rest/services/Utilities/Geometry/GeometryServer");
-        dojo.connect(map, "onLoad", function() {
-            measurement = new esri.dijit.Measurement({
-                map: map,
-                defaultLengthUnit: esri.Units.FEET
-            }, dojo.byId('measurement-div'));
-
-            dojo.style("measurement-div", {
-                "position": "absolute",
-                "background": "#fff",
-                "z-index": "100",
-                "left": "115px",
-                "top": "25px",
-                "width": "290px",
-                "height": "150px",
-                "padding": "10px 10px 10px 10px",
-                "display": "none"
-            });
-
-            measurement.startup();
-            measurement.resultLabel.setContent("Measurement Result (hold CTRL to snap)"); //06182015
-            /*06172015 snappingmanager*/
-            snapManager = map.enableSnapping();
-            var layerInfosSnap = [{
-                layer: parcellayer
-            }];
-            snapManager.setLayerInfos(layerInfosSnap);
-
-            measurement.on("measure-end", function(evt) {
-                this.setTool(evt.toolName, false);
-                console.log("measure-end event triggered");
-            });
-        });
-        /* /06042015*/
-
-    }
 
     function makelegend(layer) {
         var tocDOM = dojo.byId("legendDiv"); //changeto lengendDiv
@@ -961,7 +971,7 @@ function setCookie(c_name, value, exdays) {
             var attr = feature.attributes;
             map.graphics.remove(currentGraphic);
             //set symbol
-            var symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([250, 0, 197]), 2), new dojo.Color([255, 255, 0, 0.5]));
+            //var symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([250, 0, 197]), 2), new dojo.Color([255, 255, 0, 0.5]));
             feature.setSymbol(symbol);
 
             map.graphics.add(feature);

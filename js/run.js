@@ -2,11 +2,20 @@
 /*jshint laxcomma:true*/
 (function(){
     'use strict';
-    var pathRX=new RegExp(/\/[^\/]+$/)
+    var pathRX=new RegExp(/\/[^\/]*$/)
     , locationPath=location.pathname.replace(pathRX,'');
 
     require({
         packages:[{
+            name:'utils',
+            location: locationPath+'/js/utils',
+        },{
+            name:'controllers',
+            location: locationPath+'/js/controllers',
+        },{
+            name:'services',
+            location: locationPath+'/js/services',
+        },{
             name:'app',
             location:locationPath+'/js',
             main:'main'
