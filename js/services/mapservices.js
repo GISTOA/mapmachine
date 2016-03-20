@@ -1,8 +1,9 @@
 /*global define*/
 /*jshint laxcomma:true*/
 define([
-    'esri/layers/FeatureLayer', "esri/layers/ArcGISTiledMapServiceLayer", "esri/layers/ArcGISDynamicMapServiceLayer", "esri/layers/ImageParameters",
-    "esri/tasks/Geoprocessor", "esri/tasks/QueryTask", "esri/tasks/IdentifyTask", "esri/tasks/FindTask",
+    'esri/layers/FeatureLayer', 'esri/layers/ArcGISTiledMapServiceLayer', 'esri/layers/ArcGISDynamicMapServiceLayer',
+    'esri/layers/ImageParameters',
+    'esri/tasks/Geoprocessor', 'esri/tasks/QueryTask', 'esri/tasks/IdentifyTask', 'esri/tasks/FindTask',
     'utils/symbolutil'
 ], function(FeatureLayer, ArcGISTiledMapServiceLayer, ArcGISDynamicMapServiceLayer,ImageParameters,
     Geoprocessor, QueryTask,IdentifyTask,FindTask
