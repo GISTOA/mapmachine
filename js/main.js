@@ -600,6 +600,9 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/on",
         on(map, "load", loadMap);
         /* /06042015*/
         on(window, "resize", windowResize);
+        on(dom.byId("continue2"),'click',zcontinue);
+
+
         //TODO
         var div = document.getElementById('map_container');
         if (div.addEventListener) {
@@ -670,6 +673,12 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/on",
             scalebarUnit: 'dual'
         });
     }
+
+    function zcontinue() {
+    setCookie("zoning", "True", 0.125);
+    $('#close-btn2').trigger('click');
+    $("#tree3").dynatree("getTree").getNodeByKey("20").select();
+}
 });
 
 
@@ -692,11 +701,7 @@ function accept2() {
     }
 }
 
-function zcontinue() {
-    setCookie("zoning", "True", 0.125);
-    $('#close-btn2').trigger('click');
-    $("#tree3").dynatree("getTree").getNodeByKey("20").select();
-}
+
 
 function zreturn() {
     setCookie("zoning", "", 1);
