@@ -462,7 +462,7 @@ var tempstatus; //control shown level id for selected parcel
 var tempFeatures = []; //store graphics related with parcels's searching results
 var tempnav, exportMapGP, contactGP;
 var snapManager; //06172015
-require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/on",
+require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/on", "dojo/_base/lang",
     "dojo/dom-construct", "dojo/dom-style", "dojo/data/ItemFileReadStore",
     "esri/config",
     "esri/units", "esri/geometry/Extent",
@@ -474,7 +474,7 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/on",
     "dijit/form/FilteringSelect", "dijit/form/CheckBox", "dijit/form/TextBox", "dijit/form/Button",
     "myModules/InfoWindow", "utils/symbolutil", 'services/mapservices',
     "dojo/domReady!"
-], function(parser, ready, dom, on,
+], function(parser, ready, dom, on, lang,
     domConstruct, domStyle, ItemFileReadStore,
     esriConfig,
     units, Extent,
@@ -569,10 +569,6 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/on",
         findParams.searchFields = ["Printkey"];
         findParams.outSpatialReference = map.spatialReference;
 
-        map.addLayer(ortho);
-        map.addLayer(hydrant);
-        map.addLayer(layer);
-
         on(map, "update-start", showLoading);
         on(map, "update-end", hideLoading);
         /*06042015*/
@@ -581,6 +577,9 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/on",
         on(window, "resize", windowResize);
         on(dom.byId("continue2"),'click',zcontinue);
 
+        map.addLayer(ortho);
+        map.addLayer(hydrant);
+        map.addLayer(layer);
 
         //TODO
         var div = document.getElementById('map_container');
@@ -646,6 +645,7 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/on",
                         console.log(evt.toolName+"measure-end event triggered");
                     });
         */
+        console.log("before set extent");
         map.setExtent(startExtent);
         var scalebar = new Scalebar({
             map: map,
