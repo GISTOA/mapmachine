@@ -467,27 +467,25 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/on",
     "esri/config",
     "esri/units", "esri/geometry/Extent",
     "esri/map",
-    "esri/layers/FeatureLayer", "esri/layers/ArcGISTiledMapServiceLayer", "esri/layers/ArcGISDynamicMapServiceLayer", "esri/layers/ImageParameters",
     "esri/SnappingManager", "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol",
-    "esri/tasks/query", "esri/tasks/QueryTask", "esri/tasks/IdentifyTask", "esri/tasks/IdentifyParameters", "esri/tasks/Geoprocessor", "esri/toolbars/navigation",
-    "esri/dijit/Scalebar", "esri/dijit/Measurement", "esri/dijit/InfoWindow", "esri/tasks/FindTask", "esri/tasks/FindParameters", "esri/dijit/Legend",
+    "esri/tasks/query", "esri/tasks/IdentifyParameters", "esri/toolbars/navigation",
+    "esri/dijit/Scalebar", "esri/dijit/Measurement", "esri/dijit/InfoWindow",  "esri/tasks/FindParameters", "esri/dijit/Legend",
     "dijit/Tooltip", "dijit/Dialog", "dijit/ProgressBar", "dijit/Toolbar",
     "dijit/form/FilteringSelect", "dijit/form/CheckBox", "dijit/form/TextBox", "dijit/form/Button",
-    "myModules/InfoWindow", "utils/symbolutil",
+    "myModules/InfoWindow", "utils/symbolutil", 'services/mapservices',
     "dojo/domReady!"
 ], function(parser, ready, dom, on,
     domConstruct, domStyle, ItemFileReadStore,
     esriConfig,
     units, Extent,
     Map,
-    FeatureLayer, ArcGISTiledMapServiceLayer, ArcGISDynamicMapServiceLayer, ImageParameters,
     SnappingManager, SimpleFillSymbol, SimpleLineSymbol,
-    Query, QueryTask, IdentifyTask, IdentifyParameters, Geoprocessor, Navigation,
-    Scalebar, Measurement, InfoWindow, FindTask, FindParameters, Legend,
+    Query, IdentifyParameters,  Navigation,
+    Scalebar, Measurement, InfoWindow, FindParameters, Legend,
     Tooltip, Dialog, ProgressBar, Toolbar,
     FilteringSelect, CheckBox, TextBox, Button,
-    myInfoWindow, SymbolUtil) {
-
+    myInfoWindow, SymbolUtil, mapServices
+    ) {
     ready(function() {
         init();
         esriConfig.defaults.io.proxyUrl = "proxy.ashx";
@@ -511,36 +509,17 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/on",
     function init() {
         esriConfig.defaults.geometryService = new esri.tasks.GeometryService("http://map.amherst.ny.us/gallifrey/rest/services/Utilities/Geometry/GeometryServer");
 
-        exportMapGP = new Geoprocessor("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/ExportToPDF/GPServer/ExportToPDF");
-        contactGP = new Geoprocessor("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/Contact/GPServer/Contact");
-        queryTask = new QueryTask("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer/22");
-        identifyTask = new IdentifyTask("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer");
-        findTask = new FindTask("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer");
+        exportMapGP =mapServices.exportMapGP;
+        contactGP =mapServices.contactGP;
+        queryTask =mapServices.queryTask;
+        identifyTask =mapServices.identifyTask;
+        findTask =mapServices.findTask;
 
-        parcelLayer = new esri.layers.FeatureLayer("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer/22", {
-            mode: esri.layers.FeatureLayer.MODE_SELECTION,
-            outFields: ["*"]
-        });
-        ortho = new ArcGISTiledMapServiceLayer("http://map.amherst.ny.us/gallifrey/rest/services/OrthoBase/NYS_Imagery_2014/MapServer", {
-            id: "2011nys_true_color",
-            opacity: 1.0,
-            visible: true
-        });
-        //Add Hydrant Layer MJiang 03.03.2015
-        var imageParametersF = new ImageParameters();
-        imageParametersF.layerIds = [0, 1, 2, 3];
-        hydrant = new ArcGISDynamicMapServiceLayer("http://map.amherst.ny.us/gallifrey/rest/services/Fire/FireHydrants/MapServer", {
-            "imageParameters": imageParametersF
-        });
-        var imageParameters = new ImageParameters();
-        imageParameters.layerIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 17, 18, 19, 22, 23, 29, 30];
-        imageParameters.layerOption = ImageParameters.LAYER_OPTION_SHOW;
-        imageParameters.transparent = true;
-
-        layer = new ArcGISDynamicMapServiceLayer("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer", {
-            "imageParameters": imageParameters
-        });
-        layer.setImageFormat("png32");
+        parcelLayer =mapServices.parcelLayer;
+        ortho =mapServices.orthoLayer;
+        hydrant =mapServices.hydrantLayer;
+        layer =mapServices.layers;
+        //layer.setImageFormat("png32");
 
         loading = dom.byId("mapLoadingImg");
         symbol = SymbolUtil.renderSymbol();
