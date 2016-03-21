@@ -19,7 +19,7 @@ function(
     Evented,
     parser,
     on,
-    declare,  
+    declare,
     domConstruct,
     array,
     domStyle,
@@ -32,14 +32,14 @@ function(
     InfoWindowBase
 ) {
     return declare([InfoWindowBase, Evented], {
-        
-        isContentShowing :false,
+
+        isContentShowing :true,
 
         constructor: function(parameters) {
 
 
           lang.mixin(this, parameters);
- 
+
 
           domClass.add(this.domNode, "myInfoWindow");
 
@@ -54,11 +54,11 @@ function(
             showFunc: coreFx.wipeIn,
             hideFunc: coreFx.wipeOut
           });
-          toggler.hide();
+         // toggler.hide();
 
           on(this._closeButton, "click", lang.hitch(this, function(){
             //hide the content when the info window is toggled close.
-            this.hide(); 
+            this.hide();
             if(this.isContentShowing){
               toggler.hide();
               this.isContentShowing = false;
@@ -67,9 +67,9 @@ function(
             }
           }));
           on(this._toggleButton, "click", lang.hitch(this, function(){
-            //animate the content display 
+            //animate the content display
               if(this.isContentShowing){
-  
+
                 toggler.hide();
                 this.isContentShowing = false;
                 domClass.remove(this._toggleButton);
@@ -79,11 +79,11 @@ function(
                 toggler.show();
                 this.isContentShowing=true;
                 domClass.remove(this._toggleButton);
-                domClass.add(this._toggleButton,"toggleClose");  
+                domClass.add(this._toggleButton,"toggleClose");
               }
 
           }));
-          //hide initial display 
+          //hide initial display
           domUtils.hide(this.domNode);
           this.isShowing = false;
 
@@ -118,7 +118,7 @@ function(
           });
 
           //display the info window
-          domUtils.show(this.domNode); 
+          domUtils.show(this.domNode);
           this.isShowing = true;
           this.onShow();
         },
