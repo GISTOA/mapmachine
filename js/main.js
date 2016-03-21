@@ -394,10 +394,12 @@ $("#closeLegend").click();
 
 $("#closePrinter").click(function() {
     $("#printerSettings").hide();
-    dojo.style("pdfRequestFinished", "display", "none");
-
-    dojo.style("pdfRequest", "display", "none");
-    dojo.style("pdfRequestError", "display", "none");
+    $("#pdfRequestFinished").hide();
+    $("#pdfRequest").hide();
+    $("#pdfRequestError").hide();
+    //dojo.style("pdfRequestFinished", "display", "none");
+    //dojo.style("pdfRequest", "display", "none");
+    //dojo.style("pdfRequestError", "display", "none");
     document.getElementsByName("mapTitle")[0].value = "My Map";
 
     //untoggle layerList checkbox in mapinfo
