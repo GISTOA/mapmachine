@@ -371,12 +371,7 @@ $('#index').bind('input', function() {
     //alert("a");
 });
 
-$("#agree").click(function() {
-    accept();
-});
-$("#agree2").click(function() {
-    accept2();
-});
+
 
 
 
@@ -464,8 +459,9 @@ var tempstatus; //control shown level id for selected parcel
 var tempFeatures = []; //store graphics related with parcels's searching results
 var tempnav, exportMapGP, contactGP;
 var snapManager; //06172015
-require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/on", "dojo/_base/lang",
+require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "dojo/_base/lang",
     "dojo/dom-construct", "dojo/dom-style", "dojo/data/ItemFileReadStore",
+    "dijit/registry",
     "esri/config",
     "esri/units", "esri/geometry/Extent",
     "esri/map",
@@ -476,8 +472,9 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/on", "dojo/_base/lang",
     "dijit/form/FilteringSelect", "dijit/form/CheckBox", "dijit/form/TextBox", "dijit/form/Button",
     "myModules/InfoWindow", "utils/symbolutil", 'services/mapservices',
     "dojo/domReady!"
-], function(parser, ready, dom, on, lang,
+], function(parser, ready, dom, domAttr, on, lang,
     domConstruct, domStyle, ItemFileReadStore,
+    registry,
     esriConfig,
     units, Extent,
     Map,
@@ -489,6 +486,7 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/on", "dojo/_base/lang",
     myInfoWindow, SymbolUtil, mapServices
 ) {
     ready(function() {
+
         init();
         esriConfig.defaults.io.proxyUrl = "proxy.ashx";
         //esriConfig.defaults.map.sliderLabel = null;
@@ -578,8 +576,47 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/on", "dojo/_base/lang",
         /*06042015*/
         on(map, "load", loadMap);
         /* /06042015*/
+        //These are regular buttons, but dijit buttons are different
         on(window, "resize", windowResize);
+//zoning data alert,
+        on(dom.byId("return"),'click',zreturn);
         on(dom.byId("continue2"), 'click', zcontinue);
+//contact dialog buttons
+        on(dom.byId("close-btn4"),'click',clearContact);
+        on(dom.byId("submitContact"),'click',contact);
+//dry icon
+        on(dom.byId("dryicon"),'click',dryicons);
+        //click tutorial
+        on(dom.byId("tutorial"),'click',function(){window.open('http://www.youtube.com/user/AmherstNYGIS','_blank');});
+        on(dom.byId("helpUG"),'click',userGuide);
+        //contact button, is set as open button for contact dialog, the following set it for more function.
+        on(dom.byId("contactclicker"),'click',antiSpam);
+        //topright clicker;
+        on(dom.byId("clicker"),'click',userGuide);
+
+        on(dom.byId("agree"), 'click', accept);
+        on(dom.byId("ug"),'click',userGuide);
+        on(dom.byId("continue"),'click',mcontinue);
+
+        on(dom.byId("exportPDFBtn"),'click',exportPDF);
+
+        on(dom.byId("agree2"), 'click', accept2);
+
+//Toolbar
+        on(dom.byId("zoomin"), 'click', activateZoomIn);
+        on(dom.byId("zoomout"), 'click', activateZoomOut);
+        on(dom.byId("zoomfullext"), 'click', function(){map.setExtent(startExtent)});
+        on(dom.byId("zoomprev"), 'click', function(){navToolbar.deactivate();navToolbar.zoomToPrevExtent();});
+        on(dom.byId("zoomnext"), 'click', function(){navToolbar.zoomToNextExtent();});
+        on(dom.byId("pan"), 'click',activatePan);
+        //dojo.connect(registry.byId("pan"),"onClick",activatePan);
+        on(dom.byId("identify"), 'click', function(){navToolbar.deactivate();defaultCursor();identify();tempnav=-1;});
+        on(dom.byId("measure"), 'click', function(){navToolbar.deactivate();measure();tempnav=-1;});
+        on(dom.byId("hyperlink"), 'click', function(){navToolbar.deactivate();defaultCursor();hyperlink();tempnav=-1;});
+        on(dom.byId("clear"), 'click', function(){if (map.graphics) map.graphics.clear();});
+        on(dom.byId("printer"), 'click', print);
+
+        on(dom.byId("go"),'click',gosearch);
 
         map.addLayer(ortho);
         map.addLayer(hydrant);
@@ -662,27 +699,29 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/on", "dojo/_base/lang",
         $('#close-btn2').trigger('click');
         $("#tree3").dynatree("getTree").getNodeByKey("20").select();
     }
+
+    function accept() {
+        registry.byId('continue').setAttribute('disabled',!dom.byId("agree").checked);
+    }
+
+    function accept2() {
+        registry.byId('continue2').setAttribute('disabled',!dom.byId("agree2").checked);
+
+        // if (dom.byId("agree2").checked) {
+        //     dom.byId("continue2").setAttribute('disabled', false);
+        // } else {
+        //     dom.byId("continue2").setAttribute('disabled', true);
+        // }
+    }
+
+
+
 });
 
 
 
 //=========================================GLOBAL FUNCTIONS========================================================
 
-function accept() {
-    if (document.getElementById('agree').checked) {
-        dijit.byId("continue").setAttribute('disabled', false);
-    } else {
-        dijit.byId("continue").setAttribute('disabled', true);
-    }
-}
-
-function accept2() {
-    if (document.getElementById('agree2').checked) {
-        dijit.byId("continue2").setAttribute('disabled', false);
-    } else {
-        dijit.byId("continue2").setAttribute('disabled', true);
-    }
-}
 
 
 
@@ -1557,9 +1596,11 @@ function defaultCursor() {
 }
 
 function activatePan() {
+    console.log("navToolbar");
+    console.log(this.navToolbar);
     tempnav = 2;
     //navToolbar.deactivate();
-    this.navToolbar.activate(esri.toolbars.Navigation.PAN);
+    navToolbar.activate(esri.toolbars.Navigation.PAN);
     $("#map_layers").css("cursor", "url(images/hand_1.png), -moz-zoom-in");
     dojo.byId("map_layers").style.cursor = "url(images/hand_1.png), -moz-zoom-in";
     down = dojo.connect(map, "onMouseDown", function(evt) {
