@@ -538,7 +538,7 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/on", "dojo/_base/lang",
         var infoWindow = new myInfoWindow({
             domNode: domConstruct.create("div", null, dom.byId("map"))
         });
-
+console.log("infoTonggle: "+infoWindow.isContentShowing);
         map = new Map("map", {
             infoWindow: infoWindow,
             //sliderPosition: "bottom-left",

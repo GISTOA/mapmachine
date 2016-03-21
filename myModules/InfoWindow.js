@@ -1,109 +1,150 @@
-dojo.provide("myModules.InfoWindow");
+define([
+    "dojo/Evented",
+    "dojo/parser",
+    "dojo/on",
+    "dojo/_base/declare",
+    "dojo/dom-construct",
+    "dojo/_base/array",
+    "dojo/dom-style",
+    "dojo/_base/lang",
+    "dojo/dom-class",
+    "dojo/fx/Toggler",
+    "dojo/fx",
+    "dojo/Deferred",
+    "esri/domUtils",
+    "esri/InfoWindowBase"
 
-dojo.require("esri.InfoWindowBase");
-dojo.require("dojo.fx");
-dojo.require("dojo.fx.Toggler");
-/***************
- * MyInfoWindow
- ***************/
-dojo.declare("myModules.InfoWindow", [ esri.InfoWindowBase ], {
-  
-  constructor: function(parameters) {
-    dojo.mixin(this, parameters);
-    
-    isContentShowing: false;
-    
-    dojo.addClass(this.domNode, "myInfoWindow");
+],
+function(
+    Evented,
+    parser,
+    on,
+    declare,  
+    domConstruct,
+    array,
+    domStyle,
+    lang,
+    domClass,
+    Toggler,
+    coreFx,
+    Deferred,
+    domUtils,
+    InfoWindowBase
+) {
+    return declare([InfoWindowBase, Evented], {
+        
+        isContentShowing :false,
 
-    this._closeButton = dojo.create("div", { "class": "close", title: "Close" }, this.domNode);
-    this._title = dojo.create("div", { "class": "title" }, this.domNode);
-    this._content = dojo.create("div", { "class": "content" }, this.domNode);
-    
+        constructor: function(parameters) {
 
-    this._eventConnections = [
-      dojo.connect(this._closeButton, "onclick", this, function(){
-        this.hide();
-        //hide the content when the window is closed so it displays in closed state next time it opens.
-        if(this.isContentShowing){
+
+          lang.mixin(this, parameters);
+ 
+
+          domClass.add(this.domNode, "myInfoWindow");
+
+          this._closeButton = domConstruct.create("div",{"class": "close", "title": "Close"}, this.domNode);
+          this._title = domConstruct.create("div",{"class": "title"}, this.domNode);
+          this._content = domConstruct.create("div",{"class": "content"}, this.domNode);
+
+          this._toggleButton = domConstruct.create("div",{"class": "toggleOpen", "title": "Toggle"}, this.domNode);
+
+          var toggler = new  Toggler({
+            "node": this._content,
+            showFunc: coreFx.wipeIn,
+            hideFunc: coreFx.wipeOut
+          });
           toggler.hide();
-          this.isContentShowing = false;
-          dojo.removeClass(this._toggleButton);
-          dojo.addClass(this._toggleButton,"toggleOpen");
+
+          on(this._closeButton, "click", lang.hitch(this, function(){
+            //hide the content when the info window is toggled close.
+            this.hide(); 
+            if(this.isContentShowing){
+              toggler.hide();
+              this.isContentShowing = false;
+              domClass.remove(this._toggleButton);
+              domClass.add(this._toggleButton, "toggleOpen");
+            }
+          }));
+          on(this._toggleButton, "click", lang.hitch(this, function(){
+            //animate the content display 
+              if(this.isContentShowing){
+  
+                toggler.hide();
+                this.isContentShowing = false;
+                domClass.remove(this._toggleButton);
+                domClass.add(this._toggleButton,"toggleOpen");
+
+              }else{
+                toggler.show();
+                this.isContentShowing=true;
+                domClass.remove(this._toggleButton);
+                domClass.add(this._toggleButton,"toggleClose");  
+              }
+
+          }));
+          //hide initial display 
+          domUtils.hide(this.domNode);
+          this.isShowing = false;
+
+        },
+        setMap: function(map){
+          this.inherited(arguments);
+          map.on("pan-start", lang.hitch(this, function(){
+            this.hide();
+          }));
+          map.on("zoom-start", lang.hitch(this, function(){
+            this.hide();
+          }));
+         // map.on("zoom-start", //this, this.hide);
+
+        },
+        setTitle: function(title){
+          this.place(title, this._title);
+
+        },
+        setContent: function(content){
+          this.place(content, this._content);
+        },
+        show: function(location){
+          if(location.spatialReference){
+            location = this.map.toScreen(location);
+          }
+
+          //Position 10x10 pixels away from the specified location
+          domStyle.set(this.domNode,{
+            "left": (location.x + 10) + "px",
+            "top": (location.y + 10) + "px"
+          });
+
+          //display the info window
+          domUtils.show(this.domNode); 
+          this.isShowing = true;
+          this.onShow();
+        },
+        hide: function(){
+          domUtils.hide(this.domNode);
+          this.isShowing = false;
+          this.onHide();
+
+        },
+        resize: function(width, height){
+          domStyle.set(this._content,{
+            "width": width + "px",
+            "height": height + "px"
+          });
+          domStyle.set(this._title,{
+            "width": width + "px"
+          });
+
+        },
+        destroy: function(){
+          domConstruct.destroy(this.domNode);
+          this._closeButton = this._title = this._content = null;
+
         }
-      })
-    ];
 
-    // Hidden initially
-    esri.hide(this.domNode);            
-    this.isShowing = false;
-    //this.domNode.draggable();
-  },
-  
-  /*****************************************
-   * Override and implement methods defined  
-   * by the base class: InfoWindowBase
-   *****************************************/
 
-  setMap: function(map) {
-    // Run logic defined in the base class
-    this.inherited(arguments);
-    
-    //  hide the info window when the user is focusing elsewhere.
-    //this._eventConnections.push(dojo.connect(map, "onPanStart", this, this.hide));
-    //this._eventConnections.push(dojo.connect(map, "onZoomStart", this, this.hide));
-  },
-  
-  setTitle: function(title) {
-    this.place(title, this._title);
-  },
-  
-  setContent: function(content) {
-    this.place(content, this._content);
-  },
-  
-  show: function(location) {
-    // Is location specified in map coordinates?
-    if (location.spatialReference) {
-      location = this.map.toScreen(location);
-    }
-    
-    // Position 10x10 pixels away from the 
-    // requested location
-    dojo.style(this.domNode, {
-      left: (location.x + 10) + "px",
-      top: (location.y + 10) + "px"
-    });
-    
-    // Display
-    esri.show(this.domNode);
-    this.isShowing = true;
-    this.onShow();
-  },
-  hide: function() {
-    esri.hide(this.domNode);
-    this.isShowing = false;
-    this.onHide();
-  },
-  
-  resize: function(width, height) {
-    dojo.style(this._content, {
-      width: width + "px",
-      height: height + "px"
-    });
-    dojo.style(this._title,{
-      width: width + "px"
-    });
-  },
-  
-  /************************************
-   * Defining some methods specific to
-   * my info window
-   ************************************/
-  
-  destroy: function() {
-    dojo.forEach(this._eventConnections, dojo.disconnect);
-    dojo.destroy(this.domNode);
-    this._closeButton = this._title = this._content = this._eventConnections = null;
-  }
-  
+      });
+
 });
