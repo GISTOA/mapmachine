@@ -77,7 +77,7 @@ on iOS devices-->
                 <span id='selectedOption2' class='infoTitle zposition'></span>
                 <div class="selectOptions">
                     <span class="selectOption" value="LayerList"><span>&#8730;&nbsp;</span>Layer List</span>
-                    <span class="selectOption" value="legend"><span>&#8730;&nbsp;</span>Legend</span>
+                    <span class="selectOption" value="legend"><span class="hiddenspan">&#8730;&nbsp;</span>Legend</span>
                     <span class="selectOption" value="video" onclick="window.open('http://www.youtube.com/user/AmherstNYGIS','_blank');"><span>&nbsp;&nbsp;&nbsp;</span>Training Video</span>
                     <span class="selectOption" value="Help" onclick="window.open('doc/User Guide.pdf','_blank');"><span>&nbsp;&nbsp;&nbsp;</span>Help</span>
                     <span id="contactclicker" class="selectOption" value="Contact" onclick="antiSpam();"><span>&nbsp;&nbsp;&nbsp;</span>Contact</span>
@@ -142,7 +142,7 @@ on iOS devices-->
         <!--
 legend detail is retrievable, example: export2pdf david example from code gallery
 -->
-        <div id="legend" style="width:400px; min-height:220px; background-color:white; overflow:hidden;position:absolute;float:right;right:0px;top:50px; z-index: 100;
+        <div id="legend" style="display:none;width:400px; min-height:220px; background-color:white; overflow:hidden;position:absolute;float:right;right:0px;top:50px; z-index: 100;
     -moz-box-shadow: 1px 1px 3px #000000;-webkit-box-shadow: 1px 1px 3px #000000;box-shadow: 1px 1px 3px #000000;
     border:solid 1px #5DA1D7;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;">
             <div class="title" style="z-index: 100;float:left;position:relative;width:100%;height:20px;border:solid 0.1px #5DA1D7;color:white;background:#5DA1D7;">
@@ -151,7 +151,7 @@ legend detail is retrievable, example: export2pdf david example from code galler
             </div>
             <div id="legendDiv" style="float:left;position:relative;height:auto;">
                 <ul id="legendUl">
-                    <ul>
+                </ul>
             </div>
         </div>
         <div id="printerSettings" style="width:400px;height:320px; position:absolute;left:200px;top:200px;background-color:white;z-index: 100;-moz-box-shadow: 1px 1px 3px #000000;-webkit-box-shadow: 1px 1px 3px #000000;box-shadow: 1px 1px 3px #000000;
@@ -237,20 +237,23 @@ legend detail is retrievable, example: export2pdf david example from code galler
         <input type="button" id="popupclicker" style="display:none;">
         <input type="button" id="close-btn" style="display:none;">
         <div id="popupinfo" style="background-color: #fff;width:300px;height:410px;text-align: center;margin:auto;">
-            <div id="disclaimer" style="float:left;position:relative;height:300px;width:100%;padding-top:5px;"><b>Amherst Map Machine Disclaimer:</b>
-                <br>
-                <br>
+            <div id="disclaimer" style="overflow: hidden;float:left;position:relative;height:300px;width:100%;padding-top:5px;"><b>Amherst Map Machine Disclaimer:</b>
+                <br/>
+                <br/>
                 <div id="disclaimer-content" style="width:90%;margin-left:10px;margin-right:0px;font-family:calibri;font-size:14px;">The Town of Amherst, New York (Amherst), provides this Geographic Information System (GIS) data and related mapping as a service to residents and businesses.The GIS data is meant for informational purposes only. The maps, related datasets,and the tabular data presented in this Internet mapping application are developedand maintained from public records, various data sources, and are under constant revisions. It is not meant to be construed as a survey or legal document. Users of this mapping application should consult the original information source(s) or Town department for verification of the information contained on this application. While efforts have been made to use the most current and accurate data, Amherst, assumes no legal responsibility for the information contained in this Internet-based Geographic Information System. The information contained herein is provided for informational purposes only. Amherst provides this GIS data and metadata with no claim as to the completeness, usefulness, or accuracy of its content, positional or otherwise. Your use and browsing of information on this site is at your own risk. In providing this data and application or access to it, Amherst, assumes no obligation to assist the user in the use of such data or in the development, use, or maintenance of any applications applied to or associated with the data or metadata. For more detailed information please see the “Terms and Conditions” linked below. You can also contact us using the main form under the “Map Info” button in the upper right of these applications.</div>
-                <br /><a href="doc/Terms_and_Conditions.pdf" target="_blank">Terms and Conditions</a></div>
+                <br />
+                <a href="doc/Terms_and_Conditions.pdf" target="_blank">Terms and Conditions</a>
+                </div>
             <div style="float:left;position:relative;text-align: center;margin:auto;width:100%;">
                 <div style="height:12px;top:4px;display:inline;">
-                    <input type="checkbox" id="agree" class="agree" disabled="disabled" style="border:none; background:white;" /><span>&nbsp; I Accept</span>
+                    <input type="checkbox" id="agree" class="agree" disabled="disabled" style="border:none; background:white;" />
+                    <span>&nbsp; I Accept</span>
                     <br />
                 </div>
                 <div style="text-align:center; margin:auto;width:100%;left:60px;position:relative;top:8px;">
                     <div id="ug" dojotype="dijit.form.Button" style="float:left;" onclick="userGuide();">User Guide</div>
                     <div id="continue" dojotype="dijit.form.Button" style="float:left;" disabled="disabled" onclick="mcontinue();">
-                    Continue
+                        Continue
                     </div>
                 </div>
                 <div style="position:relative;float:left; font-size: 14px;top:10px;padding:5px 5px 5px 0px;">User Guide is also available on the upper right corner of the webpage.</div>
@@ -342,7 +345,7 @@ legend detail is retrievable, example: export2pdf david example from code galler
     <script>
     dojoConfig = {
         parseOnLoad: true,
-        async:true,
+        async: true,
         packages: [{
             "name": "myModules",
             "location": location.pathname.replace(/[^/]+$/, "") + "myModules"

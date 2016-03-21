@@ -390,7 +390,7 @@ $("#closeLegend").click(function() {
     });
 
 });
-$("#closeLegend").click();
+//$("#closeLegend").click();
 
 $("#closePrinter").click(function() {
     $("#printerSettings").hide();
