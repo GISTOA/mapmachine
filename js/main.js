@@ -469,7 +469,7 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/on", "dojo/_base/lang",
     "esri/map",
     "esri/SnappingManager", "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol",
     "esri/tasks/query", "esri/tasks/IdentifyParameters", "esri/toolbars/navigation",
-    "esri/dijit/Scalebar", "esri/dijit/Measurement", "esri/dijit/InfoWindow",  "esri/tasks/FindParameters", "esri/dijit/Legend",
+    "esri/dijit/Scalebar", "esri/dijit/Measurement", "esri/dijit/InfoWindow", "esri/tasks/FindParameters", "esri/dijit/Legend",
     "dijit/Tooltip", "dijit/Dialog", "dijit/ProgressBar", "dijit/Toolbar",
     "dijit/form/FilteringSelect", "dijit/form/CheckBox", "dijit/form/TextBox", "dijit/form/Button",
     "myModules/InfoWindow", "utils/symbolutil", 'services/mapservices',
@@ -480,12 +480,12 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/on", "dojo/_base/lang",
     units, Extent,
     Map,
     SnappingManager, SimpleFillSymbol, SimpleLineSymbol,
-    Query, IdentifyParameters,  Navigation,
+    Query, IdentifyParameters, Navigation,
     Scalebar, Measurement, InfoWindow, FindParameters, Legend,
     Tooltip, Dialog, ProgressBar, Toolbar,
     FilteringSelect, CheckBox, TextBox, Button,
     myInfoWindow, SymbolUtil, mapServices
-    ) {
+) {
     ready(function() {
         init();
         esriConfig.defaults.io.proxyUrl = "proxy.ashx";
@@ -509,16 +509,16 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/on", "dojo/_base/lang",
     function init() {
         esriConfig.defaults.geometryService = new esri.tasks.GeometryService("http://map.amherst.ny.us/gallifrey/rest/services/Utilities/Geometry/GeometryServer");
 
-        exportMapGP =mapServices.exportMapGP;
-        contactGP =mapServices.contactGP;
-        queryTask =mapServices.queryTask;
-        identifyTask =mapServices.identifyTask;
-        findTask =mapServices.findTask;
+        exportMapGP = mapServices.exportMapGP;
+        contactGP = mapServices.contactGP;
+        queryTask = mapServices.queryTask;
+        identifyTask = mapServices.identifyTask;
+        findTask = mapServices.findTask;
 
-        parcelLayer =mapServices.parcelLayer;
-        ortho =mapServices.orthoLayer;
-        hydrant =mapServices.hydrantLayer;
-        layer =mapServices.layers;
+        parcelLayer = mapServices.parcelLayer;
+        ortho = mapServices.orthoLayer;
+        hydrant = mapServices.hydrantLayer;
+        layer = mapServices.layers;
         //layer.setImageFormat("png32");
 
         loading = dom.byId("mapLoadingImg");
@@ -575,26 +575,26 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/on", "dojo/_base/lang",
         on(map, "load", loadMap);
         /* /06042015*/
         on(window, "resize", windowResize);
-        on(dom.byId("continue2"),'click',zcontinue);
+        on(dom.byId("continue2"), 'click', zcontinue);
 
         map.addLayer(ortho);
         map.addLayer(hydrant);
         map.addLayer(layer);
 
         //TODO
-        var div = document.getElementById('map_container');
+        var div = dom.byId('map_container');
         if (div.addEventListener) {
             //evt.preventDefault();
             div.addEventListener('contextmenu', CPILink, true);
         } else { //previous method, not in use anymore
 
             if ($.browser.msie && parseInt($.browser.version, 10) === 8) {
-                document.getElementById('map_container').attachEvent('oncontextmenu', function(evt) {
+                dom.byId('map_container').attachEvent('oncontextmenu', function(evt) {
                     CPILink(evt);
                     window.event.returnValue = false;
                 });
             } else {
-                document.getElementById('map_container').attachEvent('oncontextmenu', function(evt) {
+                dom.byId('map_container').attachEvent('oncontextmenu', function(evt) {
                     CPILink(evt);
                     window.event.returnValue = false;
                 });
@@ -654,10 +654,10 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/on", "dojo/_base/lang",
     }
 
     function zcontinue() {
-    setCookie("zoning", "True", 0.125);
-    $('#close-btn2').trigger('click');
-    $("#tree3").dynatree("getTree").getNodeByKey("20").select();
-}
+        setCookie("zoning", "True", 0.125);
+        $('#close-btn2').trigger('click');
+        $("#tree3").dynatree("getTree").getNodeByKey("20").select();
+    }
 });
 
 
