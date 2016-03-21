@@ -706,12 +706,6 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
 
     function accept2() {
         registry.byId('continue2').setAttribute('disabled',!dom.byId("agree2").checked);
-
-        // if (dom.byId("agree2").checked) {
-        //     dom.byId("continue2").setAttribute('disabled', false);
-        // } else {
-        //     dom.byId("continue2").setAttribute('disabled', true);
-        // }
     }
 
 
@@ -1042,7 +1036,7 @@ function showQueryIdentifyResult(fset, evt) {
         var attr = feature.attributes;
         switch (features.layerId) {
             case 22:
-                var symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([250, 0, 197]), 2), new dojo.Color([255, 255, 0, 0.5]));
+                //var symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([250, 0, 197]), 2), new dojo.Color([255, 255, 0, 0.5]));
                 feature.setSymbol(symbol);
                 map.graphics.add(feature);
                 currentGraphic = feature;
@@ -1160,7 +1154,7 @@ function showQueryResult(feature, evt) {
     map.graphics.remove(currentGraphic);
 
     //set symbol
-    var symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([250, 0, 197]), 2), new dojo.Color([255, 255, 0, 0.5]));
+    //var symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([250, 0, 197]), 2), new dojo.Color([255, 255, 0, 0.5]));
     feature.setSymbol(symbol);
 
     map.graphics.add(feature);
@@ -1214,7 +1208,7 @@ function showSearchResults(results) {
     if (map.infowindow != null) {
         map.infowindow.hide();
     }
-    var symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([250, 0, 197]), 2), new dojo.Color([255, 255, 0, 0.5]));
+    //var symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([250, 0, 197]), 2), new dojo.Color([255, 255, 0, 0.5]));
 
     if (results.length == 0) {
         $("#mapLoadingImg").hide();
@@ -1260,7 +1254,7 @@ function showSearchResults1(results) {
     if (map.infowindow != null) {
         map.infowindow.hide();
     }
-    var symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([250, 0, 197]), 2), new dojo.Color([255, 255, 0, 0.5]));
+    //var symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([250, 0, 197]), 2), new dojo.Color([255, 255, 0, 0.5]));
 
     if (results.length == 0) {
         $("#mapLoadingImg").hide();
@@ -1337,7 +1331,6 @@ function getFeatureSet(type) {
 var myVar;
 //evoked after printer button pressed
 function exportPDF(evt) {
-
     dojo.style("pdfRequestFinished", "display", "none");
     dojo.style("pdfRequestError", "display", "none");
     dojo.style("pdfRequest", "display", "block");
