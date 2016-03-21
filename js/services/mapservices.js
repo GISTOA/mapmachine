@@ -8,6 +8,7 @@ define([
 ], function(FeatureLayer, ArcGISTiledMapServiceLayer, ArcGISDynamicMapServiceLayer,ImageParameters,
     Geoprocessor, QueryTask,IdentifyTask,FindTask
     ) {
+    'use strict';
         var _exportMapGP = new Geoprocessor("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/ExportToPDF/GPServer/ExportToPDF");
         var _contactGP = new Geoprocessor("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/Contact/GPServer/Contact");
         var _queryTask = new QueryTask("http://map.amherst.ny.us/gallifrey/rest/services/BaseMap/MapMachineMain/MapServer/22");
@@ -40,8 +41,6 @@ define([
             "imageParameters": imageParameters
         });
         _layers.setImageFormat("png32");
-
-
     return {
         exportMapGP:_exportMapGP,
         contactGP:_contactGP,

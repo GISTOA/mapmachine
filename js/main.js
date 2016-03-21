@@ -582,19 +582,19 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/on", "dojo/_base/lang",
         map.addLayer(layer);
 
         //TODO
-        var div = document.getElementById('map_container');
+        var div = dom.byId('map_container');
         if (div.addEventListener) {
             //evt.preventDefault();
             div.addEventListener('contextmenu', CPILink, true);
         } else { //previous method, not in use anymore
 
             if ($.browser.msie && parseInt($.browser.version, 10) === 8) {
-                document.getElementById('map_container').attachEvent('oncontextmenu', function(evt) {
+                dom.byId('map_container').attachEvent('oncontextmenu', function(evt) {
                     CPILink(evt);
                     window.event.returnValue = false;
                 });
             } else {
-                document.getElementById('map_container').attachEvent('oncontextmenu', function(evt) {
+                dom.byId('map_container').attachEvent('oncontextmenu', function(evt) {
                     CPILink(evt);
                     window.event.returnValue = false;
                 });
