@@ -499,8 +499,9 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/on", "dojo/_base/lang",
             width: null,
             height: "500px"
         };
-        $("#continue").text("Continue");
-        $("#ug").text("User Guide");
+        //unknow reason here/
+        //$("#continue").text("Continue");
+        //$("#ug").text("User Guide");
         $("#agree").removeAttr('disabled');
         $("div.myInfoWindow").draggable({
             containment: "parent",
@@ -538,8 +539,9 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/on", "dojo/_base/lang",
         var infoWindow = new myInfoWindow({
             domNode: domConstruct.create("div", null, dom.byId("map"))
         });
-console.log("infoTonggle: "+infoWindow.isContentShowing);
+        console.log("infoTonggle: " + infoWindow.isContentShowing);
         map = new Map("map", {
+            //autoResize:true,
             infoWindow: infoWindow,
             //sliderPosition: "bottom-left",
             //sliderStyle:"large",
@@ -609,11 +611,12 @@ console.log("infoTonggle: "+infoWindow.isContentShowing);
     function windowResize() {
         map.resize();
         map.reposition();
-        $("#map").css("height", window.innerHeight - 20 + "px");
-        $('#mapLoadingImg').css("left", window.innerWidth / 2 - 16 + "px");
-        $('#mapLoadingImg').css("top", window.innerHeight / 2 - 16 + "px");
-        $("#alert").css("left", window.innerWidth / 2 - 505 + "px");
-        console.log("evt window Resize");
+        domStyle.set("map", { "height": window.innerHeight - 20 + "px" });
+        domStyle.set("mapLoadingImg", {
+            "left": window.innerWidth / 2 - 16 + "px",
+            "top": window.innerHeight / 2 - 16 + "px",
+        });
+        domStyle.set("alert", { "left": window.innerWidth / 2 - 505 + "px" });
     }
 
     function loadMap() {
@@ -647,14 +650,13 @@ console.log("infoTonggle: "+infoWindow.isContentShowing);
                         console.log(evt.toolName+"measure-end event triggered");
                     });
         */
-        console.log("before set extent");
         map.setExtent(startExtent);
         var scalebar = new Scalebar({
             map: map,
             scalebarUnit: 'dual'
         });
     }
-
+//todo//too verbose with dojo.
     function zcontinue() {
         setCookie("zoning", "True", 0.125);
         $('#close-btn2').trigger('click');
