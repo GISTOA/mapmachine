@@ -488,6 +488,7 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
     ready(function() {
 
         init();
+        setTooltips();
         esriConfig.defaults.io.proxyUrl = "proxy.ashx";
         //esriConfig.defaults.map.sliderLabel = null;
         esriConfig.defaults.map.sliderStyle = 'large';
@@ -641,6 +642,20 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
                 });
             }
         }
+    }
+    function setTooltips(){
+        new Tooltip({connectId:["dryicon"], label:"dom"});
+        new Tooltip({connectId:["zoomin"], label:"Zoom In"});
+        new Tooltip({connectId:["zoomout"], label:"Zoom Out"});
+        new Tooltip({connectId:["zoomfullext"], label:"Full Extent"});
+        new Tooltip({connectId:["zoomprev"], label:"Previous Extent"});
+        new Tooltip({connectId:["zoomnext"], label:"Next Extent"});
+        new Tooltip({connectId:["pan"], label:"Pan"});
+        new Tooltip({connectId:["identify"], label:"Identify"});
+        new Tooltip({connectId:["measure"], label:"Measure Tool"});
+        new Tooltip({connectId:["hyperlink"], label:"TriView Tool"});
+        new Tooltip({connectId:["clear"], label:"Clear Graphics"});
+        new Tooltip({connectId:["printer"], label:"Print"});
     }
     //resize the map when the browser resizes
     // dojo.connect(dijit.byId('map'), 'resize', map, map.resize);

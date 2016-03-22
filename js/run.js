@@ -16,6 +16,9 @@
             name:'services',
             location: locationPath+'/js/services',
         },{
+            "name": "myModules",
+            "location": locationPath + "/myModules",
+        },{
             name:'app',
             location:locationPath+'/js',
             main:'main'
