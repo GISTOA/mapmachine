@@ -1,3 +1,5 @@
+
+
 //=========================================GLOBAL VARIABLES========================================================
 var treeData = [{
     title: "Base Information",
@@ -485,6 +487,7 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
     FilteringSelect, CheckBox, TextBox, Button,
     myInfoWindow, SymbolUtil, mapServices
 ) {
+    parser.parse();
     ready(function() {
 
         init();
