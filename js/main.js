@@ -447,10 +447,10 @@ var map, queryTask, query, navToolbar; //, layervisible=[];//easy way to get vis
 var legendDijit;
 var infoTemplate;
 var handle, startExtent;
-var currentGraphic; //This variable is used to store symbol highlighted by hyperlink tool.
+var currentGraphic; //This variable is used to store symbol highlighted by strView tool.
 var tempGraphic;
 //var popupTemplate;
-
+var infoWindow;
 var findTask, findParams;
 var identifyTask, identifyParams;
 
@@ -462,7 +462,7 @@ var snapManager; //06172015
 require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "dojo/_base/lang",
     "dojo/dom-construct", "dojo/dom-style", "dojo/data/ItemFileReadStore",
     "dijit/registry",
-    "esri/config",
+    "esri/config", "esri/domUtils",
     "esri/units", "esri/geometry/Extent",
     "esri/map",
     "esri/SnappingManager", "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol",
@@ -476,7 +476,7 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
 ], function(parser, ready, dom, domAttr, on, lang,
     domConstruct, domStyle, ItemFileReadStore,
     registry,
-    esriConfig,
+    esriConfig, domUtils,
     units, Extent,
     Map,
     SnappingManager, SimpleFillSymbol, SimpleLineSymbol,
@@ -486,6 +486,7 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
     FilteringSelect, CheckBox, TextBox,
     myInfoWindow, SymbolUtil, mapServices
 ) {
+    //prefered over parseOnload: true in dojoConfig.
     parser.parse();
     ready(function() {
 
@@ -537,7 +538,7 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
             }
         });
 
-        var infoWindow = new myInfoWindow({
+         infoWindow = new myInfoWindow({
             domNode: domConstruct.create("div", null, dom.byId("map"))
         });
         console.log("infoTonggle: " + infoWindow.isContentShowing);
@@ -606,7 +607,9 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
         on(dom.byId("agree2"), 'click', accept2);
 
         //Toolbar
-
+        dojo.connect(map.infoWindow, "onHide", function() {
+            map.graphics.remove(currentGraphic);
+        });
 
         on(dom.byId("go"), 'click', gosearch);
 
@@ -648,12 +651,13 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
             defaultCursor();
             identify();
             tempnav = -1; });
+
         registry.byId("measure").on("click", function() { navToolbar.deactivate();
             measure();
             tempnav = -1; });
-        registry.byId("hyperlink").on("click", function() { navToolbar.deactivate();
+        registry.byId("strView").on("click", function() { navToolbar.deactivate();
             defaultCursor();
-            hyperlink();
+            startStrView();
             tempnav = -1; });
         registry.byId("clear").on("click", function() {
             if (map.graphics) map.graphics.clear(); });
@@ -667,90 +671,88 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
         new Tooltip({ connectId: ["pan"], label: "Pan" });
         new Tooltip({ connectId: ["identify"], label: "Identify" });
         new Tooltip({ connectId: ["measure"], label: "Measure Tool" });
-        new Tooltip({ connectId: ["hyperlink"], label: "TriView Tool" });
+        new Tooltip({ connectId: ["strView"], label: "TriView Tool" });
         new Tooltip({ connectId: ["clear"], label: "Clear Graphics" });
         new Tooltip({ connectId: ["printer"], label: "Print" });
     }
 
     function identify() {
-
         if (handle != null) {
-            dojo.disconnect(handle);
+            handle.remove();
         }
-        on(map, "click", executeQueryIdentifyTask);
+        handle=on(map, "click", executeQueryIdentifyTask);
         //Listent for infoWindow onHide event
-        dojo.connect(map.infoWindow, "onHide", function() {
-            map.graphics.remove(currentGraphic);
-        });
-        down = dojo.connect(map, "onMouseDown", function(evt) {
-            dojo.byId("map_layers").style.cursor = "url(../images/hand_1.png) 16 16, -moz-zoom-in";
-        });
-        dojo.connect(map, "onMouseUp", function(evt) {
-            dojo.byId("map_layers").style.cursor = "url(../images/info_mid.png) 12 12, -moz-zoom-in";
-        });
-        $("#map_layers").css("cursor", "url(../images/info_mid.png) 12 12, -moz-zoom-in");
-        dojo.byId("map_layers").style.cursor = "url(../images/info_mid.png) 12 12, -moz-zoom-in";
+        console.log(map.infoWindow);
+
+        domStyle.set("map_layers",{cursor:"url(images/info_mid.png),help"});
     }
 
-
-    function hyperlink() {
+    function startStrView() {
         if (handle != null) {
-            dojo.disconnect(handle);
+            // dojo.disconnect(handle);
+            handle.remove();
         }
-        handle = dojo.connect(map, "onClick", executeQueryTask);
-        //Listent for infoWindow onHide event
-        dojo.connect(map.infoWindow, "onHide", function() {
-            map.graphics.remove(currentGraphic);
-        });
-        $("#alert").show();
-
-        $("#map_layers").css("cursor", "url(../images/triview3.png) 16 16, -moz-zoom-in");
-        dojo.byId("map_layers").style.cursor = "url(../images/triview3.png) 16 16, -moz-zoom-in";
-        down = dojo.connect(map, "onMouseDown", function(evt) {
-            dojo.byId("map_layers").style.cursor = "url(../images/hand_1.png), -moz-zoom-in";
-        });
-        dojo.connect(map, "onMouseUp", function(evt) {
-            dojo.byId("map_layers").style.cursor = "url(../images/triview3.png) 16 16, -moz-zoom-in";
-        });
+        handle = on(map,'click',executeQueryTask);
+        domUtils.show(dom.byId("alert"));
+        domStyle.set("map_layers",{cursor:"url(images/triview3.png),pointer"});
+    }
+    function activatePan() {
+        tempnav = 2;
+        //navToolbar.deactivate();
+        navToolbar.activate(Navigation.PAN);
+        domStyle.set("map_layers",{cursor:"url(images/hand_1.png),move"});
     }
 
     function activateZoomIn() {
         console.log("activateZoomin");
         tempnav = 0; // use for loading icon hide event.
         navToolbar.deactivate();
-        dojo.disconnect(handle);
-        navToolbar.activate(esri.toolbars.Navigation.ZOOM_IN);
-        zoomCursor();
+        // /dojo.disconnect(handle);
+        if (handle != null) {
+            handle.remove();
+        }
+        navToolbar.activate(Navigation.ZOOM_IN);
+        domStyle.set("map_layers",{cursor:"url(images/blue_zoom_in.png),zoom-in"});
     }
 
     function activateZoomOut() {
         tempnav = 1;
         navToolbar.deactivate();
-        dojo.disconnect(handle);
-        navToolbar.activate(esri.toolbars.Navigation.ZOOM_OUT);
-        zoomCursor();
+        if (handle != null) {
+            handle.remove();
+        }
+        navToolbar.activate(Navigation.ZOOM_OUT);
+        domStyle.set("map_layers",{cursor:"url(images/blue_zoom_out.png),zoom-out"});
     }
 
     function measure(evt) {
         navToolbar.deactivate();
         if (handle != null) {
-            dojo.disconnect(handle);
+            // dojo.disconnect(handle);
+            handle.remove();
         }
         map.infoWindow.hide();
-
         measurement.setTool("area", false);
         measurement.setTool("distance", false);
         measurement.setTool("location", false);
-        $("#measurement-div").toggle();
-        zoomCursor();
+        domUtils.toggle(dom.byId("measurement-div"));
+        domStyle.set("map_layers",{cursor:"crosshair"});
     }
 
+function defaultCursor() {
+    domStyle.set("map_layers",{cursor:"default"});
 
+}
+    function showLoading() {
+        domUtils.show(loading);
+        map.disableMapNavigation();
+        //map.hideZoomSlider();
+    }
     function hideLoading(error) {
         var legendDiv = document.getElementById("legendUl"); //test
         legendDiv.innerHTML = "";
         makelegend(layer);
-        esri.hide(loading);
+        domUtils.hide(loading);
         map.enableMapNavigation();
         if (tempnav == 0) {
             activateZoomIn();
@@ -833,6 +835,19 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
         registry.byId('continue2').setAttribute('disabled', !dom.byId("agree2").checked);
     }
 
+function dryicons() {
+    window.open("http://www.dryicons.com", '_blank');
+}
+
+
+
+function print() {
+    domUtils.show(dom.byId("printerSettings"));
+    dom.byId('exportPDFBtn').setAttribute('disabled', false);
+    // dijit.byId("exportPDFBtn").set("disabled", false);
+    dom.byId('pdfRequest').setAttribute('disabled', "none");
+
+}
 
 
 });
@@ -1646,46 +1661,6 @@ function contactErrorCallback(error) {
 
 
 
-
-function dryicons() {
-    window.open("http://www.dryicons.com", '_blank');
-}
-
-function zoomCursor() {
-    $("#map_layers").css("cursor", "crosshair");
-    dojo.byId("map_layers").style.cursor = "crosshair";
-    down = dojo.connect(map, "onMouseDown", function(evt) {
-        dojo.byId("map_layers").style.cursor = "crosshair";
-    });
-    dojo.connect(map, "onMouseUp", function(evt) {
-        dojo.byId("map_layers").style.cursor = "crosshair";
-    });
-}
-
-function defaultCursor() {
-    $("#map_layers").css("cursor", "default");
-    dojo.byId("map_layers").style.cursor = "default";
-    down = dojo.connect(map, "onMouseDown", function(evt) {
-        dojo.byId("map_layers").style.cursor = "url(../images/hand_1.png), -moz-zoom-in";
-    });
-    dojo.connect(map, "onMouseUp", function(evt) {
-        dojo.byId("map_layers").style.cursor = "default";
-    });
-}
-
-
-
-function showLoading() {
-    esri.show(loading);
-    map.disableMapNavigation();
-    //map.hideZoomSlider();
-}
-
-function print() {
-    $('#printerSettings').show();
-    dijit.byId("exportPDFBtn").set("disabled", false);
-    dojo.style("pdfRequest", "display", "none");
-}
 
 
 

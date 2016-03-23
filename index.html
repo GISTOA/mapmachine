@@ -42,7 +42,7 @@ on iOS devices-->
             <div data-dojo-type="dijit/form/Button" baseclass="tombutton" id="pan" class="tool" data-dojo-props="iconClass:'panIcon'"></div>
             <div data-dojo-type="dijit/form/Button" baseclass="tombutton" id="identify" class="tool" data-dojo-props="iconClass:'identifyIcon' "></div>
             <div data-dojo-type="dijit/form/Button" baseclass="tombutton" id="measure" class="tool" data-dojo-props="iconClass:'measureIcon'"></div>
-            <div data-dojo-type="dijit/form/Button" baseclass="tombutton" id="hyperlink" class="tool" data-dojo-props="iconClass:'hyperlinkIcon' "></div>
+            <div data-dojo-type="dijit/form/Button" baseclass="tombutton" id="strView" class="tool" data-dojo-props="iconClass:'hyperlinkIcon' "></div>
             <div data-dojo-type="dijit/form/Button" baseclass="tombutton" id="clear" class="tool" data-dojo-props="iconClass:'clearIcon' "></div>
             <div data-dojo-type="dijit/form/Button" baseclass="tombutton" id="printer" class="tool" data-dojo-props="iconClass:'printerIcon' "></div>
         </div>
@@ -340,21 +340,7 @@ legend detail is retrievable, example: export2pdf david example from code galler
     <script src="js/placeholder.js"></script>
     <script src="js/run.js"></script>
     <script>
-    function activatePan() {
-        console.log("navToolbar");
-        console.log(this.navToolbar);
-        tempnav = 2;
-        //navToolbar.deactivate();
-        navToolbar.activate(esri.toolbars.Navigation.PAN);
-        $("#map_layers").css("cursor", "url(../images/hand_1.png), -moz-zoom-in");
-        dojo.byId("map_layers").style.cursor = "url(../images/hand_1.png), -moz-zoom-in";
-        down = dojo.connect(map, "onMouseDown", function(evt) {
-            dojo.byId("map_layers").style.cursor = "url(../images/hand_1.png), -moz-zoom-in";
-        });
-        dojo.connect(map, "onMouseUp", function(evt) {
-            dojo.byId("map_layers").style.cursor = "url(../images/hand_1.png), -moz-zoom-in";
-        });
-    }
+
     </script>
 </body>
 
