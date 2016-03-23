@@ -1,109 +1,109 @@
 .zoominIcon {
-        background-image: url(../images/blue_zoom_in.png);
-        width: 32px;
-        height: 32px;
-    }
+    background-image: url(../images/blue_zoom_in.png);
+    width: 32px;
+    height: 32px;
+}
 
-    .zoomoutIcon {
-        background-image: url(../images/blue_zoom_out.png);
-        width: 32px;
-        height: 32px;
-    }
+.zoomoutIcon {
+    background-image: url(../images/blue_zoom_out.png);
+    width: 32px;
+    height: 32px;
+}
 
-    .zoomfullextIcon {
-        background-image: url(../images/globe.png);
-        width: 32px;
-        height: 32px;
-    }
+.zoomfullextIcon {
+    background-image: url(../images/globe.png);
+    width: 32px;
+    height: 32px;
+}
 
-    .zoomprevIcon {
-        background-image: url(../images/white_arrow_left.png);
-        width: 32px;
-        height: 32px;
-    }
+.zoomprevIcon {
+    background-image: url(../images/white_arrow_left.png);
+    width: 32px;
+    height: 32px;
+}
 
-    .zoomnextIcon {
-        background-image: url(../images/white_arrow_right2.png);
-        width: 32px;
-        height: 32px;
-    }
+.zoomnextIcon {
+    background-image: url(../images/white_arrow_right2.png);
+    width: 32px;
+    height: 32px;
+}
 
-    .panIcon {
-        background-image: url(../images/hand_1.png);
-        width: 32px;
-        height: 32px;
-    }
+.panIcon {
+    background-image: url(../images/hand_1.png);
+    width: 32px;
+    height: 32px;
+}
 
-    .hyperlinkIcon {
-        background-image: url(../images/triview_google.png);
-        width: 32px;
-        height: 32px;
-    }
+.hyperlinkIcon {
+    background-image: url(../images/triview_google.png);
+    width: 32px;
+    height: 32px;
+}
 
-    .identifyIcon {
-        background-image: url(../images/info.png);
-        width: 32px;
-        height: 32px;
-    }
+.identifyIcon {
+    background-image: url(../images/info.png);
+    width: 32px;
+    height: 32px;
+}
 
-    .measureIcon {
-        background-image: url(../images/measure.png);
-        width: 32px;
-        height: 32px;
-    }
+.measureIcon {
+    background-image: url(../images/measure.png);
+    width: 32px;
+    height: 32px;
+}
 
-    <!--06042015--> .deactivateIcon {
-        background-image: url(../images/Deactivate_32.png);
-        width: 32px;
-        height: 32px;
-    }
+<!--06042015--> .deactivateIcon {
+    background-image: url(../images/Deactivate_32.png);
+    width: 32px;
+    height: 32px;
+}
 
-    .clearIcon {
-        background-image: url(../images/map_delete.png);
-        width: 32px;
-        height: 32px;
-    }
+.clearIcon {
+    background-image: url(../images/map_delete.png);
+    width: 32px;
+    height: 32px;
+}
 
-    .printerIcon {
-        background-image: url(../images/printer.png);
-        width: 32px;
-        height: 32px;
-    }
+.printerIcon {
+    background-image: url(../images/printer.png);
+    width: 32px;
+    height: 32px;
+}
 
-    .go {
-        background-image: url(../images/search.png);
-        width: 32px;
-        height: 32px;
-    }
+.go {
+    background-image: url(../images/search.png);
+    width: 32px;
+    height: 32px;
+}
 
-    .dryicon {
-        background-image: url(../images/logo_24px.png);
-        width: 24px;
-        height: 24px;
-    }
+.dryicon {
+    background-image: url(../images/logo_24px.png);
+    width: 24px;
+    height: 24px;
+}
 
-    .tombutton {
-        float: left;
-        position: relative;
-        left: 10px;
-        border: 0px;
-        text-align: center;
-        border: hidden;
-    }
+.tombutton {
+    float: left;
+    position: relative;
+    left: 10px;
+    border: 0px;
+    text-align: center;
+    border: hidden;
+}
 
-    .tombutton .dijitButtonNode {
-        border: 0px;
-    }
+.tombutton .dijitButtonNode {
+    border: 0px;
+}
 
-    .mybutton {
-        float: left;
-        left: 0px;
-        border: 3px;
-        border-color: white;
-        background: rgba(255, 255, 255, 0.9);
-        padding: 3px;
-    }
+.mybutton {
+    float: left;
+    left: 0px;
+    border: 3px;
+    border-color: white;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 3px;
+}
 
-    .tool {
-        padding-top: 5px;
-    }
+.tool {
+    padding-top: 5px;
+}

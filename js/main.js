@@ -1,5 +1,3 @@
-
-
 //=========================================GLOBAL VARIABLES========================================================
 var treeData = [{
     title: "Base Information",
@@ -471,8 +469,9 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
     "esri/tasks/query", "esri/tasks/IdentifyParameters", "esri/toolbars/navigation",
     "esri/dijit/Scalebar", "esri/dijit/Measurement", "esri/dijit/InfoWindow", "esri/tasks/FindParameters", "esri/dijit/Legend",
     "dijit/Tooltip", "dijit/Dialog", "dijit/ProgressBar", "dijit/Toolbar",
-    "dijit/form/FilteringSelect", "dijit/form/CheckBox", "dijit/form/TextBox", "dijit/form/Button",
+    "dijit/form/FilteringSelect", "dijit/form/CheckBox", "dijit/form/TextBox",
     "myModules/InfoWindow", "utils/symbolutil", 'services/mapservices',
+    "dijit/form/Button",
     "dojo/domReady!"
 ], function(parser, ready, dom, domAttr, on, lang,
     domConstruct, domStyle, ItemFileReadStore,
@@ -484,14 +483,14 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
     Query, IdentifyParameters, Navigation,
     Scalebar, Measurement, InfoWindow, FindParameters, Legend,
     Tooltip, Dialog, ProgressBar, Toolbar,
-    FilteringSelect, CheckBox, TextBox, Button,
+    FilteringSelect, CheckBox, TextBox,
     myInfoWindow, SymbolUtil, mapServices
 ) {
     parser.parse();
     ready(function() {
 
         init();
-        setTooltips();
+        setTools();
         esriConfig.defaults.io.proxyUrl = "proxy.ashx";
         //esriConfig.defaults.map.sliderLabel = null;
         esriConfig.defaults.map.sliderStyle = 'large';
@@ -582,45 +581,34 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
         /* /06042015*/
         //These are regular buttons, but dijit buttons are different
         on(window, "resize", windowResize);
-//zoning data alert,
-        on(dom.byId("return"),'click',zreturn);
+        //zoning data alert,
+        on(dom.byId("return"), 'click', zreturn);
         on(dom.byId("continue2"), 'click', zcontinue);
-//contact dialog buttons
-        on(dom.byId("close-btn4"),'click',clearContact);
-        on(dom.byId("submitContact"),'click',contact);
-//dry icon
-        on(dom.byId("dryicon"),'click',dryicons);
+        //contact dialog buttons
+        on(dom.byId("close-btn4"), 'click', clearContact);
+        on(dom.byId("submitContact"), 'click', contact);
+        //dry icon
+        on(dom.byId("dryicon"), 'click', dryicons);
         //click tutorial
-        on(dom.byId("tutorial"),'click',function(){window.open('http://www.youtube.com/user/AmherstNYGIS','_blank');});
-        on(dom.byId("helpUG"),'click',userGuide);
+        on(dom.byId("tutorial"), 'click', function() { window.open('http://www.youtube.com/user/AmherstNYGIS', '_blank'); });
+        on(dom.byId("helpUG"), 'click', userGuide);
         //contact button, is set as open button for contact dialog, the following set it for more function.
-        on(dom.byId("contactclicker"),'click',antiSpam);
+        on(dom.byId("contactclicker"), 'click', antiSpam);
         //topright clicker;
-        on(dom.byId("clicker"),'click',userGuide);
+        on(dom.byId("clicker"), 'click', userGuide);
 
         on(dom.byId("agree"), 'click', accept);
-        on(dom.byId("ug"),'click',userGuide);
-        on(dom.byId("continue"),'click',mcontinue);
+        on(dom.byId("ug"), 'click', userGuide);
+        on(dom.byId("continue"), 'click', mcontinue);
 
-        on(dom.byId("exportPDFBtn"),'click',exportPDF);
+        on(dom.byId("exportPDFBtn"), 'click', exportPDF);
 
         on(dom.byId("agree2"), 'click', accept2);
 
-//Toolbar
-        on(dom.byId("zoomin"), 'click', activateZoomIn);
-        on(dom.byId("zoomout"), 'click', activateZoomOut);
-        on(dom.byId("zoomfullext"), 'click', function(){map.setExtent(startExtent)});
-        on(dom.byId("zoomprev"), 'click', function(){navToolbar.deactivate();navToolbar.zoomToPrevExtent();});
-        on(dom.byId("zoomnext"), 'click', function(){navToolbar.zoomToNextExtent();});
-        on(dom.byId("pan"), 'click',activatePan);
-        //dojo.connect(registry.byId("pan"),"onClick",activatePan);
-        on(dom.byId("identify"), 'click', function(){navToolbar.deactivate();defaultCursor();identify();tempnav=-1;});
-        on(dom.byId("measure"), 'click', function(){navToolbar.deactivate();measure();tempnav=-1;});
-        on(dom.byId("hyperlink"), 'click', function(){navToolbar.deactivate();defaultCursor();hyperlink();tempnav=-1;});
-        on(dom.byId("clear"), 'click', function(){if (map.graphics) map.graphics.clear();});
-        on(dom.byId("printer"), 'click', print);
+        //Toolbar
 
-        on(dom.byId("go"),'click',gosearch);
+
+        on(dom.byId("go"), 'click', gosearch);
 
         map.addLayer(ortho);
         map.addLayer(hydrant);
@@ -646,19 +634,138 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
             }
         }
     }
-    function setTooltips(){
-        new Tooltip({connectId:["dryicon"], label:"dom"});
-        new Tooltip({connectId:["zoomin"], label:"Zoom In"});
-        new Tooltip({connectId:["zoomout"], label:"Zoom Out"});
-        new Tooltip({connectId:["zoomfullext"], label:"Full Extent"});
-        new Tooltip({connectId:["zoomprev"], label:"Previous Extent"});
-        new Tooltip({connectId:["zoomnext"], label:"Next Extent"});
-        new Tooltip({connectId:["pan"], label:"Pan"});
-        new Tooltip({connectId:["identify"], label:"Identify"});
-        new Tooltip({connectId:["measure"], label:"Measure Tool"});
-        new Tooltip({connectId:["hyperlink"], label:"TriView Tool"});
-        new Tooltip({connectId:["clear"], label:"Clear Graphics"});
-        new Tooltip({connectId:["printer"], label:"Print"});
+
+    function setTools() {
+        registry.byId("zoomin").on("click", activateZoomIn);
+        //on(dom.byId("zoomin"), 'click', activateZoomIn);
+        registry.byId("zoomout").on("click", activateZoomOut);
+        registry.byId("zoomfullext").on("click", function() { map.setExtent(startExtent) });
+        registry.byId("zoomprev").on("click", function() { navToolbar.deactivate();
+            navToolbar.zoomToPrevExtent(); });
+        registry.byId("zoomnext").on("click", function() { navToolbar.zoomToNextExtent(); });
+        registry.byId("pan").on("click", activatePan);
+        registry.byId("identify").on("click", function() { navToolbar.deactivate();
+            defaultCursor();
+            identify();
+            tempnav = -1; });
+        registry.byId("measure").on("click", function() { navToolbar.deactivate();
+            measure();
+            tempnav = -1; });
+        registry.byId("hyperlink").on("click", function() { navToolbar.deactivate();
+            defaultCursor();
+            hyperlink();
+            tempnav = -1; });
+        registry.byId("clear").on("click", function() {
+            if (map.graphics) map.graphics.clear(); });
+        registry.byId("printer").on("click", print);
+        new Tooltip({ connectId: ["dryicon"], label: "dom" });
+        new Tooltip({ connectId: ["zoomin"], label: "Zoom In" });
+        new Tooltip({ connectId: ["zoomout"], label: "Zoom Out" });
+        new Tooltip({ connectId: ["zoomfullext"], label: "Full Extent" });
+        new Tooltip({ connectId: ["zoomprev"], label: "Previous Extent" });
+        new Tooltip({ connectId: ["zoomnext"], label: "Next Extent" });
+        new Tooltip({ connectId: ["pan"], label: "Pan" });
+        new Tooltip({ connectId: ["identify"], label: "Identify" });
+        new Tooltip({ connectId: ["measure"], label: "Measure Tool" });
+        new Tooltip({ connectId: ["hyperlink"], label: "TriView Tool" });
+        new Tooltip({ connectId: ["clear"], label: "Clear Graphics" });
+        new Tooltip({ connectId: ["printer"], label: "Print" });
+    }
+
+    function identify() {
+
+        if (handle != null) {
+            dojo.disconnect(handle);
+        }
+        on(map, "click", executeQueryIdentifyTask);
+        //Listent for infoWindow onHide event
+        dojo.connect(map.infoWindow, "onHide", function() {
+            map.graphics.remove(currentGraphic);
+        });
+        down = dojo.connect(map, "onMouseDown", function(evt) {
+            dojo.byId("map_layers").style.cursor = "url(../images/hand_1.png) 16 16, -moz-zoom-in";
+        });
+        dojo.connect(map, "onMouseUp", function(evt) {
+            dojo.byId("map_layers").style.cursor = "url(../images/info_mid.png) 12 12, -moz-zoom-in";
+        });
+        $("#map_layers").css("cursor", "url(../images/info_mid.png) 12 12, -moz-zoom-in");
+        dojo.byId("map_layers").style.cursor = "url(../images/info_mid.png) 12 12, -moz-zoom-in";
+    }
+
+
+    function hyperlink() {
+        if (handle != null) {
+            dojo.disconnect(handle);
+        }
+        handle = dojo.connect(map, "onClick", executeQueryTask);
+        //Listent for infoWindow onHide event
+        dojo.connect(map.infoWindow, "onHide", function() {
+            map.graphics.remove(currentGraphic);
+        });
+        $("#alert").show();
+
+        $("#map_layers").css("cursor", "url(../images/triview3.png) 16 16, -moz-zoom-in");
+        dojo.byId("map_layers").style.cursor = "url(../images/triview3.png) 16 16, -moz-zoom-in";
+        down = dojo.connect(map, "onMouseDown", function(evt) {
+            dojo.byId("map_layers").style.cursor = "url(../images/hand_1.png), -moz-zoom-in";
+        });
+        dojo.connect(map, "onMouseUp", function(evt) {
+            dojo.byId("map_layers").style.cursor = "url(../images/triview3.png) 16 16, -moz-zoom-in";
+        });
+    }
+
+    function activateZoomIn() {
+        console.log("activateZoomin");
+        tempnav = 0; // use for loading icon hide event.
+        navToolbar.deactivate();
+        dojo.disconnect(handle);
+        navToolbar.activate(esri.toolbars.Navigation.ZOOM_IN);
+        zoomCursor();
+    }
+
+    function activateZoomOut() {
+        tempnav = 1;
+        navToolbar.deactivate();
+        dojo.disconnect(handle);
+        navToolbar.activate(esri.toolbars.Navigation.ZOOM_OUT);
+        zoomCursor();
+    }
+
+    function measure(evt) {
+        navToolbar.deactivate();
+        if (handle != null) {
+            dojo.disconnect(handle);
+        }
+        map.infoWindow.hide();
+
+        measurement.setTool("area", false);
+        measurement.setTool("distance", false);
+        measurement.setTool("location", false);
+        $("#measurement-div").toggle();
+        zoomCursor();
+    }
+
+
+    function hideLoading(error) {
+        var legendDiv = document.getElementById("legendUl"); //test
+        legendDiv.innerHTML = "";
+        makelegend(layer);
+        esri.hide(loading);
+        map.enableMapNavigation();
+        if (tempnav == 0) {
+            activateZoomIn();
+        } else if (tempnav == 1) {
+            activateZoomOut();
+        } else if (tempnav == 2) {
+            activatePan();
+        }
+        if (tempstatus == 99) {
+            map.setLevel(7);
+            tempstatus = 0;
+        }
+
+        $("#legendDiv").trigger('scrollContent', [-99]);
+        $("#legendDiv").trigger('resetBar', [-99]);
     }
     //resize the map when the browser resizes
     // dojo.connect(dijit.byId('map'), 'resize', map, map.resize);
@@ -711,7 +818,7 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
             scalebarUnit: 'dual'
         });
     }
-//todo//too verbose with dojo.
+    //todo//too verbose with dojo.
     function zcontinue() {
         setCookie("zoning", "True", 0.125);
         $('#close-btn2').trigger('click');
@@ -719,11 +826,11 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
     }
 
     function accept() {
-        registry.byId('continue').setAttribute('disabled',!dom.byId("agree").checked);
+        registry.byId('continue').setAttribute('disabled', !dom.byId("agree").checked);
     }
 
     function accept2() {
-        registry.byId('continue2').setAttribute('disabled',!dom.byId("agree2").checked);
+        registry.byId('continue2').setAttribute('disabled', !dom.byId("agree2").checked);
     }
 
 
@@ -999,26 +1106,7 @@ function CPILink(evt) {
 
 }
 
-function identify() {
 
-    if (handle != null) {
-        dojo.disconnect(handle);
-    }
-    handle = dojo.connect(map, "onClick", executeQueryIdentifyTask);
-    //Listent for infoWindow onHide event
-    dojo.connect(map.infoWindow, "onHide", function() {
-        map.graphics.remove(currentGraphic);
-    });
-
-    $("#map_layers").css("cursor", "url(images/info_mid.png) 12 12, -moz-zoom-in");
-    dojo.byId("map_layers").style.cursor = "url(images/info_mid.png) 12 12, -moz-zoom-in";
-    down = dojo.connect(map, "onMouseDown", function(evt) {
-        dojo.byId("map_layers").style.cursor = "url(images/hand_1.png) 16 16, -moz-zoom-in";
-    });
-    dojo.connect(map, "onMouseUp", function(evt) {
-        dojo.byId("map_layers").style.cursor = "url(images/info_mid.png) 12 12, -moz-zoom-in";
-    });
-}
 
 function executeQueryIdentifyTask(evt) {
     map.infoWindow.hide();
@@ -1127,27 +1215,6 @@ function showQueryIdentifyResult(fset, evt) {
 
 
 
-
-function hyperlink() {
-    if (handle != null) {
-        dojo.disconnect(handle);
-    }
-    handle = dojo.connect(map, "onClick", executeQueryTask);
-    //Listent for infoWindow onHide event
-    dojo.connect(map.infoWindow, "onHide", function() {
-        map.graphics.remove(currentGraphic);
-    });
-    $("#alert").show();
-
-    $("#map_layers").css("cursor", "url(images/triview3.png) 16 16, -moz-zoom-in");
-    dojo.byId("map_layers").style.cursor = "url(images/triview3.png) 16 16, -moz-zoom-in";
-    down = dojo.connect(map, "onMouseDown", function(evt) {
-        dojo.byId("map_layers").style.cursor = "url(images/hand_1.png), -moz-zoom-in";
-    });
-    dojo.connect(map, "onMouseUp", function(evt) {
-        dojo.byId("map_layers").style.cursor = "url(images/triview3.png) 16 16, -moz-zoom-in";
-    });
-}
 
 function executeQueryTask(evt) {
     map.infoWindow.hide();
@@ -1599,44 +1666,14 @@ function defaultCursor() {
     $("#map_layers").css("cursor", "default");
     dojo.byId("map_layers").style.cursor = "default";
     down = dojo.connect(map, "onMouseDown", function(evt) {
-        dojo.byId("map_layers").style.cursor = "url(images/hand_1.png), -moz-zoom-in";
+        dojo.byId("map_layers").style.cursor = "url(../images/hand_1.png), -moz-zoom-in";
     });
     dojo.connect(map, "onMouseUp", function(evt) {
         dojo.byId("map_layers").style.cursor = "default";
     });
 }
 
-function activatePan() {
-    console.log("navToolbar");
-    console.log(this.navToolbar);
-    tempnav = 2;
-    //navToolbar.deactivate();
-    navToolbar.activate(esri.toolbars.Navigation.PAN);
-    $("#map_layers").css("cursor", "url(images/hand_1.png), -moz-zoom-in");
-    dojo.byId("map_layers").style.cursor = "url(images/hand_1.png), -moz-zoom-in";
-    down = dojo.connect(map, "onMouseDown", function(evt) {
-        dojo.byId("map_layers").style.cursor = "url(images/hand_1.png), -moz-zoom-in";
-    });
-    dojo.connect(map, "onMouseUp", function(evt) {
-        dojo.byId("map_layers").style.cursor = "url(images/hand_1.png), -moz-zoom-in";
-    });
-}
 
-function activateZoomIn() {
-    tempnav = 0; // use for loading icon hide event.
-    navToolbar.deactivate();
-    dojo.disconnect(handle);
-    navToolbar.activate(esri.toolbars.Navigation.ZOOM_IN);
-    zoomCursor();
-}
-
-function activateZoomOut() {
-    tempnav = 1;
-    navToolbar.deactivate();
-    dojo.disconnect(handle);
-    navToolbar.activate(esri.toolbars.Navigation.ZOOM_OUT);
-    zoomCursor();
-}
 
 function showLoading() {
     esri.show(loading);
@@ -1650,41 +1687,9 @@ function print() {
     dojo.style("pdfRequest", "display", "none");
 }
 
-function measure(evt) {
-    navToolbar.deactivate();
-    if (handle != null) {
-        dojo.disconnect(handle);
-    }
-    map.infoWindow.hide();
 
-    measurement.setTool("area", false);
-    measurement.setTool("distance", false);
-    measurement.setTool("location", false);
-    $("#measurement-div").toggle();
-    zoomCursor();
-}
 
-function hideLoading(error) {
-    var legendDiv = document.getElementById("legendUl"); //test
-    legendDiv.innerHTML = "";
-    makelegend(layer);
-    esri.hide(loading);
-    map.enableMapNavigation();
-    if (tempnav == 0) {
-        activateZoomIn();
-    } else if (tempnav == 1) {
-        activateZoomOut();
-    } else if (tempnav == 2) {
-        activatePan();
-    }
-    if (tempstatus == 99) {
-        map.setLevel(7);
-        tempstatus = 0;
-    }
 
-    $("#legendDiv").trigger('scrollContent', [-99]);
-    $("#legendDiv").trigger('resetBar', [-99]);
-}
 
 
 

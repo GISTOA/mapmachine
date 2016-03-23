@@ -21,7 +21,7 @@ on iOS devices-->
     <link rel="stylesheet" type="text/css" href="css/button.css">
     <link rel="stylesheet" type="text/css" href="css/skin-vista/ui.dynatree.css" id="skinSheet">
     <link rel="stylesheet" type="text/css" href="css/modalPopLite.css" />
-    <link rel="stylesheet" type="text/css" href="myModules/InfoWindow.css">
+    <link rel="stylesheet" type="text/css" href="js/myModules/InfoWindow.css">
 </head>
 
 <body class="claro">
@@ -32,18 +32,19 @@ on iOS devices-->
                 <a><img id="clicker" src="images/help.png" border="none" width='19px' height='19px' /></a>
             </div>
         </div>
+        <!-- <div id="tc"  style="float:left; position:relative; top:0px;left:0px; height:415px;width:50px;z-index:100; background-color:rgba(0,0,0,0.6);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#60000000,endColorstr=#60000000);border-radius:5px;-moz-border-radius:5px;" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="href:'button.html'"></div> -->
         <div id="tools" style="float:left; position:relative; top:0px;left:0px; height:415px;width:50px;z-index:100; background-color:rgba(0,0,0,0.6);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#60000000,endColorstr=#60000000);border-radius:5px;-moz-border-radius:5px;">
             <div data-dojo-type="dijit/form/Button" baseclass="tombutton" id="zoomin" class="tool" data-dojo-props="iconClass:'zoominIcon'"></div>
-            <div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="zoomout" class="tool" data-dojo-props="iconClass:'zoomoutIcon'"></div>
-            <div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="zoomfullext" class="tool" data-dojo-props="iconClass:'zoomfullextIcon'"></div>
-            <div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="zoomprev" class="tool" data-dojo-props="iconClass:'zoomprevIcon'"></div>
-            <div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="zoomnext" class="tool" data-dojo-props="iconClass:'zoomnextIcon'"></div>
-            <div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="pan" class="tool" data-dojo-props="iconClass:'panIcon'"></div>
-            <div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="identify" class="tool" data-dojo-props="iconClass:'identifyIcon' "></div>
-            <div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="measure" class="tool" data-dojo-props="iconClass:'measureIcon'"></div>
-            <div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="hyperlink" class="tool" data-dojo-props="iconClass:'hyperlinkIcon' "></div>
-            <div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="clear" class="tool" data-dojo-props="iconClass:'clearIcon' "></div>
-            <div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="printer" class="tool" data-dojo-props="iconClass:'printerIcon' "></div>
+            <div data-dojo-type="dijit/form/Button" baseclass="tombutton" id="zoomout" class="tool" data-dojo-props="iconClass:'zoomoutIcon'"></div>
+            <div data-dojo-type="dijit/form/Button" baseclass="tombutton" id="zoomfullext" class="tool" data-dojo-props="iconClass:'zoomfullextIcon'"></div>
+            <div data-dojo-type="dijit/form/Button" baseclass="tombutton" id="zoomprev" class="tool" data-dojo-props="iconClass:'zoomprevIcon'"></div>
+            <div data-dojo-type="dijit/form/Button" baseclass="tombutton" id="zoomnext" class="tool" data-dojo-props="iconClass:'zoomnextIcon'"></div>
+            <div data-dojo-type="dijit/form/Button" baseclass="tombutton" id="pan" class="tool" data-dojo-props="iconClass:'panIcon'"></div>
+            <div data-dojo-type="dijit/form/Button" baseclass="tombutton" id="identify" class="tool" data-dojo-props="iconClass:'identifyIcon' "></div>
+            <div data-dojo-type="dijit/form/Button" baseclass="tombutton" id="measure" class="tool" data-dojo-props="iconClass:'measureIcon'"></div>
+            <div data-dojo-type="dijit/form/Button" baseclass="tombutton" id="hyperlink" class="tool" data-dojo-props="iconClass:'hyperlinkIcon' "></div>
+            <div data-dojo-type="dijit/form/Button" baseclass="tombutton" id="clear" class="tool" data-dojo-props="iconClass:'clearIcon' "></div>
+            <div data-dojo-type="dijit/form/Button" baseclass="tombutton" id="printer" class="tool" data-dojo-props="iconClass:'printerIcon' "></div>
         </div>
         <div id="alert" style="font-family:calibri;font-size:18px;font-style:bold; color:black;width:460px; height:auto;z-index:100; float:left;position:relative;background-color:rgba(255,255,0,0.9);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#15999900,endColorstr=#15999900);display:none">
             <div style="float:left;position:relative;padding-left:10px; width:93%">Note: The TriView Hyperlink Tool will open a new window. It may respond slowly at times. Please be patient.</div>
@@ -158,7 +159,7 @@ legend detail is retrievable, example: export2pdf david example from code galler
                             Map Title
                         </td>
                         <td>
-                            <input type="text" name="mapTitle" value="My Map" dojoType="dijit.form.TextBox" trim="true" id="mapTitle">
+                            <input type="text" name="mapTitle" value="My Map" dojoType="dijit/form/TextBox" trim="true" id="mapTitle">
                         </td>
                     </tr>
                     <tr>
@@ -166,7 +167,7 @@ legend detail is retrievable, example: export2pdf david example from code galler
                             Map Layout
                         </td>
                         <td>
-                            <select dojoType="dijit.form.FilteringSelect" id="mapLayout" name="mapLayout">
+                            <select dojoType="dijit/form/FilteringSelect" id="mapLayout" name="mapLayout">
                                 <option value="Landscape8x11" selected="selected">8 1/2 x 11 Landscape</option>
                                 <option value="Portrait8x11">8 1/2 x 11 Portrait</option>
                             </select>
@@ -174,7 +175,7 @@ legend detail is retrievable, example: export2pdf david example from code galler
                     </tr>
                     <tr>
                         <td colspan="2" style="text-align:left;">
-                            <div id="exportPDFBtn" dojotype="dijit.form.Button" >Export PDF</div>
+                            <div id="exportPDFBtn" dojotype="dijit/form/Button">Export PDF</div>
                             <div>(When your PDF is ready, you can click and view it in another window or right click and save link to your local directory)</div>
                         </td>
                     </tr>
@@ -216,7 +217,7 @@ legend detail is retrievable, example: export2pdf david example from code galler
             </div>
             <div style="float:left;position:relative;text-align: center;margin:auto;width:100%;">
                 <div style="text-align:center; margin:auto;width:100%;position:relative;top:15px;">
-                    <div id="close-btn3" dojotype="dijit.form.Button">OK</div>
+                    <div id="close-btn3" dojotype="dijit/form/Button">OK</div>
                 </div>
             </div>
         </div>
@@ -229,7 +230,7 @@ legend detail is retrievable, example: export2pdf david example from code galler
                 <div id="disclaimer-content" style="width:90%;margin-left:10px;margin-right:0px;font-family:calibri;font-size:14px;">The Town of Amherst, New York (Amherst), provides this Geographic Information System (GIS) data and related mapping as a service to residents and businesses.The GIS data is meant for informational purposes only. The maps, related datasets,and the tabular data presented in this Internet mapping application are developedand maintained from public records, various data sources, and are under constant revisions. It is not meant to be construed as a survey or legal document. Users of this mapping application should consult the original information source(s) or Town department for verification of the information contained on this application. While efforts have been made to use the most current and accurate data, Amherst, assumes no legal responsibility for the information contained in this Internet-based Geographic Information System. The information contained herein is provided for informational purposes only. Amherst provides this GIS data and metadata with no claim as to the completeness, usefulness, or accuracy of its content, positional or otherwise. Your use and browsing of information on this site is at your own risk. In providing this data and application or access to it, Amherst, assumes no obligation to assist the user in the use of such data or in the development, use, or maintenance of any applications applied to or associated with the data or metadata. For more detailed information please see the “Terms and Conditions” linked below. You can also contact us using the main form under the “Map Info” button in the upper right of these applications.</div>
                 <br />
                 <a href="doc/Terms_and_Conditions.pdf" target="_blank">Terms and Conditions</a>
-                </div>
+            </div>
             <div style="float:left;position:relative;text-align: center;margin:auto;width:100%;">
                 <div style="height:12px;top:4px;display:inline;">
                     <input type="checkbox" id="agree" class="agree" disabled="disabled" style="border:none; background:white;" />
@@ -237,8 +238,8 @@ legend detail is retrievable, example: export2pdf david example from code galler
                     <br />
                 </div>
                 <div style="text-align:center; margin:auto;width:100%;left:60px;position:relative;top:8px;">
-                    <div id="ug" dojotype="dijit.form.Button" style="float:left;" >User Guide</div>
-                    <div id="continue" dojotype="dijit.form.Button" style="float:left;" disabled="disabled" >
+                    <div id="ug" dojotype="dijit/form/Button" style="float:left;">User Guide</div>
+                    <div id="continue" dojotype="dijit/form/Button" style="float:left;" disabled="disabled">
                         Continue
                     </div>
                 </div>
@@ -264,8 +265,8 @@ legend detail is retrievable, example: export2pdf david example from code galler
                     <br />
                 </div>
                 <div style="text-align:center; margin:auto;width:100%;left:60px;position:relative;">
-                    <div id="return" dojotype="dijit.form.Button" style="float:left;" >Return</div>
-                    <div id="continue2" dojotype="dijit.form.Button" style="float:left;">Continue</div>
+                    <div id="return" dojotype="dijit/form/Button" style="float:left;">Return</div>
+                    <div id="continue2" dojotype="dijit/form/Button" style="float:left;">Continue</div>
                 </div>
             </div>
         </div>
@@ -308,22 +309,23 @@ legend detail is retrievable, example: export2pdf david example from code galler
                 <div id="submitting" style="position:absolute;top: 200px;width:100%;text-align: center;margin:auto;">submitting...</div>
             </div>
             <div style="float:left;position:relative;text-align: center;margin:auto;width:100%;left:80px;">
-                <div id="close-btn4" dojotype="dijit.form.Button" style="float:left;position:relative;" >Return</div>
-                <div id="submitContact" dojotype="dijit.form.Button" style="float:left;position:relative;" disabled="false" >Submit</div>
+                <div id="close-btn4" dojotype="dijit/form/Button" style="float:left;position:relative;">Return</div>
+                <div id="submitContact" dojotype="dijit/form/Button" style="float:left;position:relative;" disabled="false">Submit</div>
             </div>
         </div>
         <div id="map" style="width:100%; overflow: hidden;padding:0;left:0px;right:0px;bottom:0px;top:20px;position:absolute;float:left;">
             <img id="mapLoadingImg" src="images/loadingEsri.gif" style="position:absolute; width:32px; height:32px; z-index:100;" />
         </div>
         <div id="measurement-div"></div>
-        <div data-dojo-type="dijit.form.Button" baseclass="tombutton" id="dryicon" style="float:left; left:170px; bottom:15px; z-index:100;position:absolute;" data-dojo-props="iconClass:'dryicon'"></div>
+        <div data-dojo-type="dijit/form/Button" baseclass="tombutton" id="dryicon" style="float:left; left:170px; bottom:15px; z-index:100;position:absolute;" data-dojo-props="iconClass:'dryicon'"></div>
         <!--<div id="dryicon" style="width:auto;height:auto;float:left;left:500px;position:relative; bottom:30px;z-index: 100;"><img src="images/logo_24px.png" /></div>-->
         <input type="hidden" name="antispam" id="antispam" value="lalalala" />
     </div>
     <script>
     dojoConfig = {
         //parseOnLoad: true,
-        async: true
+        async: true,
+        //  isDebug:true
     }
     </script>
     <script src="/js/3.13/init.js"></script>
@@ -337,6 +339,23 @@ legend detail is retrievable, example: export2pdf david example from code galler
     <script src="js/modalPopLite.js"></script>
     <script src="js/placeholder.js"></script>
     <script src="js/run.js"></script>
+    <script>
+    function activatePan() {
+        console.log("navToolbar");
+        console.log(this.navToolbar);
+        tempnav = 2;
+        //navToolbar.deactivate();
+        navToolbar.activate(esri.toolbars.Navigation.PAN);
+        $("#map_layers").css("cursor", "url(../images/hand_1.png), -moz-zoom-in");
+        dojo.byId("map_layers").style.cursor = "url(../images/hand_1.png), -moz-zoom-in";
+        down = dojo.connect(map, "onMouseDown", function(evt) {
+            dojo.byId("map_layers").style.cursor = "url(../images/hand_1.png), -moz-zoom-in";
+        });
+        dojo.connect(map, "onMouseUp", function(evt) {
+            dojo.byId("map_layers").style.cursor = "url(../images/hand_1.png), -moz-zoom-in";
+        });
+    }
+    </script>
 </body>
 
 </html>
