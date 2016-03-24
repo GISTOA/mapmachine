@@ -466,7 +466,7 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
     "dijit/registry",
     "esri/config", "esri/domUtils",
     "esri/units", "esri/geometry/Extent",
-    "esri/map",
+    "esri/map","esri/geometry",
     "esri/SnappingManager", "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol",
     "esri/tasks/query", "esri/tasks/IdentifyParameters", "esri/toolbars/navigation",
     "esri/dijit/Scalebar", "esri/dijit/Measurement", "esri/dijit/InfoWindow", "esri/tasks/FindParameters", "esri/dijit/Legend",
@@ -480,7 +480,7 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
     registry,
     esriConfig, domUtils,
     units, Extent,
-    Map,
+    Map,Geometry,
     SnappingManager, SimpleFillSymbol, SimpleLineSymbol,
     Query, IdentifyParameters, Navigation,
     Scalebar, Measurement, InfoWindow, FindParameters, Legend,
@@ -828,7 +828,7 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
         map.setExtent(startExtent);
         var scalebar = new Scalebar({
             map: map,
-            scalebarUnit: 'dual'
+
         });
     }
     //todo//too verbose with dojo.
@@ -845,17 +845,47 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
     function dryicons() {
         window.open("http://www.dryicons.com", '_blank');
     }
-
+function userGuide() {
+    window.open("doc/User Guide.pdf", "_blank");
+}
     function print() {
         domUtils.show(dom.byId("printerSettings"));
         dom.byId('exportPDFBtn').setAttribute('disabled', false);
         // dijit.byId("exportPDFBtn").set("disabled", false);
         dom.byId('pdfRequest').setAttribute('disabled', "none");
     }
+function CPILink(evt) {
+    map.infoWindow.hide();
+console.log("CPI link right click");
+
+    event.preventDefault ? event.preventDefault():(event.returnValue=false);
+        var winx = evt.clientX;
+        var winy = evt.clientY - 20;
 
 
+    //var screenPoint=new esri.geometry.Point(evt.screenX, evt.screenY-80);//need to consider screen size as well.
+    var screenPoint = new Geometry.Point(winx, winy); //new point
+    var mapPoint = map.toMap(screenPoint);
+    query.geometry = mapPoint;
+
+    //Execute task and call showResults on completion
+    queryTask.execute(query, function(fset) {
+        var feature = fset.features[0];
+        var attr = feature.attributes;
+        map.graphics.remove(currentGraphic);
+        //set symbol
+        //var symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([250, 0, 197]), 2), new dojo.Color([255, 255, 0, 0.5]));
+        feature.setSymbol(symbol);
+
+        map.graphics.add(feature);
+        currentGraphic = feature;
+
+        window.open(attr['CPILink'], "_blank", 'scrollbars=1,toolbar=0,location=0,menubar=0,left=0px,top=0px,height=' + screen.height + 'px ,width=' + screen.width + 'px');
+    console.log(attr['CPILink']);
+    });
+
+}
 });
-
 
 
 //=========================================GLOBAL FUNCTIONS========================================================
@@ -905,9 +935,7 @@ function getCookie(c_name) {
         }
     }
 }
-function userGuide() {
-    window.open("doc/User Guide.pdf", "_blank");
-}
+
 
 function sortByID(x, y) {
     return ((x.PARCELID == y.PARCELID) ? 0 : ((x.PARCELID > y.PARCELID) ? 1 : -1));
@@ -1087,49 +1115,6 @@ function extentHistoryChangeHandler() {
     dijit.byId("zoomnext").disabled = navToolbar.isLastExtent();
 }
 
-function CPILink(evt) {
-    map.infoWindow.hide();
-
-    if ($.browser.msie) {
-
-        //screen coordinates to map coordinates
-        if (parseInt($.browser.version, 10) === 9) {
-            try {
-                evt.preventDefault();
-            } catch (err) {
-
-            }
-        }
-        var winx = evt.clientX;
-        var winy = evt.clientY - 20;
-
-    } else {
-        evt.preventDefault();
-        var winx = evt.clientX;
-        var winy = evt.clientY - 20;
-    }
-
-    //var screenPoint=new esri.geometry.Point(evt.screenX, evt.screenY-80);//need to consider screen size as well.
-    var screenPoint = new esri.geometry.Point(winx, winy); //new point
-    var mapPoint = map.toMap(screenPoint);
-    query.geometry = mapPoint;
-
-    //Execute task and call showResults on completion
-    queryTask.execute(query, function(fset) {
-        var feature = fset.features[0];
-        var attr = feature.attributes;
-        map.graphics.remove(currentGraphic);
-        //set symbol
-        //var symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([250, 0, 197]), 2), new dojo.Color([255, 255, 0, 0.5]));
-        feature.setSymbol(symbol);
-
-        map.graphics.add(feature);
-        currentGraphic = feature;
-
-        window.open(attr['CPILink'], "_blank", 'scrollbars=1,toolbar=0,location=0,menubar=0,left=0px,top=0px,height=' + screen.height + 'px ,width=' + screen.width + 'px');
-    });
-
-}
 
 
 
