@@ -423,19 +423,17 @@ $(".close").click(function() {
 $(document).ready(function() {
     $("#popupclicker").hide();
     var mainDisclaimer = getCookie("main");
-    if (mainDisclaimer != null && mainDisclaimer != "") {} else {
-        $('#popupclicker').trigger('click');
-    }
+    if (mainDisclaimer== null || mainDisclaimer == "") $('#popupclicker').trigger('click');
 
-    $("#popupclicker2").hide();
-    $("#alertclicker").hide();
-    $("#close-btn2").hide();
-    $("#closePrinter").trigger('click');
+    // $("#popupclicker2").hide();
+    // $("#alertclicker").hide();
+    // $("#close-btn2").hide();
+    // $("#closePrinter").trigger('click');
     //$('.esriPopupWrapper').attr("id","aaaaaa");
     //dijit.byId("agree").setAttribute('disabled',false);
     //$("#agree").attr("disabled","false");
 
-    $("#submitting").hide();
+    //$("#submitting").hide();
     //activatePan();
 });
 //========================================================AMD start here=====================================
@@ -613,6 +611,7 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
 
         on(dom.byId("go"), 'click', gosearch);
 
+        on(dom.byId("close-btn3"),'click',searchAlertOK)
         map.addLayer(ortho);
         map.addLayer(hydrant);
         map.addLayer(layer);
@@ -833,11 +832,7 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
         });
     }
     //todo//too verbose with dojo.
-    function zcontinue() {
-        setCookie("zoning", "True", 0.125);
-        $('#close-btn2').trigger('click');
-        $("#tree3").dynatree("getTree").getNodeByKey("20").select();
-    }
+
 
     function accept() {
         registry.byId('continue').setAttribute('disabled', !dom.byId("agree").checked);
@@ -851,14 +846,11 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
         window.open("http://www.dryicons.com", '_blank');
     }
 
-
-
     function print() {
         domUtils.show(dom.byId("printerSettings"));
         dom.byId('exportPDFBtn').setAttribute('disabled', false);
         // dijit.byId("exportPDFBtn").set("disabled", false);
         dom.byId('pdfRequest').setAttribute('disabled', "none");
-
     }
 
 
@@ -868,7 +860,9 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
 
 //=========================================GLOBAL FUNCTIONS========================================================
 
-
+function searchAlertOK(){
+    $("#close-btn3").trigger('click');
+}
 
 
 function zreturn() {
@@ -880,7 +874,37 @@ function mcontinue() {
     setCookie("main", "True", 7);
     $('#close-btn').trigger('click');
 }
+    function zcontinue() {
+        setCookie("zoning", "True", 0.125);
+        $('#close-btn2').trigger('click');
+        $("#tree3").dynatree("getTree").getNodeByKey("20").select();
+    }
 
+
+function setCookie(c_name, value, exdays) {
+
+    var exdate = new Date();
+    if (exdays < 1) {
+        exdate.setTime(exdate.getTime() + exdays * 24 * 60 * 60 * 1000);
+    } else {
+        exdate.setDate(exdate.getDate() + exdays);
+    }
+    var exdate = exdate.toUTCString();
+
+    var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate);
+    document.cookie = c_name + "=" + c_value;
+}
+function getCookie(c_name) {
+    var i, x, y, ARRcookies = document.cookie.split(";");
+    for (i = 0; i < ARRcookies.length; i++) {
+        x = ARRcookies[i].substr(0, ARRcookies[i].indexOf("="));
+        y = ARRcookies[i].substr(ARRcookies[i].indexOf("=") + 1);
+        x = x.replace(/^\s+|\s+$/g, "");
+        if (x == c_name) {
+            return unescape(y);
+        }
+    }
+}
 function userGuide() {
     window.open("doc/User Guide.pdf", "_blank");
 }
@@ -1004,32 +1028,6 @@ function getDropdownValue(selectedOption) {
         }
     })
     return dropdownValue;
-}
-
-function getCookie(c_name) {
-    var i, x, y, ARRcookies = document.cookie.split(";");
-    for (i = 0; i < ARRcookies.length; i++) {
-        x = ARRcookies[i].substr(0, ARRcookies[i].indexOf("="));
-        y = ARRcookies[i].substr(ARRcookies[i].indexOf("=") + 1);
-        x = x.replace(/^\s+|\s+$/g, "");
-        if (x == c_name) {
-            return unescape(y);
-        }
-    }
-}
-
-function setCookie(c_name, value, exdays) {
-
-    var exdate = new Date();
-    if (exdays < 1) {
-        exdate.setTime(exdate.getTime() + exdays * 24 * 60 * 60 * 1000);
-    } else {
-        exdate.setDate(exdate.getDate() + exdays);
-    }
-    var exdate = exdate.toUTCString();
-
-    var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate);
-    document.cookie = c_name + "=" + c_value;
 }
 
 
@@ -1670,16 +1668,6 @@ function contactErrorCallback(error) {
     $("#submitting")[0].innerHTML = "Failed. Please try again later.";
     var err = error;
 }
-
-
-
-
-
-
-
-
-
-
 
 var spamDetect;
 
