@@ -126,7 +126,7 @@ function(
           domUtils.hide(this.domNode);
           this.isShowing = false;
           this.onHide();
-
+          this.emit("hide",{});
         },
         resize: function(width, height){
           domStyle.set(this._content,{

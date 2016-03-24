@@ -538,7 +538,7 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
             }
         });
 
-         infoWindow = new myInfoWindow({
+        infoWindow = new myInfoWindow({
             domNode: domConstruct.create("div", null, dom.byId("map"))
         });
         console.log("infoTonggle: " + infoWindow.isContentShowing);
@@ -607,7 +607,7 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
         on(dom.byId("agree2"), 'click', accept2);
 
         //Toolbar
-        dojo.connect(map.infoWindow, "onHide", function() {
+        on(infoWindow, "hide", function() {
             map.graphics.remove(currentGraphic);
         });
 
@@ -643,24 +643,33 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
         //on(dom.byId("zoomin"), 'click', activateZoomIn);
         registry.byId("zoomout").on("click", activateZoomOut);
         registry.byId("zoomfullext").on("click", function() { map.setExtent(startExtent) });
-        registry.byId("zoomprev").on("click", function() { navToolbar.deactivate();
-            navToolbar.zoomToPrevExtent(); });
+        registry.byId("zoomprev").on("click", function() {
+            navToolbar.deactivate();
+            navToolbar.zoomToPrevExtent();
+        });
         registry.byId("zoomnext").on("click", function() { navToolbar.zoomToNextExtent(); });
         registry.byId("pan").on("click", activatePan);
-        registry.byId("identify").on("click", function() { navToolbar.deactivate();
+        registry.byId("identify").on("click", function() {
+            navToolbar.deactivate();
             defaultCursor();
             identify();
-            tempnav = -1; });
+            tempnav = -1;
+        });
 
-        registry.byId("measure").on("click", function() { navToolbar.deactivate();
+        registry.byId("measure").on("click", function() {
+            navToolbar.deactivate();
             measure();
-            tempnav = -1; });
-        registry.byId("strView").on("click", function() { navToolbar.deactivate();
+            tempnav = -1;
+        });
+        registry.byId("strView").on("click", function() {
+            navToolbar.deactivate();
             defaultCursor();
             startStrView();
-            tempnav = -1; });
+            tempnav = -1;
+        });
         registry.byId("clear").on("click", function() {
-            if (map.graphics) map.graphics.clear(); });
+            if (map.graphics) map.graphics.clear();
+        });
         registry.byId("printer").on("click", print);
         new Tooltip({ connectId: ["dryicon"], label: "dom" });
         new Tooltip({ connectId: ["zoomin"], label: "Zoom In" });
@@ -680,11 +689,11 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
         if (handle != null) {
             handle.remove();
         }
-        handle=on(map, "click", executeQueryIdentifyTask);
+        handle = on(map, "click", executeQueryIdentifyTask);
         //Listent for infoWindow onHide event
         console.log(map.infoWindow);
 
-        domStyle.set("map_layers",{cursor:"url(images/info_mid.png),help"});
+        domStyle.set("map_layers", { cursor: "url(images/info_mid.png),help" });
     }
 
     function startStrView() {
@@ -692,15 +701,16 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
             // dojo.disconnect(handle);
             handle.remove();
         }
-        handle = on(map,'click',executeQueryTask);
+        handle = on(map, 'click', executeQueryTask);
         domUtils.show(dom.byId("alert"));
-        domStyle.set("map_layers",{cursor:"url(images/triview3.png),pointer"});
+        domStyle.set("map_layers", { cursor: "url(images/triview3.png),pointer" });
     }
+
     function activatePan() {
         tempnav = 2;
         //navToolbar.deactivate();
         navToolbar.activate(Navigation.PAN);
-        domStyle.set("map_layers",{cursor:"url(images/hand_1.png),move"});
+        domStyle.set("map_layers", { cursor: "url(images/hand_1.png),move" });
     }
 
     function activateZoomIn() {
@@ -712,7 +722,7 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
             handle.remove();
         }
         navToolbar.activate(Navigation.ZOOM_IN);
-        domStyle.set("map_layers",{cursor:"url(images/blue_zoom_in.png),zoom-in"});
+        domStyle.set("map_layers", { cursor: "url(images/blue_zoom_in.png),zoom-in" });
     }
 
     function activateZoomOut() {
@@ -722,7 +732,7 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
             handle.remove();
         }
         navToolbar.activate(Navigation.ZOOM_OUT);
-        domStyle.set("map_layers",{cursor:"url(images/blue_zoom_out.png),zoom-out"});
+        domStyle.set("map_layers", { cursor: "url(images/blue_zoom_out.png),zoom-out" });
     }
 
     function measure(evt) {
@@ -736,18 +746,20 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
         measurement.setTool("distance", false);
         measurement.setTool("location", false);
         domUtils.toggle(dom.byId("measurement-div"));
-        domStyle.set("map_layers",{cursor:"crosshair"});
+        domStyle.set("map_layers", { cursor: "crosshair" });
     }
 
-function defaultCursor() {
-    domStyle.set("map_layers",{cursor:"default"});
+    function defaultCursor() {
+        domStyle.set("map_layers", { cursor: "default" });
 
-}
+    }
+
     function showLoading() {
         domUtils.show(loading);
         map.disableMapNavigation();
         //map.hideZoomSlider();
     }
+
     function hideLoading(error) {
         var legendDiv = document.getElementById("legendUl"); //test
         legendDiv.innerHTML = "";
@@ -835,19 +847,19 @@ function defaultCursor() {
         registry.byId('continue2').setAttribute('disabled', !dom.byId("agree2").checked);
     }
 
-function dryicons() {
-    window.open("http://www.dryicons.com", '_blank');
-}
+    function dryicons() {
+        window.open("http://www.dryicons.com", '_blank');
+    }
 
 
 
-function print() {
-    domUtils.show(dom.byId("printerSettings"));
-    dom.byId('exportPDFBtn').setAttribute('disabled', false);
-    // dijit.byId("exportPDFBtn").set("disabled", false);
-    dom.byId('pdfRequest').setAttribute('disabled', "none");
+    function print() {
+        domUtils.show(dom.byId("printerSettings"));
+        dom.byId('exportPDFBtn').setAttribute('disabled', false);
+        // dijit.byId("exportPDFBtn").set("disabled", false);
+        dom.byId('pdfRequest').setAttribute('disabled', "none");
 
-}
+    }
 
 
 });
