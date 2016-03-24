@@ -25,7 +25,9 @@ on iOS devices-->
 </head>
 
 <body class="claro">
+
     <div style="margin:0;position:relative;width:100%;height:100%;padding:0;overflow: hidden;">
+<img id="mapLoadingImg" src="images/loadingEsri.gif" style="position:absolute; width:32px; height:32px; z-index:100; top:50%; left:50%;margin-top:-16px;margin-left:-16px" />
         <div id="banner" style="width:100%;height:20px; margin:0; background-color:#5DA1D7;overflow: hidden;color:white;">
             <div style="position:relative;float:left;">Town of Amherst------The Map Machine</div>
             <div style="float:right;height:20px;margin:0; overflow:hidden;position:relative;">
@@ -205,7 +207,7 @@ legend detail is retrievable, example: export2pdf david example from code galler
             </div>
         </div>
         <input type="button" id="alertclicker" style="display:none;">
-        <div id="alertinfo" style="background-color: #fff;width:300px;height:220px;text-align: center;margin:auto;">
+        <div id="alertinfo" style="background-color: #fff;width:300px;height:220px;text-align: center;margin:auto;display:none">
             <div style="float:left;position:relative;height:160px;width:100%;">
                 <br />Results were not found! Please check your spelling and try again.
                 <br />
@@ -223,7 +225,7 @@ legend detail is retrievable, example: export2pdf david example from code galler
         </div>
         <input type="button" id="popupclicker" style="display:none;">
         <input type="button" id="close-btn" style="display:none;">
-        <div id="popupinfo" style="background-color: #fff;width:300px;height:410px;text-align: center;margin:auto;">
+        <div id="popupinfo" style="background-color: #fff;width:300px;height:410px;text-align: center;margin:auto;display:none">
             <div id="disclaimer" style="overflow: hidden;float:left;position:relative;height:300px;width:100%;padding-top:5px;"><b>Amherst Map Machine Disclaimer:</b>
                 <br/>
                 <br/>
@@ -248,7 +250,7 @@ legend detail is retrievable, example: export2pdf david example from code galler
         </div>
         <input type="button" id="popupclicker2" style="display:none;">
         <input type="button" id="close-btn2" style="display:none;">
-        <div id="popupinfo2" style="background-color: #fff;width:300px;height:425px;text-align: center;margin:auto;">
+        <div id="popupinfo2" style="background-color: #fff;width:300px;height:425px;text-align: center;margin:auto;display:none">
             <div style="float:left;position:relative;height:330px;width:100%;"><b>Zoning Data Disclaimer:</b>
                 <br/>
                 <br/>This map was prepared with data maintained by various agencies at both the Town and County levels. While every effort was made to use the best available information, this map is intended to be used for informational purposes only. The Zoning Layer is not to be construed as the Official Zoning Map of the Town of Amherst.
@@ -270,7 +272,7 @@ legend detail is retrievable, example: export2pdf david example from code galler
                 </div>
             </div>
         </div>
-        <div id="contactinfo" style="background-color: #fff;width:300px;height:410px;text-align: center;margin:auto;">
+        <div id="contactinfo" style="background-color: #fff;width:300px;height:410px;text-align: center;margin:auto;display:none">
             <div style="float:left;position:relative;height:350px;width:100%;"><b>Contact Form:</b>
                 <br>(Your response will be sent to gis@amherst.ny.us)
                 <br />
@@ -313,8 +315,9 @@ legend detail is retrievable, example: export2pdf david example from code galler
                 <div id="submitContact" dojotype="dijit/form/Button" style="float:left;position:relative;" disabled="false">Submit</div>
             </div>
         </div>
+
         <div id="map" style="width:100%; overflow: hidden;padding:0;left:0px;right:0px;bottom:0px;top:20px;position:absolute;float:left;">
-            <img id="mapLoadingImg" src="images/loadingEsri.gif" style="position:absolute; width:32px; height:32px; z-index:100;" />
+
         </div>
         <div id="measurement-div"></div>
         <div data-dojo-type="dijit/form/Button" baseclass="tombutton" id="dryicon" style="float:left; left:170px; bottom:15px; z-index:100;position:absolute;" data-dojo-props="iconClass:'dryicon'"></div>

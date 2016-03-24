@@ -135,8 +135,8 @@ $(document).ready(function() {
     var mapheight = winH - 20 + "px";
     $("#map").css("height", mapheight);
     $("#alert").css("left", winW / 2 - 505 + "px");
-    $('#mapLoadingImg').css("left", winW / 2 - 16 + "px");
-    $('#mapLoadingImg').css("top", winH / 2 - 16 + "px");
+    // $('#mapLoadingImg').css("left", winW / 2 - 16 + "px");
+    // $('#mapLoadingImg').css("top", winH / 2 - 16 + "px");
     $('#table').css("top", 100 + "px");
     $('#table').css("right", winW / 2 + "px");
     $("#legendDiv").addClass("absolutePosition");
@@ -264,6 +264,7 @@ $(function() {
                     //node.toggleSelect();
                     $("#tree3").dynatree("getTree").getNodeByKey("20").toggleSelect();
                     //layervisible=visible;
+                    $("#popupinfo2").show();
                     $('#popupclicker2').trigger('click');
                 }
             }
@@ -423,8 +424,11 @@ $(".close").click(function() {
 $(document).ready(function() {
     $("#popupclicker").hide();
     var mainDisclaimer = getCookie("main");
-    if (mainDisclaimer== null || mainDisclaimer == "") $('#popupclicker').trigger('click');
 
+    if (mainDisclaimer== null || mainDisclaimer == "") {
+        $("#popupinfo").show();
+        $('#popupclicker').trigger('click');
+}
     // $("#popupclicker2").hide();
     // $("#alertclicker").hide();
     // $("#close-btn2").hide();
@@ -584,6 +588,7 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
         on(dom.byId("return"), 'click', zreturn);
         on(dom.byId("continue2"), 'click', zcontinue);
         //contact dialog buttons
+        on(dom.byId("contactclicker"), 'click', startContact);
         on(dom.byId("close-btn4"), 'click', clearContact);
         on(dom.byId("submitContact"), 'click', contact);
         //dry icon
@@ -592,7 +597,6 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
         on(dom.byId("tutorial"), 'click', function() { window.open('http://www.youtube.com/user/AmherstNYGIS', '_blank'); });
         on(dom.byId("helpUG"), 'click', userGuide);
         //contact button, is set as open button for contact dialog, the following set it for more function.
-        on(dom.byId("contactclicker"), 'click', antiSpam);
         //topright clicker;
         on(dom.byId("clicker"), 'click', userGuide);
 
@@ -787,10 +791,6 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
         map.resize();
         map.reposition();
         domStyle.set("map", { "height": window.innerHeight - 20 + "px" });
-        domStyle.set("mapLoadingImg", {
-            "left": window.innerWidth / 2 - 16 + "px",
-            "top": window.innerHeight / 2 - 16 + "px",
-        });
         domStyle.set("alert", { "left": window.innerWidth / 2 - 505 + "px" });
     }
 
@@ -1322,6 +1322,7 @@ function showSearchResults(results) {
 
     if (results.length == 0) {
         $("#mapLoadingImg").hide();
+        $('#alertinfo').show()
         $('#alertclicker').trigger('click');
         return;
     }
@@ -1668,7 +1669,10 @@ function contactErrorCallback(error) {
     $("#submitting")[0].innerHTML = "Failed. Please try again later.";
     var err = error;
 }
-
+function startContact(){
+    $("#contactinfo").show();
+    antiSpam()
+}
 var spamDetect;
 
 function antiSpam() {
