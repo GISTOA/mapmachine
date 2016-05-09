@@ -21,9 +21,9 @@ define([
         renderSymbol: function() {
             return new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
                 // outline of symbol
-                new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([250, 0, 197]), 2),
+                new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([250, 100, 197]), 2),
                 // color of fill
-                new Color([255, 255, 0, 0.5]));
+                new Color([255, 0, 0, 0.5]));
         },
         selectedSymbol: function() {
             return new SimpleMarkerSymbol(
