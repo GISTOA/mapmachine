@@ -467,6 +467,7 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
     "esri/config", "esri/domUtils",
     "esri/units", "esri/geometry/Extent",
     "esri/map","esri/geometry",
+    "esri/layers/DynamicLayerInfo",
     "esri/SnappingManager", "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol",
     "esri/tasks/query", "esri/tasks/IdentifyParameters", "esri/toolbars/navigation",
     "esri/dijit/Scalebar", "esri/dijit/Measurement", "esri/dijit/InfoWindow", "esri/tasks/FindParameters", "esri/dijit/Legend",
@@ -481,6 +482,7 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
     esriConfig, domUtils,
     units, Extent,
     Map,Geometry,
+    DynamicLayerInfo,
     SnappingManager, SimpleFillSymbol, SimpleLineSymbol,
     Query, IdentifyParameters, Navigation,
     Scalebar, Measurement, InfoWindow, FindParameters, Legend,
@@ -524,10 +526,12 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
 
         parcelLayer = mapServices.parcelLayer;
         ortho = mapServices.orthoLayer;
+        //orthoDummy=mapServices.orthoLayer11;
         hydrant = mapServices.hydrantLayer;
         layer = mapServices.layers;
         //layer.setImageFormat("png32");
-
+        var usgslayer= mapServices.usgsTopo;
+        //var usgslayer2=mapServices.usgsTopo2;
         loading = dom.byId("mapLoadingImg");
         symbol = SymbolUtil.renderSymbol();
         startExtent = new Extent({
@@ -615,8 +619,21 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
 
         on(dom.byId("go"), 'click', gosearch);
 
-        on(dom.byId("close-btn3"),'click',searchAlertOK)
+        on(dom.byId("close-btn3"),'click',searchAlertOK);
+/*
+        usgslayer2.on("load",function(e){
+            dynamicLayerInfos = e.target.createDynamicLayerInfosFromLayerInfos();
+dynamicLayerInfos[0].minScale=19000;
+console.log(dynamicLayerInfos);
+        });
+        usgslayer2.setMinScale(19000);
+console.log(usgslayer2);
+*/
+
+        //map.addLayer(orthoDummy);
+        //map.addLayer(usgslayer2);
         map.addLayer(ortho);
+        map.addLayer(usgslayer);
         map.addLayer(hydrant);
         map.addLayer(layer);
 

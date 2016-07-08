@@ -22,8 +22,19 @@ define([
 
         var _orthoLayer = new ArcGISTiledMapServiceLayer("http://map.amherst.ny.us/gallifrey/rest/services/OrthoBase/NYS_Imagery_2014/MapServer", {
             id: "2011nys_true_color",
-            opacity: 1.0,
+            opacity:1.0,
             visible: true
+        });
+        var _orthoLayer2= new ArcGISTiledMapServiceLayer("http://map.amherst.ny.us/gallifrey/rest/services/OrthoBase/NYS_Imagery_2011/MapServer", {
+            opacity: 1.0,
+            visible: false
+        });
+
+        var _usgs= new ArcGISDynamicMapServiceLayer("http://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer", {
+
+        });
+        var _usgs2= new ArcGISDynamicMapServiceLayer("http://services.nationalmap.gov/arcgis/rest/services/USGSTopoLarge/MapServer", {
+
         });
 
         //Add Hydrant Layer MJiang 03.03.2015
@@ -49,7 +60,10 @@ define([
         findTask: _findTask,
         parcelLayer: _parcelLayer,
         orthoLayer: _orthoLayer,
+        orthoLayer11: _orthoLayer2,
         hydrantLayer: _hydrantLayer,
         layers: _layers,
+        usgsTopo: _usgs,
+        usgsTopo2: _usgs2
     };
 });
