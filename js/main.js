@@ -1,96 +1,3 @@
-//=========================================GLOBAL VARIABLES========================================================
-var treeData = [{
-    title: "Base Information",
-    expand: true,
-    key: "100",
-    children: [{
-        title: "Zoning",
-        key: "20"
-    }, {
-        title: "Parcels",
-        select: true,
-        key: "22"
-    }, {
-        title: "Buildings",
-        key: "24"
-    }, {
-        title: "Zip Code",
-        key: "25"
-    }, {
-        title: "School Districts",
-        key: "26"
-    }, {
-        title: "Fire Districts",
-        key: "27"
-    }, {
-        title: "Fire Hydrant",
-        select: true,
-        key: "119"
-    }]
-}, {
-    title: "Environmental Features",
-    key: "129",
-    expand: true,
-    children: [{
-        title: "Lakes, Ponds, Creeks",
-        select: true,
-        key: "29"
-    }, {
-        title: "Drainage Ditches & Creeks",
-        key: "30",
-        select: true
-    }, {
-        title: "Contours 2ft (LiDAR Based)",
-        key: "31"
-    }, {
-        title: "Soils",
-        key: "32"
-    }, {
-        title: "Wetlands",
-        key: "134",
-        children: [{
-            title: "Wetlands - State (DEC)",
-            key: "34"
-        }, {
-            title: "Wetlands - Federal (FWS)",
-            key: "35"
-        }]
-    }, {
-        title: "FEMA FLoodplain Information",
-        key: "137",
-        expand: true,
-        children: [{
-            title: "(Existing)FEMA Floodplain",
-            expand: true,
-            key: "138",
-            children: [{
-                title: "Existing Floodway",
-                key: "38"
-            }, {
-                title: "Existing Floodplain",
-                key: "39"
-            }]
-        }, {
-            title: "(Proposed) FEMA Floodplain",
-            expand: true,
-            key: "141",
-            children: [{
-                title: "Proposed Floodway",
-                key: "41"
-            }, {
-                title: "Proposed Floodplain",
-                key: "42"
-            }]
-        }]
-    }]
-}, {
-    title: "2014 NYS Aerial Photography",
-    select: true,
-    key: "118"
-}];
-
-
-
 
 //========================Exe part========================================
 var OSName = "Unknown OS";
@@ -149,22 +56,19 @@ $(function() {
         closeButton: '#close-btn',
         isModal: true
     });
-});
-$(function() {
+
     $('#popupinfo2').modalPopLite({
         openButton: '#popupclicker2',
         closeButton: '#close-btn2',
         isModal: true
     });
-});
-$(function() {
+
     $('#alertinfo').modalPopLite({
         openButton: '#alertclicker',
         closeButton: '#close-btn3',
         isModal: true
     });
-});
-$(function() {
+
     $('#contactinfo').modalPopLite({
         openButton: '#contactclicker',
         closeButton: '#close-btn4',
@@ -235,79 +139,88 @@ $(function() {
         wait: true
     });
 });
-
+//Create toc from json data file.
+var treeData = [];
 
 $(function() {
-    $("#tree3").dynatree({
-        checkbox: true,
-        selectMode: 3,
-        children: treeData,
-        onSelect: function(select, node) {
-            var selKeys = $.map(node.tree.getSelectedNodes(), function(node) {
-                return node.data.key;
-            });
-            var visible = $.map(selKeys, function(key) {
-                return parseInt(key);
+    $.getJSON("data/TOC.json", function(data) {
 
-            });
-            if (jQuery.inArray(22, visible) != -1) {
-                visible.push(23);
-            }
-            identifyParams.layerIds = [22, 25, 26, 27, 32];
-            if (jQuery.inArray(20, visible) != -1) {
-                var zoningPre = getCookie("zoning");
-                if (zoningPre != null && zoningPre != "") {
-                    identifyParams.layerIds.push(20);
-                    /*identifyParams.layerIds.push(20);//add zoning to identify layers*/
-                } else {
-                    visible.splice(jQuery.inArray(20, visible), 1);
-                    //node.toggleSelect();
-                    $("#tree3").dynatree("getTree").getNodeByKey("20").toggleSelect();
-                    //layervisible=visible;
-                    $("#popupinfo2").show();
-                    $('#popupclicker2').trigger('click');
+        $.each(data, function(index, val) {
+            treeData.push(val);
+        });
+        $("#tree3").dynatree({
+            checkbox: true,
+            selectMode: 3,
+            children: treeData,
+            onSelect: function(select, node) {
+                var selKeys = $.map(node.tree.getSelectedNodes(), function(node) {
+                    return node.data.key;
+                });
+                var visible = $.map(selKeys, function(key) {
+                    return parseInt(key);
+
+                });
+                if (jQuery.inArray(22, visible) != -1) {
+                    visible.push(23);
                 }
-            }
+                identifyParams.layerIds = [22, 25, 26, 27, 32];
+                if (jQuery.inArray(20, visible) != -1) {
+                    var zoningPre = getCookie("zoning");
+                    if (zoningPre != null && zoningPre != "") {
+                        identifyParams.layerIds.push(20);
+                        /*identifyParams.layerIds.push(20);//add zoning to identify layers*/
+                    } else {
+                        visible.splice(jQuery.inArray(20, visible), 1);
+                        //node.toggleSelect();
+                        $("#tree3").dynatree("getTree").getNodeByKey("20").toggleSelect();
+                        //layervisible=visible;
+                        $("#popupinfo2").show();
+                        $('#popupclicker2').trigger('click');
+                    }
+                }
 
-            //if there aren't any layers visible set the array value to = -1
-            var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 17, 18, 19];
-            dojo.forEach(arr, function(a, i) {
-                visible.push(a);
-            });
+                //if there aren't any layers visible set the array value to = -1
+                var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 17, 18, 19];
+                dojo.forEach(arr, function(a, i) {
+                    visible.push(a);
+                });
 
-            if (visible.length === 0) {
-                visible.push(-1);
-            }
-            layer.setVisibleLayers(visible);
-            if (jQuery.inArray(118, visible) != -1) {
-                ortho.show();
-            } else {
-                ortho.hide();
-            }
-            if (jQuery.inArray(119, visible) != -1) {
-                hydrant.show();
-            } else {
-                hydrant.hide();
-            }
+                if (visible.length === 0) {
+                    visible.push(-1);
+                }
+                layer.setVisibleLayers(visible);
+                if (jQuery.inArray(118, visible) != -1) {
+                    ortho.show();
+                } else {
+                    ortho.hide();
+                }
+                if (jQuery.inArray(119, visible) != -1) {
+                    hydrant.show();
+                } else {
+                    hydrant.hide();
+                }
 
-            var selRootNodes = node.tree.getSelectedNodes(true);
-            var selRootKeys = $.map(selRootNodes, function(node) {
-                return node.data.key;
-            });
+                var selRootNodes = node.tree.getSelectedNodes(true);
+                var selRootKeys = $.map(selRootNodes, function(node) {
+                    return node.data.key;
+                });
 
-        },
-        onDblClick: function(node, event) {
-            node.toggleSelect();
-        },
-        onKeydown: function(node, event) {
-            if (event.which == 32) {
+            },
+            onDblClick: function(node, event) {
                 node.toggleSelect();
-                return false;
-            }
-        },
-        cookieId: "dynatree-Cb3",
-        idPrefix: "dynatree-Cb3-"
+            },
+            onKeydown: function(node, event) {
+                if (event.which == 32) {
+                    node.toggleSelect();
+                    return false;
+                }
+            },
+            cookieId: "dynatree-Cb3",
+            idPrefix: "dynatree-Cb3-"
+        });
     });
+
+
 });
 
 
@@ -425,10 +338,10 @@ $(document).ready(function() {
     $("#popupclicker").hide();
     var mainDisclaimer = getCookie("main");
 
-    if (mainDisclaimer== null || mainDisclaimer == "") {
+    if (mainDisclaimer == null || mainDisclaimer == "") {
         $("#popupinfo").show();
         $('#popupclicker').trigger('click');
-}
+    }
     // $("#popupclicker2").hide();
     // $("#alertclicker").hide();
     // $("#close-btn2").hide();
@@ -466,7 +379,7 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
     "dijit/registry",
     "esri/config", "esri/domUtils",
     "esri/units", "esri/geometry/Extent",
-    "esri/map","esri/geometry",
+    "esri/map", "esri/geometry",
     "esri/layers/DynamicLayerInfo",
     "esri/SnappingManager", "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol",
     "esri/tasks/query", "esri/tasks/IdentifyParameters", "esri/toolbars/navigation",
@@ -481,7 +394,7 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
     registry,
     esriConfig, domUtils,
     units, Extent,
-    Map,Geometry,
+    Map, Geometry,
     DynamicLayerInfo,
     SnappingManager, SimpleFillSymbol, SimpleLineSymbol,
     Query, IdentifyParameters, Navigation,
@@ -530,7 +443,7 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
         hydrant = mapServices.hydrantLayer;
         layer = mapServices.layers;
         //layer.setImageFormat("png32");
-        var usgslayer= mapServices.usgsTopo;
+        var usgslayer = mapServices.usgsTopo;
         //var usgslayer2=mapServices.usgsTopo2;
         loading = dom.byId("mapLoadingImg");
         symbol = SymbolUtil.renderSymbol();
@@ -619,16 +532,16 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
 
         on(dom.byId("go"), 'click', gosearch);
 
-        on(dom.byId("close-btn3"),'click',searchAlertOK);
-/*
-        usgslayer2.on("load",function(e){
-            dynamicLayerInfos = e.target.createDynamicLayerInfosFromLayerInfos();
-dynamicLayerInfos[0].minScale=19000;
-console.log(dynamicLayerInfos);
-        });
-        usgslayer2.setMinScale(19000);
-console.log(usgslayer2);
-*/
+        on(dom.byId("close-btn3"), 'click', searchAlertOK);
+        /*
+                usgslayer2.on("load",function(e){
+                    dynamicLayerInfos = e.target.createDynamicLayerInfosFromLayerInfos();
+        dynamicLayerInfos[0].minScale=19000;
+        console.log(dynamicLayerInfos);
+                });
+                usgslayer2.setMinScale(19000);
+        console.log(usgslayer2);
+        */
 
         //map.addLayer(orthoDummy);
         //map.addLayer(usgslayer2);
@@ -862,52 +775,55 @@ console.log(usgslayer2);
     function dryicons() {
         window.open("http://www.dryicons.com", '_blank');
     }
-function userGuide() {
-    window.open("doc/User Guide.pdf", "_blank");
-}
+
+    function userGuide() {
+        window.open("doc/User Guide.pdf", "_blank");
+    }
+
     function print() {
         domUtils.show(dom.byId("printerSettings"));
         dom.byId('exportPDFBtn').setAttribute('disabled', false);
         // dijit.byId("exportPDFBtn").set("disabled", false);
         dom.byId('pdfRequest').setAttribute('disabled', "none");
     }
-function CPILink(evt) {
-    map.infoWindow.hide();
-console.log("CPI link right click");
 
-    event.preventDefault ? event.preventDefault():(event.returnValue=false);
+    function CPILink(evt) {
+        map.infoWindow.hide();
+        console.log("CPI link right click");
+
+        event.preventDefault ? event.preventDefault() : (event.returnValue = false);
         var winx = evt.clientX;
         var winy = evt.clientY - 20;
 
 
-    //var screenPoint=new esri.geometry.Point(evt.screenX, evt.screenY-80);//need to consider screen size as well.
-    var screenPoint = new Geometry.Point(winx, winy); //new point
-    var mapPoint = map.toMap(screenPoint);
-    query.geometry = mapPoint;
+        //var screenPoint=new esri.geometry.Point(evt.screenX, evt.screenY-80);//need to consider screen size as well.
+        var screenPoint = new Geometry.Point(winx, winy); //new point
+        var mapPoint = map.toMap(screenPoint);
+        query.geometry = mapPoint;
 
-    //Execute task and call showResults on completion
-    queryTask.execute(query, function(fset) {
-        var feature = fset.features[0];
-        var attr = feature.attributes;
-        map.graphics.remove(currentGraphic);
-        //set symbol
-        //var symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([250, 0, 197]), 2), new dojo.Color([255, 255, 0, 0.5]));
-        feature.setSymbol(symbol);
+        //Execute task and call showResults on completion
+        queryTask.execute(query, function(fset) {
+            var feature = fset.features[0];
+            var attr = feature.attributes;
+            map.graphics.remove(currentGraphic);
+            //set symbol
+            //var symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([250, 0, 197]), 2), new dojo.Color([255, 255, 0, 0.5]));
+            feature.setSymbol(symbol);
 
-        map.graphics.add(feature);
-        currentGraphic = feature;
+            map.graphics.add(feature);
+            currentGraphic = feature;
 
-        window.open(attr['CPILink'], "_blank", 'scrollbars=1,toolbar=0,location=0,menubar=0,left=0px,top=0px,height=' + screen.height + 'px ,width=' + screen.width + 'px');
-    console.log(attr['CPILink']);
-    });
+            window.open(attr['CPILink'], "_blank", 'scrollbars=1,toolbar=0,location=0,menubar=0,left=0px,top=0px,height=' + screen.height + 'px ,width=' + screen.width + 'px');
+            console.log(attr['CPILink']);
+        });
 
-}
+    }
 });
 
 
 //=========================================GLOBAL FUNCTIONS========================================================
 
-function searchAlertOK(){
+function searchAlertOK() {
     $("#close-btn3").trigger('click');
 }
 
@@ -921,11 +837,12 @@ function mcontinue() {
     setCookie("main", "True", 7);
     $('#close-btn').trigger('click');
 }
-    function zcontinue() {
-        setCookie("zoning", "True", 0.125);
-        $('#close-btn2').trigger('click');
-        $("#tree3").dynatree("getTree").getNodeByKey("20").select();
-    }
+
+function zcontinue() {
+    setCookie("zoning", "True", 0.125);
+    $('#close-btn2').trigger('click');
+    $("#tree3").dynatree("getTree").getNodeByKey("20").select();
+}
 
 
 function setCookie(c_name, value, exdays) {
@@ -941,6 +858,7 @@ function setCookie(c_name, value, exdays) {
     var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate);
     document.cookie = c_name + "=" + c_value;
 }
+
 function getCookie(c_name) {
     var i, x, y, ARRcookies = document.cookie.split(";");
     for (i = 0; i < ARRcookies.length; i++) {
@@ -1671,7 +1589,8 @@ function contactErrorCallback(error) {
     $("#submitting")[0].innerHTML = "Failed. Please try again later.";
     var err = error;
 }
-function startContact(){
+
+function startContact() {
     $("#contactinfo").show();
     antiSpam()
 }

@@ -1,0 +1,89 @@
+[{
+    "title": "Base Information",
+    "expand": true,
+    "key": "100",
+    "children": [{
+        "title": "Zoning",
+        "key": "20"
+    }, {
+        "title": "Parcels",
+        "select": true,
+        "key": "22"
+    }, {
+        "title": "Buildings",
+        "key": "24"
+    }, {
+        "title": "Zip Code",
+        "key": "25"
+    }, {
+        "title": "School Districts",
+        "key": "26"
+    }, {
+        "title": "Fire Districts",
+        "key": "27"
+    }, {
+        "title": "Fire Hydrant",
+        "select": true,
+        "key": "119"
+    }]
+}, {
+    "title": "Environmental Features",
+    "key": "129",
+    "expand": true,
+    "children": [{
+        "title": "Lakes, Ponds, Creeks",
+        "select": true,
+        "key": "29"
+    }, {
+        "title": "Drainage Ditches & Creeks",
+        "key": "30",
+        "select": true
+    }, {
+        "title": "Contours 2ft (LiDAR Based)",
+        "key": "31"
+    }, {
+        "title": "Soils",
+        "key": "32"
+    }, {
+        "title": "Wetlands",
+        "key": "134",
+        "children": [{
+            "title": "Wetlands - State (DEC)",
+            "key": "34"
+        }, {
+            "title": "Wetlands - Federal (FWS)",
+            "key": "35"
+        }]
+    }, {
+        "title": "FEMA FLoodplain Information",
+        "key": "137",
+        "expand": true,
+        "children": [{
+            "title": "(Existing)FEMA Floodplain",
+            "expand": true,
+            "key": "138",
+            "children": [{
+                "title": "Existing Floodway",
+                "key": "38"
+            }, {
+                "title": "Existing Floodplain",
+                "key": "39"
+            }]
+        }, {
+            "title": "(Proposed) FEMA Floodplain",
+            "expand": true,
+            "key": "141",
+            "children": [{
+                "title": "Proposed Floodway",
+                "key": "41"
+            }, {
+                "title": "Proposed Floodplain",
+                "key": "42"
+            }]
+        }]
+    }]
+}, {
+    "title": "2014 NYS Aerial Photography",
+    "select": true,
+    "key": "118"
+}]
