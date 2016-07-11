@@ -342,7 +342,7 @@ $(document).ready(function() {
         $("#popupinfo").show();
         $('#popupclicker').trigger('click');
     }
-    // $("#popupclicker2").hide();
+     //$("#popupclicker2").hide();
     // $("#alertclicker").hide();
     // $("#close-btn2").hide();
     // $("#closePrinter").trigger('click');
