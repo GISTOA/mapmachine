@@ -443,7 +443,7 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
         hydrant = mapServices.hydrantLayer;
         layer = mapServices.layers;
         //layer.setImageFormat("png32");
-        var usgslayer = mapServices.usgsTopo;
+        //usgs layer comment out//var usgslayer = mapServices.usgsTopo;
         //var usgslayer2=mapServices.usgsTopo2;
         loading = dom.byId("mapLoadingImg");
         symbol = SymbolUtil.renderSymbol();
@@ -451,7 +451,7 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
             "xmin": 1081699,
             "ymin": 1073385,
             "xmax": 1117959,
-            "ymax": 1124831,
+            "ymax": 1129831,
             "spatialReference": {
                 "wkid": 2262
             }
@@ -464,8 +464,8 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
         map = new Map("map", {
             //autoResize:true,
             infoWindow: infoWindow,
-            //sliderPosition: "bottom-left",
-            //sliderStyle:"large",
+            sliderPosition: "bottom-left",
+            sliderStyle:"large",
         });
 
         navToolbar = new Navigation(map);
@@ -546,7 +546,7 @@ require(["dojo/parser", "dojo/ready", "dojo/dom", "dojo/dom-attr", "dojo/on", "d
         //map.addLayer(orthoDummy);
         //map.addLayer(usgslayer2);
         map.addLayer(ortho);
-        map.addLayer(usgslayer);
+        //usgs layer comment out//map.addLayer(usgslayer);
         map.addLayer(hydrant);
         map.addLayer(layer);
 

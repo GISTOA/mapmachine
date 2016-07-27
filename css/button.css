@@ -1,3 +1,7 @@
+.esriLargeSliderBL{
+    top:10px;
+    left:60px;
+}
 .zoominIcon {
     background-image: url(../images/blue_zoom_in.png);
     width: 32px;

@@ -30,12 +30,12 @@ define([
             visible: false
         });
 
-        var _usgs= new ArcGISDynamicMapServiceLayer("http://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer", {
+        //usgs layer comment out//var _usgs= new ArcGISDynamicMapServiceLayer("http://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer", {
 
-        });
-        var _usgs2= new ArcGISDynamicMapServiceLayer("http://services.nationalmap.gov/arcgis/rest/services/USGSTopoLarge/MapServer", {
+        //usgs layer comment out//});
+        //usgs layer comment out//var _usgs2= new ArcGISDynamicMapServiceLayer("http://services.nationalmap.gov/arcgis/rest/services/USGSTopoLarge/MapServer", {
 
-        });
+        //usgs layer comment out//});
 
         //Add Hydrant Layer MJiang 03.03.2015
         var imageParametersF = new ImageParameters();
@@ -63,7 +63,7 @@ define([
         orthoLayer11: _orthoLayer2,
         hydrantLayer: _hydrantLayer,
         layers: _layers,
-        usgsTopo: _usgs,
-        usgsTopo2: _usgs2
+        //usgs layer comment out//usgsTopo: _usgs,
+        //usgs layer comment out//usgsTopo2: _usgs2
     };
 });
